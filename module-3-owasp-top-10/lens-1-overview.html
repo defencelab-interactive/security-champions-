@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWASP Top 10 · Security Champions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:slide-in .35s cubic-bezier(.2,.6,.2,1) both}
+@keyframes slide-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.slide:not(.on) *{animation-play-state:paused!important}
+
+@media (prefers-reduced-motion:reduce){
+  .slide.on{animation:none}
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.01s!important}
+}
+
+/* Header & footer */
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh .sh-right{display:flex;align-items:center;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}
+.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}
+.btn.pri:hover{background:var(--od)}
+.btn.reflect-btn{border-color:rgba(232,129,58,.4);color:var(--or);background:rgba(232,129,58,.06)}
+.btn.reflect-btn:hover{background:rgba(232,129,58,.15);color:#fff}
+
+/* Pips */
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:280px;justify-content:flex-end}
+.pip{width:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}
+.pip.on{background:var(--or);transform:scaleY(1.8)}
+
+/* Split layout */
+.split{display:flex;min-height:480px}
+.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:20px;font-weight:700;color:var(--wh);line-height:1.25}
+.sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:480px}
+.sp-r::-webkit-scrollbar{width:3px}
+.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+
+/* Black full-bleed divider */
+.sb{padding:0}
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}
+.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
+
+/* Prose */
+.prose{font-size:15.5px;color:var(--tm);line-height:1.78}
+.prose strong{color:var(--td);font-weight:600}
+.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.prose em{font-style:italic}
+
+/* Glossary */
+.gloss{border-bottom:1px dotted var(--or);cursor:help;font-weight:600;color:inherit}
+#gloss-tip{position:fixed;background:#1a1620;color:#F5F2ED;font-size:12px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.4);box-shadow:0 8px 28px rgba(0,0,0,.55);max-width:300px;width:max-content;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none;z-index:9999;text-align:left;font-family:inherit}
+#gloss-tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+#gloss-tip::after{content:'';position:absolute;left:14px;top:100%;width:0;height:0;border:6px solid transparent;border-top-color:rgba(232,129,58,.5)}
+#gloss-tip.below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:rgba(232,129,58,.5)}
+
+/* Callout */
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}
+.co em{font-style:italic;font-weight:500;color:var(--or)}
+.co strong{font-weight:600}
+
+/* Expand */
+.xp{margin:4px 0}
+.xh{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card);border:none;border-radius:6px;padding:12px 16px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--td);text-align:left;transition:background .1s}
+.xh:hover{background:#e5e5e5}
+.xa{font-size:13px;color:var(--mu);transition:transform .18s;margin-left:8px}.xa.op{transform:rotate(90deg);color:var(--or)}
+.xb{display:none;padding:14px 16px;background:var(--ow);border-radius:0 0 6px 6px;font-size:14px;color:var(--tm);line-height:1.7}
+.xb.op{display:block}.xb strong{color:var(--td);font-weight:600}
+
+/* Quiz */
+.qw{margin:6px 0}
+.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}
+.qo.ok{border-color:var(--gr);background:var(--gl)}
+.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55}
+.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block}.qe strong{color:var(--td)}
+
+/* Wager */
+.wager{margin:6px 0 10px;background:linear-gradient(135deg,#fff8f2,#fff);border:1px dashed rgba(232,129,58,.4);border-radius:8px;padding:11px 14px;transition:all .25s}
+.wager.locked{opacity:.55;border-style:solid;border-color:var(--bd);background:var(--ow)}
+.wager-lab{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.wager-lab::before{content:'';width:14px;height:1px;background:var(--or)}
+.wager-row{display:flex;gap:6px;flex-wrap:wrap}
+.wager-btn{flex:1;min-width:90px;background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .12s}
+.wager-btn:hover{border-color:var(--or);transform:translateY(-1px);box-shadow:0 2px 8px rgba(232,129,58,.15)}
+.wager-btn.pk{border-color:var(--or);background:var(--ol)}
+.wager-btn.pk .wb-mult{background:var(--or);color:#fff}
+.wager-btn:disabled{cursor:not-allowed;opacity:.5}
+.wb-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.wb-mult{display:inline-flex;align-items:center;justify-content:center;background:var(--card);color:var(--td);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;letter-spacing:.3px}
+.wb-name{font-size:13px;font-weight:700;color:var(--td)}
+.wb-sub{font-size:11px;color:var(--mu);line-height:1.3}
+.wager-locked-note{font-size:11px;color:var(--mu);font-style:italic;display:flex;align-items:center;gap:6px}
+.wager-locked-note b{color:var(--td);font-style:normal;font-weight:600}
+.qe .qe-score{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:13px}
+.qe .qe-score .qs-pts{display:inline-flex;align-items:center;gap:4px;background:var(--gl);color:var(--gr);font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px;letter-spacing:.3px}
+.qe .qe-score .qs-pts.zero{background:var(--rl);color:var(--rd)}
+.qe .qe-score .qs-pts.humility{background:rgba(123,111,174,.12);color:var(--pu)}
+.qe .qe-score .qs-msg{color:var(--tm);font-size:12px}
+
+/* Fade-in for sp-r children */
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .2s ease both}
+.slide.on .sp-r>*:nth-child(1){animation-delay:.03s}
+.slide.on .sp-r>*:nth-child(2){animation-delay:.06s}
+.slide.on .sp-r>*:nth-child(3){animation-delay:.09s}
+.slide.on .sp-r>*:nth-child(4){animation-delay:.12s}
+.slide.on .sp-r>*:nth-child(5){animation-delay:.15s}
+.slide.on .sp-r>*:nth-child(6){animation-delay:.18s}
+.slide.on .sp-r>*:nth-child(7){animation-delay:.21s}
+
+/* Punch Line */
+.punch{background:#0F0E14;background-image:radial-gradient(ellipse at center,rgba(232,129,58,.08) 0%,transparent 60%),radial-gradient(ellipse at top right,rgba(123,111,174,.06) 0%,transparent 50%);min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;text-align:center;position:relative;overflow:hidden}
+.punch-tag{font-size:10px;letter-spacing:5px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:36px;display:flex;align-items:center;gap:14px;animation:punch-fade-in .8s ease both}
+.punch-tag::before,.punch-tag::after{content:'';width:32px;height:1px;background:linear-gradient(90deg,transparent,var(--or),transparent)}
+.punch-quote{font-family:'DM Sans',sans-serif;font-size:42px;font-weight:300;line-height:1.22;letter-spacing:-.02em;color:#F5F2ED;max-width:780px;text-wrap:balance;animation:punch-fade-in 1s ease .15s both}
+.punch-quote em{color:var(--or);font-style:normal;font-weight:600}
+.punch-source{font-size:15px;color:rgba(245,242,237,.45);line-height:1.7;max-width:600px;margin-top:26px;animation:punch-fade-in 1s ease .4s both}
+.punch-source b{color:rgba(245,242,237,.65);font-weight:600}
+.punch-mark{position:absolute;font-size:160px;font-weight:700;color:rgba(232,129,58,.06);line-height:1;pointer-events:none;user-select:none}
+.punch-mark.tl{top:20px;left:30px}.punch-mark.br{bottom:-20px;right:30px;transform:rotate(180deg)}
+@keyframes punch-fade-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Breather */
+.breather{display:flex;flex-direction:column;align-items:center;padding:18px 24px 10px;min-height:480px;gap:12px}
+.breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.breather-caption{text-align:center;padding:4px 0 2px;max-width:640px}
+.breather-caption p{font-size:14px;line-height:1.6}
+.breather-caption strong{font-weight:700}
+.breather-notice{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.4px;text-align:center;margin-top:6px;font-style:italic}
+.breather-notice b{color:rgba(255,255,255,.65);font-style:normal;font-weight:600}
+.bg-warm{background:linear-gradient(170deg,#1e1a15,#1a1a1a,#1a1520)}
+.bg-warm .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-warm .breather-caption strong{color:var(--or)}
+
+/* ════ Lens roadmap (intro) ════ */
+.lens-grid{display:flex;flex-direction:column;gap:8px;width:600px;max-width:100%}
+.lens-item{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px 18px;transition:all .3s;cursor:default}
+.lens-item:hover{border-color:rgba(232,129,58,.4);background:rgba(232,129,58,.06)}
+.lens-num{font-size:11px;font-weight:800;color:var(--or);letter-spacing:2px;font-family:'JetBrains Mono',monospace;flex-shrink:0;width:28px}
+.lens-name{font-size:14px;font-weight:700;color:rgba(255,255,255,.85);line-height:1.35}
+.lens-desc{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;line-height:1.4}
+.lens-risks{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.lens-risk-tag{font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(232,129,58,.7);background:rgba(232,129,58,.08);padding:2px 7px;border-radius:10px;text-transform:uppercase}
+
+/* ════ Risk pipe breather ════ */
+.pipe-box{width:100%;max-width:780px;position:relative;padding:20px 0}
+.pipe-row{display:flex;align-items:center;gap:16px;margin-bottom:12px;position:relative}
+.pipe-bar{height:56px;border-radius:8px;display:flex;align-items:center;padding:0 18px;gap:12px;position:relative;transition:all .3s}
+.pipe-bar.pb-vuln{width:100%;background:rgba(232,129,58,.08);border:1px solid rgba(232,129,58,.18)}
+.pipe-bar.pb-threat{width:62%;background:rgba(232,129,58,.12);border:1px solid rgba(232,129,58,.28)}
+.pipe-bar.pb-risk{width:30%;background:rgba(232,129,58,.22);border:1px solid rgba(232,129,58,.5);box-shadow:0 0 20px rgba(232,129,58,.1)}
+.pipe-label{font-size:14px;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;flex-shrink:0}
+.pipe-bar.pb-risk .pipe-label{color:#fff}
+.pipe-dots{display:flex;gap:4px;flex-wrap:wrap;flex:1;justify-content:flex-end}
+.pipe-dot{width:7px;height:7px;border-radius:50%;background:rgba(232,129,58,.25)}
+.pb-vuln .pipe-dot{animation:pd-wave 5s ease-in-out infinite}
+.pb-threat .pipe-dot{animation:pd-wave 5s ease-in-out infinite;animation-delay:1.8s}
+.pb-risk .pipe-dot{background:var(--or);animation:pd-wave 5s ease-in-out infinite;animation-delay:3.5s}
+@keyframes pd-wave{0%,25%{opacity:.3;transform:scale(1)}30%,45%{opacity:1;transform:scale(1.5);background:var(--or)}55%,100%{opacity:.5;transform:scale(1)}}
+.pipe-idot{position:absolute;right:-36px;top:50%;transform:translateY(-50%)}
+.pipe-idot .idot{width:20px;height:20px;font-size:10px}
+.pipe-idot .idot::before{inset:-3px}
+.pipe-narrow{display:flex;align-items:center;gap:6px;margin:2px 0 2px 12px}
+.pipe-narrow-line{width:2px;height:14px;background:linear-gradient(180deg,rgba(232,129,58,.4),rgba(232,129,58,.15));border-radius:2px}
+.pipe-narrow-label{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:1.5px;font-weight:700;text-transform:uppercase}
+.pipe-idot-pop{display:none;margin:4px 0 8px;padding:12px 16px;background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.3);border-radius:8px;font-size:12.5px;color:rgba(245,242,237,.8);line-height:1.65;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.pipe-idot-pop.open{display:block;animation:idot-fade .25s ease}
+.pipe-idot-pop strong{color:#fff;font-weight:600}
+.pipe-owasp-tag{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:4px 10px;background:rgba(232,129,58,.15);border:1px solid rgba(232,129,58,.4);border-radius:14px;font-size:10px;font-weight:700;color:var(--or);letter-spacing:1.5px;text-transform:uppercase}
+
+/* ════ Lens card (roadmap S2) ════ */
+.lc{margin:4px 0;border-radius:8px;overflow:hidden;border:1px solid var(--bd);transition:all .2s}
+.lc:hover{border-color:rgba(232,129,58,.35)}
+.lc-head{display:flex;align-items:center;gap:12px;width:100%;background:var(--wh);border:none;padding:13px 16px;cursor:pointer;font-family:inherit;text-align:left;transition:background .1s}
+.lc-head:hover{background:var(--ow)}
+.lc-num{font-size:11px;font-weight:800;color:#fff;background:var(--or);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:.5px;font-family:'JetBrains Mono',monospace}
+.lc-title{flex:1;font-size:14px;font-weight:700;color:var(--td);line-height:1.3}
+.lc-arrow{font-size:13px;color:var(--mu);transition:transform .18s}.lc-arrow.op{transform:rotate(90deg);color:var(--or)}
+.lc-body{display:none;padding:0 16px 14px 56px;font-size:13.5px;color:var(--tm);line-height:1.7;background:var(--ow)}
+.lc-body.op{display:block}
+.lc-body strong{color:var(--td);font-weight:600}
+.aside{margin:6px 0;padding:10px 14px;background:rgba(123,111,174,.06);border:1px dashed rgba(123,111,174,.25);border-radius:8px;font-size:13px;color:var(--tm);line-height:1.6;display:flex;gap:10px;align-items:flex-start}
+.aside-icon{flex-shrink:0;font-size:16px;margin-top:1px}
+.aside em{color:var(--pu);font-style:normal;font-weight:600}
+
+/* ════ Info dot (pulsing, click to reveal) ════ */
+.idot-wrap{position:relative;margin:4px 0}
+.idot-trigger{display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none;background:none;padding:0;font-family:inherit}
+.idot{width:22px;height:22px;border-radius:50%;background:var(--or);color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;position:relative;z-index:1;flex-shrink:0;transition:transform .15s}
+.idot:hover{transform:scale(1.15)}
+.idot::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--or);opacity:0;animation:idot-pulse 2s ease-in-out infinite}
+.idot-wrap.opened .idot::before{animation:none;opacity:0}
+@keyframes idot-pulse{0%{opacity:0;transform:scale(.8)}50%{opacity:.45;transform:scale(1.2)}100%{opacity:0;transform:scale(1.5)}}
+.idot-label{font-size:13px;color:var(--mu);font-weight:500;transition:color .15s}
+.idot-trigger:hover .idot-label{color:var(--td)}
+.idot-pop{display:none;margin-top:8px;padding:14px 16px;background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:10px;font-size:13.5px;color:rgba(245,242,237,.85);line-height:1.7;box-shadow:0 8px 28px rgba(0,0,0,.4)}
+.idot-pop.open{display:block;animation:idot-fade .25s ease}
+.idot-pop strong{color:#fff;font-weight:600}
+@keyframes idot-fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ════ Scenario card (replaces "from the room") ════ */
+.scenario{margin:6px 0;background:linear-gradient(170deg,#1c1820,#181820);border-radius:10px;padding:16px 20px;color:#F5F2ED;border-left:3px solid var(--or);box-shadow:0 6px 22px rgba(0,0,0,.18)}
+.scenario-tag{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--or);margin-bottom:8px}
+.scenario-text{font-size:15px;line-height:1.65;color:rgba(245,242,237,.85);font-style:italic}
+.scenario-text em{color:var(--or);font-style:normal;font-weight:600}
+
+/* ════ Definition table ════ */
+.def-table{border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin:4px 0}
+.def-row{display:flex;border-bottom:1px solid var(--bd);font-size:14px}
+.def-row:last-child{border-bottom:none}
+.def-term{width:140px;flex-shrink:0;padding:11px 14px;background:var(--card);font-weight:700;color:var(--td);line-height:1.4}
+.def-desc{flex:1;padding:11px 14px;color:var(--tm);line-height:1.55}
+.def-desc em{color:var(--or);font-style:normal;font-weight:600}
+
+/* Reflect modal */
+#reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px;animation:rm-fade .25s ease}
+#reflect-modal.on{display:flex}
+@keyframes rm-fade{from{opacity:0}to{opacity:1}}
+.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:14px;padding:36px 40px 28px;max-width:560px;width:100%;text-align:center;color:#F5F2ED;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+.rm-q{font-size:22px;line-height:1.45;font-weight:300;margin-bottom:14px;text-wrap:pretty;color:#F5F2ED}
+.rm-q em{color:var(--or);font-style:normal;font-weight:600}
+.rm-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin:0 auto 24px;max-width:440px}
+.rm-actions{display:flex;gap:10px;justify-content:center}
+.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;width:28px;height:28px;line-height:1;border-radius:6px}
+.rm-close:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* ════ Responsive ════ */
+@media(max-width:700px){
+  .split{flex-direction:column}
+  .sp-l{width:100%;min-height:auto;padding:16px 18px}
+  .sp-r{max-height:none}
+  .fbody{flex-direction:column;padding:32px 24px;gap:24px}
+  .fb-visual{width:180px;height:180px}
+  .fb-tt{font-size:28px}
+  .punch-quote{font-size:28px}
+  .lens-grid{width:100%}
+  .pipe-bar.pb-threat{width:75%}
+  .pipe-bar.pb-risk{width:45%}
+}
+/* ════ Terminal ════ */
+.term{background:#0a0c10;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;font-family:'JetBrains Mono',monospace}
+.term-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)}
+.term-dot{width:10px;height:10px;border-radius:50%}.term-dot:nth-child(1){background:#ff5f57}.term-dot:nth-child(2){background:#febc2e}.term-dot:nth-child(3){background:#28c840}
+.term-title{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1px;margin-left:8px;font-weight:600;text-transform:uppercase}
+.term-body{padding:16px 18px;min-height:120px;max-height:220px;overflow-y:auto;scrollbar-width:thin}
+.term-line{font-size:12px;line-height:1.7;color:rgba(255,255,255,.55);white-space:pre-wrap;word-break:break-all;opacity:0;transform:translateY(3px);animation:term-appear .2s ease forwards}
+.term-line.cmd{color:rgba(255,255,255,.85)}.term-line.cmd::before{content:'$ ';color:var(--gr)}
+.term-line.atk{color:var(--rd)}.term-line.atk::before{content:'⚠ ';color:var(--rd)}
+.term-line.ok{color:var(--gr)}.term-line.ok::before{content:'✓ ';color:var(--gr)}
+.term-line.blank{height:8px}
+@keyframes term-appear{to{opacity:1;transform:translateY(0)}}
+.term-play{background:var(--or);border:none;color:#fff;padding:7px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;margin-top:10px}
+.term-play:hover{background:var(--od)}
+.term-play:disabled{opacity:.4;cursor:default}
+
+/* ════ Code Diff ════ */
+.cdiff{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;margin:6px 0}
+.cdiff-col{padding:0}
+.cdiff-head{padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06)}
+.cdiff-bad .cdiff-head{background:rgba(217,69,69,.1);color:var(--rd)}
+.cdiff-good .cdiff-head{background:rgba(46,173,107,.08);color:var(--gr)}
+.cdiff-bad{border-right:1px solid rgba(255,255,255,.06)}
+.cdiff-code{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.8;color:rgba(255,255,255,.6);white-space:pre;overflow-x:auto;background:#0a0c10}
+.cdiff-code .hl-bad{background:rgba(217,69,69,.15);color:rgba(255,255,255,.85);padding:1px 3px;border-radius:2px}
+.cdiff-code .hl-good{background:rgba(46,173,107,.12);color:rgba(255,255,255,.85);padding:1px 3px;border-radius:2px}
+.cdiff-fix{grid-column:1/-1;padding:10px 16px;background:rgba(46,173,107,.06);border-top:1px solid rgba(46,173,107,.2);display:flex;align-items:flex-start;gap:8px;font-size:12px;color:rgba(255,255,255,.7);line-height:1.5}
+.cdiff-fix strong{color:var(--gr);font-weight:700}
+@media(max-width:560px){.cdiff{grid-template-columns:1fr}.cdiff-bad{border-right:none;border-bottom:1px solid rgba(255,255,255,.06)}}
+
+/* ════ Risk Slider ════ */
+.rslider{padding:8px 0}
+.rslider-row{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.rslider-label{width:80px;flex-shrink:0;font-size:12px;font-weight:700;color:var(--td);text-align:right}
+.rslider-input{flex:1;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--bd);outline:none;cursor:pointer}
+.rslider-input::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--or);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer}
+.rslider-input::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--or);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer}
+.rslider-val{width:30px;font-size:14px;font-weight:800;color:var(--td);font-family:'JetBrains Mono',monospace;text-align:center}
+.rslider-result{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:8px;border:2px solid var(--bd);transition:all .3s;margin-top:4px}
+.rslider-result.lvl-low{border-color:var(--gr);background:var(--gl)}
+.rslider-result.lvl-med{border-color:#E5A832;background:rgba(229,168,50,.08)}
+.rslider-result.lvl-high{border-color:var(--or);background:var(--ol)}
+.rslider-result.lvl-crit{border-color:var(--rd);background:var(--rl)}
+.rslider-score{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;transition:color .3s}
+.lvl-low .rslider-score{color:var(--gr)}.lvl-med .rslider-score{color:#E5A832}.lvl-high .rslider-score{color:var(--or)}.lvl-crit .rslider-score{color:var(--rd)}
+.rslider-info{flex:1}
+.rslider-level{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px;transition:color .3s}
+.lvl-low .rslider-level{color:var(--gr)}.lvl-med .rslider-level{color:#E5A832}.lvl-high .rslider-level{color:var(--or)}.lvl-crit .rslider-level{color:var(--rd)}
+.rslider-explain{font-size:12.5px;color:var(--tm);line-height:1.5}
+
+/* Cover animation */
+.fb-visual svg circle{animation:cover-orbit 20s linear infinite}
+.fb-visual svg circle:nth-child(1){animation-duration:25s}
+.fb-visual svg circle:nth-child(2){animation-duration:18s;animation-direction:reverse}
+.fb-visual svg g circle{animation:cover-dot 4s ease-in-out infinite;animation-delay:calc(var(--i,0) * .4s)}
+@keyframes cover-orbit{from{transform-origin:center;transform:rotate(0deg)}to{transform-origin:center;transform:rotate(360deg)}}
+@keyframes cover-dot{0%,100%{opacity:.3;r:3}50%{opacity:.8;r:4.5}}
+
+/* Lens divider animation */
+.neq-anim{animation:neq-float 3s ease-in-out infinite}
+@keyframes neq-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.neq-left{animation:neq-slide-l 1s ease .2s both}
+.neq-right{animation:neq-slide-r 1s ease .4s both}
+@keyframes neq-slide-l{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes neq-slide-r{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+
+</style>
+</head>
+<body>
+<main class="lms-main">
+<div class="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Module 3</span> · OWASP Top 10</span><div class="sh-right"><div class="pips" id="pp0"></div></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Module 3</div>
+      <div class="fb-tt">OWASP Top 10</div>
+      <div class="fb-sb">Ten risk categories, five lenses, and a practical question: where does each one show up in your product?</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="55" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+        <circle cx="100" cy="100" r="30" fill="rgba(232,129,58,.12)" stroke="rgba(232,129,58,.4)" stroke-width="1.5"/>
+        <text x="100" y="105" fill="#E8813A" font-size="16" text-anchor="middle" font-weight="800" font-family="JetBrains Mono, monospace">10</text>
+        <g opacity=".5">
+          <circle cx="100" cy="20" r="3" fill="rgba(255,255,255,.3)" style="--i:0"/>
+          <circle cx="165" cy="50" r="3" fill="rgba(255,255,255,.3)" style="--i:1"/>
+          <circle cx="180" cy="100" r="3" fill="rgba(255,255,255,.3)" style="--i:2"/>
+          <circle cx="165" cy="150" r="3" fill="rgba(255,255,255,.3)" style="--i:3"/>
+          <circle cx="100" cy="180" r="3" fill="rgba(255,255,255,.3)" style="--i:4"/>
+          <circle cx="35" cy="150" r="3" fill="rgba(255,255,255,.3)" style="--i:5"/>
+          <circle cx="20" cy="100" r="3" fill="rgba(255,255,255,.3)" style="--i:6"/>
+          <circle cx="35" cy="50" r="3" fill="rgba(255,255,255,.3)" style="--i:7"/>
+          <circle cx="70" cy="25" r="3" fill="rgba(255,255,255,.3)" style="--i:8"/>
+          <circle cx="130" cy="25" r="3" fill="rgba(255,255,255,.3)" style="--i:9"/>
+        </g>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">01 / 20 · Cover</span><div class="snav"><button class="btn pri" onclick="go(1)">Start →</button></div></div>
+</div>
+
+<!-- ═══ S1 · INTRO — what this module does ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">Intro</span> · How this module works</span><div class="sh-right"><div class="pips" id="pp1"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Five lenses, not ten summaries</div><div class="sp-s">A different way through the list</div></div><div class="sp-r">
+    <div class="prose">The OWASP Top 10 is publicly available — you can read the descriptions on <span class="gloss" data-def="OWASP — Open Web Application Security Project. A nonprofit community that produces open-source security tools, documentation, and the Top 10 list. owasp.org">owasp.org</span> in twenty minutes. This module doesn't try to compete with that.</div>
+    <div class="prose">Instead, we organize the ten risks into <strong>five lenses</strong> — five angles that help you look at your own product and see where the risks actually live. Each lens groups risks that share a common root cause or structural pattern.</div>
+    <div class="co">The goal: take a component you work on and map the Top 10 against it. Not because you memorized a list, but because you understand <em>why</em> each risk exists and where it hides in your architecture.</div>
+    <div class="prose">The next slide shows the roadmap — which risks go where, and why we grouped them this way.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">02 / 20 · Intro</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S2 · INTRO — lens roadmap (detailed) ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Intro</span> · The roadmap</span><div class="sh-right"><div class="pips" id="pp2"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Five lenses, ten risks</div><div class="sp-s">Tap any lens to see why those risks belong together</div></div><div class="sp-r" style="max-height:520px">
+    <div class="lc" id="lc1"><button class="lc-head" onclick="tgc('lc1')"><span class="lc-num">01</span><span class="lc-title">Risk ≠ vulnerability</span><span class="lc-arrow">›</span></button><div class="lc-body">The OWASP Top 10 used to list specific vulnerabilities. Now it lists <strong>risks</strong> — impact × likelihood. This lens covers why that shift happened and what it changes for you. No specific A01–A10 items here; this is the foundation that makes the other four lenses work.</div></div>
+    <div class="lc" id="lc2"><button class="lc-head" onclick="tgc('lc2')"><span class="lc-num">02</span><span class="lc-title">What changed and why</span><span class="lc-arrow">›</span></button><div class="lc-body">Comparing the 2021 and 2025 lists reveals how <strong>development itself changed</strong>: supply chain risk rose because we use hundreds of dependencies now, not dozens. Misconfiguration jumped to #2 because forgetting to configure a WAF <em>is</em> a vulnerability now. And vibe coding isn't on the list yet — but only because OWASP's data collection finished before it took off.<div class="lens-risks" style="margin-top:8px"><span class="lens-risk-tag">Supply chain ↑</span><span class="lens-risk-tag">Misconfig ↑</span><span class="lens-risk-tag">Vibe coding?</span></div></div></div>
+    <div class="lc" id="lc3"><button class="lc-head" onclick="tgc('lc3')"><span class="lc-num">03</span><span class="lc-title">Architecture against you — A01, A02, A06</span><span class="lc-arrow">›</span></button><div class="lc-body">Three risks with a shared root: <strong>architectural decisions that create risk by default</strong>. Broken access control (A01) persists because distributed microservices each implement their own authorization — and one of them will get it wrong. Misconfiguration (A02) exists because modern stacks have so many configurable layers that missing one flag is inevitable. Insecure design (A06) happens when teams under delivery pressure skip the checks they know they should do.<div class="lens-risks" style="margin-top:8px"><span class="lens-risk-tag">A01 Access control</span><span class="lens-risk-tag">A02 Misconfig</span><span class="lens-risk-tag">A06 Insecure design</span></div></div></div>
+    <div class="lc" id="lc4"><button class="lc-head" onclick="tgc('lc4')"><span class="lc-num">04</span><span class="lc-title">Someone else's code — A03, A04, A08</span><span class="lc-arrow">›</span></button><div class="lc-body">All three are about <strong>trusting things you didn't build</strong>. Supply chain failures (A03) — we use third-party code we didn't audit. Cryptographic failures (A04) — even using existing crypto correctly is hard. Integrity failures (A08) — how do you verify that a component hasn't been tampered with at runtime? These risks grow together because we compose more and write from scratch less.<div class="lens-risks" style="margin-top:8px"><span class="lens-risk-tag">A03 Supply chain</span><span class="lens-risk-tag">A04 Crypto</span><span class="lens-risk-tag">A08 Integrity</span></div></div></div>
+    <div class="lc" id="lc5"><button class="lc-head" onclick="tgc('lc5')"><span class="lc-num">05</span><span class="lc-title">We can't predict everything — A05, A07, A09, A10</span><span class="lc-arrow">›</span></button><div class="lc-body">Four risks unified by one theme: <strong>our attention and resources have limits</strong>. We can't sanitize every input path (A05). Password rules don't guarantee strong passwords (A07). Storing telemetry from every source is a billion-dollar problem (A09). And our tools are so complex that predicting every possible behavior is structurally impossible (A10).<div class="lens-risks" style="margin-top:8px"><span class="lens-risk-tag">A05 Injection</span><span class="lens-risk-tag">A07 Auth</span><span class="lens-risk-tag">A09 Logging</span><span class="lens-risk-tag">A10 Edge cases</span></div></div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">03 / 20 · Roadmap</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S3 · QUIZ — what is OWASP Top 10 ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag">Knowledge check · before we start</span><div class="sh-right"><div class="pips" id="pp3"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Check your instinct</div><div class="sp-s">Before the first lens</div></div><div class="sp-r">
+    <div class="qw" id="q1"><div class="qq">OWASP Top 10 is a list of the ten most common application security ___. Fill in the blank.</div>
+      <button class="qo" onclick="pk('q1',0)">A) vulnerabilities</button>
+      <button class="qo" onclick="pk('q1',1)">B) threats</button>
+      <button class="qo" onclick="pk('q1',2)">C) risks</button>
+      <button class="qo" onclick="pk('q1',3)">D) attack vectors</button>
+      <div class="qe" id="q1-e"><strong>C — risks.</strong> This is the distinction most engineers miss, and it's exactly where Lens 1 starts. The project was originally about vulnerabilities, then threats, and today it's organized around <em>risks</em> — meaning impact × likelihood. The shift matters because it changes what you count and how you prioritize. A single vulnerability might be critical or irrelevant depending on context. A risk forces you to consider both.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">04 / 20 · Quiz</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S4 · LENS 1 DIVIDER ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · Risk ≠ vulnerability</span><div class="sh-right"><div class="pips" id="pp4"></div></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Lens 1</div>
+      <div class="fb-tt">Risk ≠ vulnerability</div>
+      <div class="fb-sb">The OWASP Top 10 changed its unit of measurement — from specific weaknesses to business-level risks. Understanding why is the foundation for everything else in this module.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 200 200" width="200" height="200" class="neq-anim">
+        <text x="100" y="60" fill="rgba(255,255,255,.12)" font-size="48" text-anchor="middle" font-weight="800" font-family="JetBrains Mono, monospace">≠</text>
+        <g class="neq-left">
+        <text x="60" y="120" fill="rgba(232,129,58,.6)" font-size="11" text-anchor="middle" font-weight="700" letter-spacing="1" font-family="DM Sans, sans-serif">VULN</text>
+        <line x1="40" y1="130" x2="80" y2="130" stroke="rgba(232,129,58,.3)" stroke-width="1"/>
+        <text x="60" y="148" fill="rgba(255,255,255,.25)" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace">attribute</text>
+        </g>
+        <g class="neq-right">
+        <text x="140" y="120" fill="rgba(255,255,255,.6)" font-size="11" text-anchor="middle" font-weight="700" letter-spacing="1" font-family="DM Sans, sans-serif">RISK</text>
+        <line x1="120" y1="130" x2="160" y2="130" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+        <text x="140" y="148" fill="rgba(255,255,255,.25)" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace">impact × prob</text>
+        </g>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">05 / 20 · Lens 1</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S5 · Why the shift happened ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · Why the naming changed</span><div class="sh-right"><div class="pips" id="pp5"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">From vulner&shy;abilities to risks</div></div><div class="sp-r">
+    <div class="prose">The OWASP Top 10 has gone through three naming eras: first a list of <strong>vulnerabilities</strong>, then <strong>threats</strong>, today — <strong>risks</strong>. The reason is practical: there are too many individual vulnerabilities to list. Grouping them by risk makes the Top 10 something you can actually work with.</div>
+    <div class="co" style="font-weight:600">Each of the ten items is a <em>risk category</em> — a cluster of related weaknesses with shared impact profiles — not a single bug or attack technique.</div>
+    <div class="xp" id="x5a"><button class="xh" onclick="tg('x5a')"><span>Why listing vulnerabilities doesn't scale — the DDoS example</span><span class="xa">›</span></button><div class="xb" id="x5a-p">Take <span class="gloss" data-def="DDoS — Distributed Denial of Service. An attack that overwhelms a system with traffic or requests to make it unavailable. Can target the network, application, database connections, or virtually any resource.">distributed denial of service</span>: you can execute it at the network level, at the application level, against database connection pools, against virtual resources — the specific vulnerabilities are endless. But the <em>risk</em> — that your service becomes unavailable and the business loses revenue — is one thing, regardless of which weakness the attacker exploits. That's why the unit moved up.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">06 / 20 · Lens 1</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S6 · HUMOR — "we have a weather" ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · Quick check</span><div class="sh-right"><div class="pips" id="pp6"></div></div></div>
+  <div class="sb"><div class="punch" style="min-height:420px;background:#0F0E14;background-image:radial-gradient(ellipse at center,rgba(123,111,174,.08) 0%,transparent 55%)">
+    <div class="punch-tag">A common mistake</div>
+    <div class="punch-quote" style="font-size:32px">"We have an <em>OWASP vulnerability</em>."</div>
+    <div class="punch-source">That's like saying "we have a weather." OWASP Top 10 is a set of <b>risk categories</b>, not specific bugs. Saying "we have broken access control risk in our payment service" — that's a sentence you can actually act on.</div>
+  </div></div>
+  <div class="sf"><span class="shint">07 / 20</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S7 · Defining the terms ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · Definitions that matter</span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Vulnerability, threat, risk</div><div class="sp-s">Three words, three different things</div></div><div class="sp-r">
+    <div class="prose" style="font-size:16px">These three terms get used interchangeably in casual conversation. They mean different things, and the difference changes what you do about them.</div>
+    <div class="def-table">
+      <div class="def-row"><div class="def-term">Vulnerability / weakness</div><div class="def-desc">An <em>attribute of the system</em> that permits an attack to be realized. A misconfiguration, a missing control, or the <span class="gloss" data-def="A public API without rate limiting isn't 'broken' — it's doing its job. But the absence of a compensating control (rate limiting, WAF, traffic shaping) makes it a weakness. Weaknesses aren't always bugs in code — sometimes they're architectural decisions nobody questioned.">absence of a security feature</span> altogether.</div></div>
+      <div class="def-row"><div class="def-term">Threat</div><div class="def-desc">The <em>action or agent</em> attempting to exploit the weakness. The attacker, the script, the insider.</div></div>
+      <div class="def-row"><div class="def-term">Risk</div><div class="def-desc"><em>Impact × likelihood</em> — the business-level concern. How bad would it be, weighted by how probable it is.</div></div>
+    </div>
+    <div class="prose" style="font-size:16px">A vulnerability is something about how the system <em>is</em> — from a forgotten <code>admin/admin</code> password to the absence of <span class="gloss" data-def="Rate limiting — restricting how many requests a client can make in a given time window. Without it, an API is open to brute-force attacks, credential stuffing, and denial-of-service.">rate limiting</span> on a public API. It's not something someone <em>does</em> — that's a threat.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">08 / 20 · Lens 1</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S8 · TERMINAL — admin/admin ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · Reality check</span><div class="sh-right"><div class="pips" id="pp8"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Meanwhile, in production</div><div class="sp-s">This is a vulnerability. Not a threat, not a risk. An attribute of the system.</div></div><div class="sp-r" style="background:#0d0f14;padding:22px 20px">
+    <div class="term" id="term1">
+      <div class="term-bar"><div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div><span class="term-title">default credentials check</span></div>
+      <div class="term-body" id="term1-body"></div>
+    </div>
+    <button class="term-play" id="term1-play" onclick="playTerm('term1')">▶ Run it</button>
+  </div></div></div>
+  <div class="sf"><span class="shint">09 / 20</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S9 · SCENARIO QUIZ — is this a vulnerability? ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag">Knowledge check · classify the situation</span><div class="sh-right"><div class="pips" id="pp9"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="scenario">
+      <div class="scenario-tag">Scenario</div>
+      <div class="scenario-text">Your application has a login page. When a user enters a valid username but wrong password, the system responds <em>"incorrect password."</em> When the username doesn't exist, it responds <em>"user not found."</em></div>
+    </div>
+    <div class="qw" id="q2"><div class="qq">What is this?</div>
+      <button class="qo" onclick="pk('q2',0)">A) A threat — someone is attacking the login</button>
+      <button class="qo" onclick="pk('q2',1)">B) A vulnerability — the system leaks information about which usernames exist</button>
+      <button class="qo" onclick="pk('q2',2)">C) A risk — the business could lose data</button>
+      <button class="qo" onclick="pk('q2',3)">D) Not a security issue — it's just helpful UX</button>
+      <div class="qe" id="q2-e"><strong>B — a vulnerability.</strong> The system permits <span class="gloss" data-def="User enumeration — an attack where the attacker submits different usernames to determine which ones exist in the system. The response difference ('user not found' vs 'wrong password') gives the attacker confirmed usernames to target.">user enumeration</span>. An attacker can script requests and build a list of valid usernames, then use that list for credential stuffing or phishing. The fix — returning the same generic message for both cases — is annoying for legitimate users. That's the trade-off, and it's a real one. Some teams accept the risk; some don't. The point is knowing it's there.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">10 / 20 · Quiz</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S10 · CODE DIFF — enumeration fix ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · The fix in code</span><div class="sh-right"><div class="pips" id="pp10"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What the fix looks like</div><div class="sp-s">Same login, different response</div></div><div class="sp-r" style="background:#0d0f14;padding:18px 16px">
+    <div class="cdiff">
+      <div class="cdiff-col cdiff-bad">
+        <div class="cdiff-head">✗ Leaks info</div>
+        <div class="cdiff-code">if (!user) {
+  <span class="hl-bad">return res.status(404)
+    .json({error: "User not found"})</span>
+}
+if (!validPassword(user, pwd)) {
+  <span class="hl-bad">return res.status(401)
+    .json({error: "Wrong password"})</span>
+}</div>
+      </div>
+      <div class="cdiff-col cdiff-good">
+        <div class="cdiff-head">✓ Generic response</div>
+        <div class="cdiff-code">if (!user || !validPassword(user, pwd)) {
+  <span class="hl-good">return res.status(401)
+    .json({error: "Invalid credentials"})</span>
+}
+
+
+
+</div>
+      </div>
+      <div class="cdiff-fix">
+        <span style="color:var(--gr);flex-shrink:0">→</span>
+        <span><strong>The decisive fix:</strong> same response for "user doesn't exist" and "wrong password." The attacker can't tell which one failed — so enumeration doesn't work.</span>
+      </div>
+    </div>
+    <div class="prose" style="color:rgba(255,255,255,.4);font-size:12px;margin-top:10px;line-height:1.5">Yes, users will complain. That's the trade-off from the previous quiz — and now you've seen both sides of it.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">11 / 20 · Code</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · The formula + RISK SLIDER ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · The formula</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Feel the formula</div><div class="sp-s">Drag the sliders</div></div><div class="sp-r">
+    <div class="co" style="font-weight:700;font-size:18px;text-align:center;padding:14px 20px;background:rgba(232,129,58,.08);border-color:var(--or)">Risk = Impact × Likelihood</div>
+    <div class="rslider" id="rslider1">
+      <div class="rslider-row">
+        <div class="rslider-label">Impact</div>
+        <input type="range" class="rslider-input" min="1" max="5" value="2" oninput="calcRisk('rslider1')">
+        <div class="rslider-val" id="rslider1-imp">2</div>
+      </div>
+      <div class="rslider-row">
+        <div class="rslider-label">Likelihood</div>
+        <input type="range" class="rslider-input" min="1" max="5" value="1" oninput="calcRisk('rslider1')">
+        <div class="rslider-val" id="rslider1-lik">1</div>
+      </div>
+      <div class="rslider-result lvl-low" id="rslider1-result">
+        <div class="rslider-score" id="rslider1-score">2</div>
+        <div class="rslider-info">
+          <div class="rslider-level" id="rslider1-level">LOW</div>
+          <div class="rslider-explain" id="rslider1-explain">Acceptable risk. Monitor and revisit next review cycle.</div>
+        </div>
+      </div>
+    </div>
+    <div class="prose" style="font-size:13px;color:var(--mu);margin-top:4px">Try it: set Impact to 5 and Likelihood to 1. Then flip them. Same score — different situation. That's why both dimensions matter.</div>
+    <div class="idot-wrap" id="id11a">
+      <button class="idot-trigger" onclick="tgd('id11a')"><span class="idot">?</span><span class="idot-label">Why did OWASP stop listing individual vulnerabilities?</span></button>
+      <div class="idot-pop">Earlier versions listed specific types — "cross-site scripting" or "SQL injection" as separate entries. Too many vulnerabilities, too much overlap. By grouping them into <strong>risk categories</strong>, each entry represents a cluster of related problems with shared root causes and shared mitigations.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">12 / 20 · Lens 1</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · PUNCH LINE ═══ -->
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag"><span class="hl">Pause</span></span><div class="sh-right"><div class="pips" id="pp12"></div></div></div>
+  <div class="sb"><div class="punch">
+    <div class="punch-mark tl">&ldquo;</div>
+    <div class="punch-mark br">&ldquo;</div>
+    <div class="punch-tag">The distinction</div>
+    <div class="punch-quote">A vulnerability is something <em>about your system</em>. A risk is a question <em>your CFO can answer</em>.</div>
+    <div class="punch-source">The OWASP Top 10 moved from cataloguing the first to measuring the second. <b>That's the whole trick.</b></div>
+  </div></div>
+  <div class="sf"><span class="shint">12 / 20</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S12 · QUIZ — real-world classification ═══ -->
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag">Knowledge check · spot the difference</span><div class="sh-right"><div class="pips" id="pp13"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="scenario">
+      <div class="scenario-tag">Scenario</div>
+      <div class="scenario-text">Your team's registration form responds <em>"this email is already taken"</em> when a user tries to register with an existing email address.</div>
+    </div>
+    <div class="qw" id="q3"><div class="qq">A colleague argues this is a vulnerability. Another says it's not — the registration form needs to tell the user what went wrong. Who's closer to the truth?</div>
+      <button class="qo" onclick="pk('q3',0)">A) First colleague — it's a clear vulnerability that must be fixed</button>
+      <button class="qo" onclick="pk('q3',1)">B) Second colleague — it's not a security concern at all</button>
+      <button class="qo" onclick="pk('q3',2)">C) Both are partially right — it's a vulnerability, but fixing it has a UX cost the team needs to weigh</button>
+      <button class="qo" onclick="pk('q3',3)">D) Neither — this is a threat, not a vulnerability</button>
+      <div class="qe" id="q3-e"><strong>C — both are partially right.</strong> The form <em>does</em> permit email enumeration — that's a weakness. But the alternative (a generic "something went wrong with registration") makes for a terrible user experience. This is exactly the kind of trade-off a Security Champion navigates: a banking app should probably accept the UX hit, a gaming platform might not. The point isn't that there's one correct answer — it's that you know the trade-off exists.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">13 / 20 · Quiz</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S13 · The practical takeaway ═══ -->
+<div class="slide" id="s14">
+  <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · What this changes</span><div class="sh-right"><div class="pips" id="pp14"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What this changes in practice</div></div><div class="sp-r">
+    <div class="prose">If the Top 10 were still about vulnerabilities, you'd use it like a checklist: does my app have X? Yes/no. Because it's about <em>risks</em>, the question is different: <strong>how likely is this for us, and how bad would it be?</strong></div>
+    <div class="scenario">
+      <div class="scenario-tag">The shift</div>
+      <div class="scenario-text">Broken access control (A01) shows up differently in a financial API than in a content management system. The risk category is the same. The vulnerabilities, mitigations, and trade-offs are <em>completely different</em>.</div>
+    </div>
+    <div class="co">The OWASP Top 10 doesn't tell you <em>what to fix</em>. It tells you <em>where to look</em>. The fixing part requires knowing your own system — and that's what the remaining four lenses are about.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">14 / 20 · Lens 1</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S14 · BREATHER — Risk pipe ═══ -->
+<div class="slide" id="s15">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · How it all connects</span><div class="sh-right"><div class="pips" id="pp15"></div></div></div>
+  <div class="sb"><div class="breather bg-warm" style="padding:24px 28px 14px;align-items:stretch">
+    <div class="breather-visual" style="flex-direction:column;justify-content:center;align-items:stretch">
+      <div class="pipe-box">
+        <!-- Vulnerabilities — widest bar -->
+        <div class="pipe-row" id="pv1">
+          <div class="pipe-bar pb-vuln">
+            <span class="pipe-label">Vulnerabilities</span>
+            <div class="pipe-dots"><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span></div>
+            <div class="pipe-idot"><button class="idot" onclick="tgd('pv1')">?</button></div>
+          </div>
+        </div>
+        <div class="pipe-idot-pop" id="pv1-pop">Hundreds of specific weaknesses: misconfigurations, missing controls, default credentials, unpatched components. These are <strong>attributes of your system</strong> — things about how it <em>is</em>, not things someone does.</div>
+        <div class="pipe-narrow"><div class="pipe-narrow-line"></div><span class="pipe-narrow-label">exploited by threats ↓</span></div>
+        <!-- Threats — medium bar -->
+        <div class="pipe-row" id="pv2">
+          <div class="pipe-bar pb-threat">
+            <span class="pipe-label">Threats</span>
+            <div class="pipe-dots"><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span></div>
+            <div class="pipe-idot"><button class="idot" onclick="tgd('pv2')">?</button></div>
+          </div>
+        </div>
+        <div class="pipe-idot-pop" id="pv2-pop">The actions and agents trying to exploit weaknesses — attackers, scripts, insiders, bots. Many vulnerabilities share the same threats. That's why this bar is <strong>narrower</strong>.</div>
+        <div class="pipe-narrow"><div class="pipe-narrow-line"></div><span class="pipe-narrow-label">produce risks ↓</span></div>
+        <!-- Risks — narrow bar, brightest -->
+        <div class="pipe-row" id="pv3">
+          <div class="pipe-bar pb-risk">
+            <span class="pipe-label">Risks</span>
+            <div class="pipe-dots"><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span></div>
+            <div class="pipe-idot"><button class="idot" onclick="tgd('pv3')">?</button></div>
+          </div>
+        </div>
+        <div class="pipe-idot-pop" id="pv3-pop"><strong>Impact × likelihood</strong> — the business-level concerns. Dozens of vulnerabilities and threats compress into a handful of risks you can prioritize and budget for. This is the level executives can act on.</div>
+        <div class="pipe-owasp-tag">↑ OWASP Top 10 operates here</div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>The bars get <strong>narrower</strong> because many weaknesses compress into fewer risks. That compression is what makes the Top 10 <strong>actionable</strong>.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn reflect-btn" onclick="openReflect('risk')">⏸ Reflect</button><button class="btn pri" onclick="go(16)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S15 · QUIZ — applying the formula ═══ -->
+<div class="slide" id="s16">
+  <div class="sh"><span class="stag">Knowledge check · applying the formula</span><div class="sh-right"><div class="pips" id="pp16"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="scenario">
+      <div class="scenario-tag">Scenario</div>
+      <div class="scenario-text">Two applications both have a known SQL injection vulnerability. Application A is an internal HR tool used by 12 people behind a VPN. Application B is a payment API processing 2 million transactions per day, exposed to the internet.</div>
+    </div>
+    <div class="qw" id="q4"><div class="qq">Both have the same vulnerability. Do they have the same risk?</div>
+      <button class="qo" onclick="pk('q4',0)">A) Yes — SQL injection is critical regardless of context</button>
+      <button class="qo" onclick="pk('q4',1)">B) No — the likelihood and impact are different, so the risk is different</button>
+      <button class="qo" onclick="pk('q4',2)">C) No — the internal app has higher risk because VPNs give false confidence</button>
+      <button class="qo" onclick="pk('q4',3)">D) It depends on which SQL database they use</button>
+      <div class="qe" id="q4-e"><strong>B — the risk is different.</strong> The vulnerability is identical. But the payment API has massively higher <em>impact</em> (financial data, regulatory exposure, millions of users) and higher <em>likelihood</em> (internet-facing, publicly discoverable). The internal tool still needs fixing — SQL injection is never acceptable — but when you're deciding which one to fix <em>this sprint</em>, the formula gives you a clear answer. That's what risk-based thinking buys you: a way to prioritize when you can't fix everything at once.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">16 / 20 · Quiz</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S16 · Lens 1 summary ═══ -->
+<div class="slide" id="s17">
+  <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · Summary</span><div class="sh-right"><div class="pips" id="pp17"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What Lens 1 gave you</div></div><div class="sp-r">
+    <div class="prose">Three things to carry forward from this lens:</div>
+    <div class="co"><strong>1. The unit of measurement.</strong> OWASP Top 10 measures <em>risks</em> — impact × likelihood — not individual vulnerabilities. When you see "A01: Broken Access Control," you're looking at a risk category containing dozens of specific weaknesses.</div>
+    <div class="co" style="margin-top:8px"><strong>2. The working definitions.</strong> A <em>vulnerability</em> is an attribute of your system. A <em>threat</em> is the action exploiting it. A <em>risk</em> is the business consequence — probability × impact. These aren't synonyms.</div>
+    <div class="co" style="margin-top:8px"><strong>3. Context changes everything.</strong> The same vulnerability produces different risks in different products. That's why the OWASP Top 10 is a framework for thinking, not a universal to-do list.</div>
+    <div class="prose" style="margin-top:4px">Next up: <strong>Lens 2</strong> looks at how the Top 10 has evolved from 2021 to 2025, and what that evolution reveals about the way we build software now.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">17 / 20 · Lens 1 summary</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S17 · BRIDGE — Lens 2 preview ═══ -->
+<div class="slide" id="s18">
+  <div class="sh"><span class="stag"><span class="hl">Bridge</span> · Into Lens 2</span><div class="sh-right"><div class="pips" id="pp18"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Coming next: what changed and why</div></div><div class="sp-r">
+    <div class="prose">The 2021 → 2025 OWASP evolution isn't just a reshuffling of categories. It's a mirror of how software development itself changed. Lens 2 reads that mirror.</div>
+    <div class="xp" id="x15a"><button class="xh" onclick="tg('x15a')"><span>Why did supply chain risk rise?</span><span class="xa">›</span></button><div class="xb" id="x15a-p">How many dependencies does your product have? 10? 50? Hundreds? We're not writing everything from primitives anymore — we compose. And the cost of that composition is supply chain risk.</div></div>
+    <div class="xp" id="x15b"><button class="xh" onclick="tg('x15b')"><span>Why did misconfiguration jump to #2?</span><span class="xa">›</span></button><div class="xb" id="x15b-p">Can you imagine your API without a WAF? Your registration form without a captcha? We're so dependent on external security controls that <strong>forgetting to configure one</strong> is itself a vulnerability now.</div></div>
+    <div class="xp" id="x15c"><button class="xh" onclick="tg('x15c')"><span>Where is vibe coding on the list?</span><span class="xa">›</span></button><div class="xb" id="x15c-p">It's not — yet. OWASP's data collection finished before vibe coding took off. But expect it on the next iteration. LLM-generated code without review is the supply chain risk nobody's catalogued yet.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">18 / 20 · Bridge</span><div class="snav"><button class="btn" onclick="go(17)">← Back</button><button class="btn pri" onclick="go(19)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S19 · End of Lens 1 ═══ -->
+<div class="slide" id="s19">
+  <div class="sh"><span class="stag"><span class="hl">Module 3</span> · Lens 1 complete</span><div class="sh-right"><div class="pips" id="pp19"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Lens 1 complete</div><div class="sp-s">Risk ≠ vulnerability</div></div><div class="sp-r">
+    <div class="prose" style="font-size:16px">You covered the foundation: OWASP Top 10 measures <strong>risks</strong> (impact × likelihood), not individual bugs. Vulnerability, threat, and risk are three different things — and the difference changes how you prioritize.</div>
+    <div class="co" id="final-score" style="text-align:center;font-size:15px;padding:16px 20px"><strong>Your score:</strong> calculating...</div>
+    <div class="prose">The remaining four lenses build on this. Lens 2 looks at how the Top 10 evolved from 2021 to 2025 — and what that says about the way we build software now.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">20 / 20</span><div class="snav"><button class="btn" onclick="go(18)">← Back</button><button class="btn" onclick="doRetake()">↻ Retake</button><button class="btn pri" onclick="go(0)">Finish Lens 1 ✓</button></div></div>
+</div>
+
+</div><!-- end .deck -->
+
+<!-- Reflection modal -->
+<div id="reflect-modal" role="dialog" aria-modal="true" aria-labelledby="rm-q">
+  <div class="rm-card">
+    <button class="rm-close" aria-label="Close" onclick="closeReflect()">×</button>
+    <div class="rm-tag">⏸  Pause to reflect</div>
+    <div class="rm-q" id="rm-q"></div>
+    <div class="rm-sub" id="rm-sub"></div>
+    <div class="rm-actions"><button class="btn pri" onclick="closeReflect()">Got it →</button></div>
+  </div>
+</div>
+
+<script>
+const T=20;let c=0;
+
+const STORAGE_KEY='sc_m3_v1';
+
+const DEFAULT_STATE={xp:0,streak:0,bestStreak:0,answers:{},wagers:{},reflections:[]};
+let state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};
+
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const s=JSON.parse(raw);state={...DEFAULT_STATE,...s,answers:s.answers||{},wagers:s.wagers||{},reflections:s.reflections||[]}}}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+function rankFor(xp){let r=RANKS[0];for(const x of RANKS){if(xp>=x.min)r=x}return r}
+
+function doRetake(){
+  state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};
+  try{localStorage.removeItem(STORAGE_KEY)}catch(e){}
+  // Reset all quiz DOM
+  document.querySelectorAll('.qo').forEach(o=>{o.classList.remove('pk','ok','no');o.disabled=false});
+  document.querySelectorAll('.qe').forEach(e=>{e.classList.remove('sh');const sc=e.querySelector('.qe-score');if(sc)sc.remove()});
+  document.querySelectorAll('.wager').forEach(w=>w.remove());
+  document.querySelectorAll('.qw').forEach(buildWagerUI);
+  // Reset expandables
+  document.querySelectorAll('.xb').forEach(b=>b.classList.remove('op'));
+  document.querySelectorAll('.xa').forEach(a=>a.classList.remove('op'));
+  renderChips();
+  go(0);
+}
+
+function renderChips(){}
+function bumpChips(){}
+
+function go(n){
+  if(n<0||n>=T)return;
+  document.getElementById('s'+c).classList.remove('on');
+  c=n;
+  const slide=document.getElementById('s'+n);
+  const animated=slide.querySelectorAll('[class*="pipe-"], [class*="punch-"], [class*="lens-"]');
+  animated.forEach(el=>{const a=el.style.animation;el.style.animation='none';el.offsetHeight;el.style.animation=a||''});
+  slide.classList.add('on');
+  const r=slide.querySelector('.sp-r');if(r)r.scrollTop=0;
+  // Render final score on last slide
+  if(n===T-1){
+    const fs=document.getElementById('final-score');
+    if(fs){
+      const totalQ=Object.keys(ans).length;
+      const answered=Object.keys(state.answers).length;
+      const correct=Object.values(state.answers).filter(a=>a.correct).length;
+      if(answered===0) fs.innerHTML='<strong>You haven\'t answered any quizzes yet.</strong> Go back and try them — they\'re worth it.';
+      else fs.innerHTML=`<strong>${correct} out of ${totalQ}</strong> correct on first attempt · <strong>${state.xp} XP</strong> earned`;
+    }
+  }
+  document.querySelectorAll('.pips').forEach(p=>bp(p));
+  window.scrollTo(0,0);
+}
+function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(c-1)}});
+function tg(id){const el=document.getElementById(id),b=el.querySelector('.xb'),a=el.querySelector('.xa');b.classList.toggle('op');if(a)a.classList.toggle('op')}
+function tgc(id){const el=document.getElementById(id),b=el.querySelector('.lc-body'),a=el.querySelector('.lc-arrow');b.classList.toggle('op');if(a)a.classList.toggle('op')}
+function tgd(id){
+  const el=document.getElementById(id);
+  // Pattern 1: idot-wrap with .idot-pop child
+  const pop1=el.querySelector('.idot-pop');
+  if(pop1){pop1.classList.toggle('open');el.classList.toggle('opened');return}
+  // Pattern 2: pipe-row with sibling pop (id + '-pop')
+  const pop2=document.getElementById(id+'-pop');
+  if(pop2){pop2.classList.toggle('open');el.classList.toggle('opened')}
+}
+
+const ans={q1:2,q2:1,q3:2,q4:1};
+
+const WAGERS=[
+  {key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},
+  {key:'pretty',mult:2,name:'Pretty sure',sub:'×2 if right · 1 if wrong'},
+  {key:'guess',mult:1,name:'Just guessing',sub:'×1 either way'}
+];
+function buildWagerUI(qw){
+  const qq=qw.querySelector('.qq');if(!qq)return;
+  const qid=qw.id;
+  const w=document.createElement('div');
+  w.className='wager';w.dataset.qid=qid;
+  w.innerHTML=`<div class="wager-lab">How confident are you?</div>
+    <div class="wager-row">${WAGERS.map(g=>`<button class="wager-btn" data-w="${g.key}" data-m="${g.mult}"><div class="wb-top"><span class="wb-mult">×${g.mult}</span><span class="wb-name">${g.name}</span></div><div class="wb-sub">${g.sub}</div></button>`).join('')}</div>`;
+  qq.parentNode.insertBefore(w,qq.nextSibling);
+  w.querySelectorAll('.wager-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      if(w.classList.contains('locked'))return;
+      w.querySelectorAll('.wager-btn').forEach(b=>b.classList.remove('pk'));
+      btn.classList.add('pk');
+      state.wagers[qid]=parseInt(btn.dataset.m,10);
+      saveState();
+    };
+  });
+  if(state.wagers[qid]){
+    const b=w.querySelector(`.wager-btn[data-m="${state.wagers[qid]}"]`);
+    if(b)b.classList.add('pk');
+  }
+}
+function lockWager(qid){
+  const w=document.querySelector(`.wager[data-qid="${qid}"]`);
+  if(!w)return;
+  w.classList.add('locked');
+  w.querySelectorAll('.wager-btn').forEach(b=>b.disabled=true);
+  const mult=state.wagers[qid]||1;
+  const wname=WAGERS.find(g=>g.mult===mult)?.name||'Just guessing';
+  w.innerHTML=`<div class="wager-locked-note">🎯 You wagered <b>${wname}</b> (×${mult})</div>`;
+}
+
+function pk(q,i){
+  const w=document.getElementById(q),o=w.querySelectorAll('.qo');
+  if(o[0].classList.contains('pk'))return;
+  if(!state.wagers[q])state.wagers[q]=1;
+  const mult=state.wagers[q];
+  const k=ans[q];
+  const correct=(i===k);
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});
+  let pts=0,kind='zero',msg='';
+  if(correct){
+    pts=mult*3;
+    state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak;
+    kind='';
+    if(mult===3)msg=`Confident and correct. <b>+${pts} XP</b>${state.streak>=2?` · 🔥 ${state.streak} streak`:''}`;
+    else if(mult===2)msg=`Right call. <b>+${pts} XP</b>`;
+    else msg=`Lucky guess — still counts. <b>+${pts} XP</b>`;
+  }else{
+    if(mult===3){pts=0;kind='zero';msg=`Confidence didn't pay off here. <b>+0 XP</b> · streak reset.`}
+    else if(mult===2){pts=1;kind='humility';msg=`Humility bonus — knowing you might be wrong is half the skill. <b>+1 XP</b>`}
+    else {pts=1;kind='humility';msg=`Honest guess — keep going. <b>+1 XP</b>`}
+    state.streak=0;
+  }
+  state.xp+=pts;
+  state.answers[q]={picked:i,correct,wager:mult,points:pts};
+  saveState();renderChips();bumpChips();lockWager(q);
+  const e=document.getElementById(q+'-e');
+  e.classList.add('sh');
+  if(!e.querySelector('.qe-score')){
+    const s=document.createElement('div');s.className='qe-score';
+    s.innerHTML=`<span class="qs-pts ${kind}">${pts>0?'+':''}${pts} XP</span><span class="qs-msg">${msg}</span>`;
+    e.appendChild(s);
+  }
+}
+
+
+
+const REFLECT_PROMPTS={
+  risk:{q:'Think about the last security issue your team discussed. Was it framed as a <em>vulnerability</em> or as a <em>risk</em>?',sub:'If it was framed as a vulnerability — "we have X, fix it" — try re-framing it as a risk: what\'s the impact if someone exploits it, and how likely is that? Does the priority change?'}
+};
+function openReflect(key){
+  const p=REFLECT_PROMPTS[key];if(!p)return;
+  document.getElementById('rm-q').innerHTML=p.q;
+  document.getElementById('rm-sub').textContent=p.sub;
+  document.getElementById('reflect-modal').classList.add('on');
+  if(state.reflections&&!state.reflections.includes(key)){
+    state.reflections.push(key);
+    state.xp+=2;saveState();renderChips();bumpChips();
+  }
+}
+function closeReflect(){document.getElementById('reflect-modal').classList.remove('on')}
+document.getElementById('reflect-modal').addEventListener('click',e=>{if(e.target.id==='reflect-modal')closeReflect()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('reflect-modal').classList.contains('on'))closeReflect()});
+
+loadState();
+document.querySelectorAll('.qw').forEach(buildWagerUI);
+Object.keys(state.answers).forEach(q=>{
+  const a=state.answers[q];
+  const qw=document.getElementById(q);if(!qw)return;
+  const o=qw.querySelectorAll('.qo'),k=ans[q];
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===a.picked&&j!==k)x.classList.add('no')});
+  const e=document.getElementById(q+'-e');if(e){e.classList.add('sh');if(!e.querySelector('.qe-score')){const s=document.createElement('div');s.className='qe-score';s.innerHTML=`<span class="qs-pts ${a.points===0?'zero':(a.correct?'':'humility')}">+${a.points} XP</span><span class="qs-msg">Already answered. ${a.correct?'Correct.':'Review the explanation above.'}</span>`;e.appendChild(s)}}
+  lockWager(q);
+});
+renderChips();
+document.querySelectorAll('.pips').forEach(p=>bp(p));
+
+/* Terminal */
+const TERM_DATA={
+  term1:[
+    {type:'cmd',text:"curl -u admin:admin https://internal.corp.com/api/status"},
+    {type:'',text:'HTTP/1.1 200 OK'},
+    {type:'',text:'{"role":"superadmin","access":"full","mfa":false}'},
+    {type:'blank'},
+    {type:'atk',text:"Default credentials work. Full admin panel exposed."},
+  ]
+};
+function playTerm(id){
+  const body=document.getElementById(id+'-body');
+  const btn=document.getElementById(id+'-play');
+  const lines=TERM_DATA[id];if(!lines)return;
+  body.innerHTML='';btn.disabled=true;
+  lines.forEach((l,i)=>{
+    setTimeout(()=>{
+      const div=document.createElement('div');
+      div.className='term-line'+(l.type?' '+l.type:'');
+      div.style.animationDelay=(i*0.05)+'s';
+      if(l.type==='blank')div.innerHTML='&nbsp;';
+      else div.textContent=l.text;
+      body.appendChild(div);
+      body.scrollTop=body.scrollHeight;
+    },i*400);
+  });
+  setTimeout(()=>{btn.disabled=false},lines.length*400+200);
+}
+
+/* Risk Slider */
+const RISK_LEVELS=[
+  {max:4,name:'LOW',cls:'lvl-low',text:'Acceptable risk. Monitor and revisit next review cycle.'},
+  {max:9,name:'MEDIUM',cls:'lvl-med',text:'Worth tracking. Schedule a fix within the next sprint cycle.'},
+  {max:16,name:'HIGH',cls:'lvl-high',text:'Needs attention this sprint. Discuss with the team and product owner.'},
+  {max:25,name:'CRITICAL',cls:'lvl-crit',text:'Fix immediately. This blocks the release.'}
+];
+function calcRisk(id){
+  const el=document.getElementById(id);
+  const inputs=el.querySelectorAll('.rslider-input');
+  const imp=parseInt(inputs[0].value);
+  const lik=parseInt(inputs[1].value);
+  const score=imp*lik;
+  document.getElementById(id+'-imp').textContent=imp;
+  document.getElementById(id+'-lik').textContent=lik;
+  document.getElementById(id+'-score').textContent=score;
+  const lvl=RISK_LEVELS.find(l=>score<=l.max)||RISK_LEVELS[3];
+  const res=document.getElementById(id+'-result');
+  res.className='rslider-result '+lvl.cls;
+  document.getElementById(id+'-level').textContent=lvl.name;
+  document.getElementById(id+'-explain').textContent=lvl.text;
+}
+
+/* Glossary tooltip */
+(function(){
+  const tip=document.createElement('div');tip.id='gloss-tip';document.body.appendChild(tip);
+  let cur=null;
+  function place(el){
+    const def=el.getAttribute('data-def')||'';
+    tip.textContent=def;
+    const r=el.getBoundingClientRect();
+    tip.classList.remove('below');
+    tip.style.left='0px';tip.style.top='0px';
+    const tw=tip.offsetWidth,th=tip.offsetHeight;
+    let left=r.left;
+    if(left+tw>window.innerWidth-8)left=window.innerWidth-tw-8;
+    if(left<8)left=8;
+    let top=r.top-th-10;
+    if(top<8){top=r.bottom+10;tip.classList.add('below')}
+    tip.style.left=left+'px';tip.style.top=top+'px';
+    tip.classList.add('on');cur=el;
+  }
+  function hide(){tip.classList.remove('on');cur=null}
+  document.addEventListener('mouseover',e=>{const g=e.target.closest('.gloss');if(g&&g!==cur)place(g)});
+  document.addEventListener('mouseout',e=>{const g=e.target.closest('.gloss');if(g&&!e.relatedTarget?.closest?.('.gloss'))hide()});
+  document.addEventListener('click',e=>{const g=e.target.closest('.gloss');if(g&&window.matchMedia('(hover:none)').matches){if(cur===g)hide();else place(g);e.preventDefault();return}if(!g)hide()});
+  document.addEventListener('scroll',hide,true);
+  window.addEventListener('resize',hide);
+})();
+</script>
+</main>
+</body>
+</html>

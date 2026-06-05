@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secret Management · Security Champions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:slide-in .35s cubic-bezier(.2,.6,.2,1) both}
+@keyframes slide-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.slide:not(.on) *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.slide.on{animation:none}*,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
+
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh .sh-right{display:flex;align-items:center;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}
+.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}
+.btn.pri:hover{background:var(--od)}
+.btn.reflect-btn{border-color:rgba(232,129,58,.4);color:var(--or);background:rgba(232,129,58,.06)}
+.btn.reflect-btn:hover{background:rgba(232,129,58,.15);color:#fff}
+
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:280px;justify-content:flex-end}
+.pip{width:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}
+.pip.on{background:var(--or);transform:scaleY(1.8)}
+
+/* Score chip */
+.scorechip{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:4px 10px 4px 6px;margin-left:10px;font-family:inherit;cursor:default;transition:all .2s}
+.scorechip.bump{animation:sc-bump .5s ease}
+@keyframes sc-bump{0%{transform:scale(1)}30%{transform:scale(1.12);background:rgba(232,129,58,.18);border-color:rgba(232,129,58,.4)}100%{transform:scale(1)}}
+.scorechip .sc-rank{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--or);font-size:10px;font-weight:800;color:#1A1A1A;letter-spacing:.5px}
+.scorechip .sc-xp{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px}
+.scorechip .sc-xp b{color:var(--or)}
+.scorechip .sc-streak{font-size:10px;color:rgba(255,255,255,.5);font-weight:600;display:flex;align-items:center;gap:2px;border-left:1px solid rgba(255,255,255,.1);padding-left:8px}
+.scorechip .sc-streak.live{color:#FFB36B}
+.scorechip .sc-streak.live .sc-flame{filter:drop-shadow(0 0 4px rgba(255,150,80,.6));animation:flame-flick .8s ease-in-out infinite}
+@keyframes flame-flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.1) rotate(2deg)}}
+@media(max-width:560px){.scorechip .sc-streak{display:none}.scorechip{margin-left:6px;padding:3px 8px 3px 4px}}
+
+/* Reflect modal */
+#reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px;animation:rm-fade .25s ease}
+#reflect-modal.on{display:flex}
+@keyframes rm-fade{from{opacity:0}to{opacity:1}}
+.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:14px;padding:36px 40px 28px;max-width:560px;width:100%;text-align:center;color:#F5F2ED;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+.rm-q{font-size:22px;line-height:1.45;font-weight:300;margin-bottom:14px;text-wrap:pretty;color:#F5F2ED}
+.rm-q em{color:var(--or);font-style:normal;font-weight:600}
+.rm-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin:0 auto 24px;max-width:440px}
+.rm-actions{display:flex;gap:10px;justify-content:center}
+.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;width:28px;height:28px;line-height:1;border-radius:6px}
+.rm-close:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* Wager */
+.wager{margin:6px 0 10px;background:linear-gradient(135deg,#fff8f2,#fff);border:1px dashed rgba(232,129,58,.4);border-radius:8px;padding:11px 14px;transition:all .25s}
+.wager.locked{opacity:.55;border-style:solid;border-color:var(--bd);background:var(--ow)}
+.wager-lab{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.wager-lab::before{content:'';width:14px;height:1px;background:var(--or)}
+.wager-row{display:flex;gap:6px;flex-wrap:wrap}
+.wager-btn{flex:1;min-width:90px;background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .12s}
+.wager-btn:hover{border-color:var(--or);transform:translateY(-1px);box-shadow:0 2px 8px rgba(232,129,58,.15)}
+.wager-btn.pk{border-color:var(--or);background:var(--ol)}
+.wager-btn.pk .wb-mult{background:var(--or);color:#fff}
+.wager-btn:disabled{cursor:not-allowed;opacity:.5}
+.wb-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.wb-mult{display:inline-flex;align-items:center;justify-content:center;background:var(--card);color:var(--td);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;letter-spacing:.3px}
+.wb-name{font-size:13px;font-weight:700;color:var(--td)}
+.wb-sub{font-size:11px;color:var(--mu);line-height:1.3}
+.wager-locked-note{font-size:11px;color:var(--mu);font-style:italic;display:flex;align-items:center;gap:6px}
+.wager-locked-note b{color:var(--td);font-style:normal;font-weight:600}
+.qe .qe-score{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:13px}
+.qe .qe-score .qs-pts{display:inline-flex;align-items:center;gap:4px;background:var(--gl);color:var(--gr);font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px;letter-spacing:.3px}
+.qe .qe-score .qs-pts.zero{background:var(--rl);color:var(--rd)}
+.qe .qe-score .qs-pts.humility{background:rgba(123,111,174,.12);color:var(--pu)}
+.qe .qe-score .qs-msg{color:var(--tm);font-size:12px}
+
+.sb{padding:0}
+
+/* Split */
+.split{display:flex;min-height:480px}
+.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:20px;font-weight:700;color:var(--wh);line-height:1.25}
+.sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:480px}
+.sp-r::-webkit-scrollbar{width:3px}
+.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+
+/* Full-bleed */
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}
+.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
+
+/* Prose */
+.prose{font-size:15.5px;color:var(--tm);line-height:1.78}
+.prose strong{color:var(--td);font-weight:600}
+.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.prose em{font-style:italic}
+
+/* Callout */
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}
+.co em{font-style:italic;font-weight:500;color:var(--or)}
+.co strong{font-weight:600}
+
+/* Numbered callout */
+.numlist{padding:14px 18px;background:var(--ol);border-left:3px solid var(--or);border-radius:0 7px 7px 0;font-size:14px;line-height:1.7;color:var(--td)}
+.numlist b{font-weight:700}
+
+/* Expand */
+.xp{margin:4px 0}
+.xh{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card);border:none;border-radius:6px;padding:12px 16px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--td);text-align:left;transition:background .1s}
+.xh:hover{background:#e5e5e5}
+.xa{font-size:13px;color:var(--mu);transition:transform .18s;margin-left:8px}.xa.op{transform:rotate(90deg);color:var(--or)}
+.xb{display:none;padding:14px 16px;background:var(--ow);border-radius:0 0 6px 6px;font-size:14px;color:var(--tm);line-height:1.7}
+.xb.op{display:block}.xb strong{color:var(--td);font-weight:600}
+
+/* Quiz */
+.qw{margin:6px 0}
+.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}
+.qo.ok{border-color:var(--gr);background:var(--gl)}
+.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55}
+.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block}.qe strong{color:var(--td)}
+
+/* Glossary */
+.gloss{border-bottom:1px dotted var(--or);cursor:help;font-weight:600;color:inherit}
+#gloss-tip{position:fixed;background:#1a1620;color:#F5F2ED;font-size:12px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.4);box-shadow:0 8px 28px rgba(0,0,0,.55);max-width:300px;width:max-content;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none;z-index:9999;text-align:left;font-family:inherit}
+#gloss-tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+#gloss-tip::after{content:'';position:absolute;left:14px;top:100%;width:0;height:0;border:6px solid transparent;border-top-color:rgba(232,129,58,.5)}
+#gloss-tip.below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:rgba(232,129,58,.5)}
+
+/* Fade-in for sp-r children */
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .2s ease both}
+.slide.on .sp-r>*:nth-child(1){animation-delay:.03s}
+.slide.on .sp-r>*:nth-child(2){animation-delay:.06s}
+.slide.on .sp-r>*:nth-child(3){animation-delay:.09s}
+.slide.on .sp-r>*:nth-child(4){animation-delay:.12s}
+.slide.on .sp-r>*:nth-child(5){animation-delay:.15s}
+.slide.on .sp-r>*:nth-child(6){animation-delay:.18s}
+
+/* Breather */
+.breather{display:flex;flex-direction:column;align-items:center;padding:18px 24px 10px;min-height:480px;gap:12px}
+.breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.breather-caption{text-align:center;padding:6px 0 2px;max-width:660px}
+.breather-caption p{font-size:15.5px;line-height:1.65}
+.breather-caption strong{font-weight:700}
+.breather-notice{font-size:12px;color:rgba(255,255,255,.4);letter-spacing:.4px;text-align:center;margin-top:8px;font-style:italic}
+.breather-notice b{color:rgba(255,255,255,.65);font-style:normal;font-weight:600}
+.breather-hint{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.5px;text-align:center;margin-top:4px}
+.breather-hint b{color:rgba(232,129,58,.5);font-weight:600}
+
+/* Clickable detail panel on breather visuals */
+[data-detail]{cursor:pointer;position:relative}
+[data-detail]::after{content:'tap for details';position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:.5px;color:rgba(255,255,255,.2);text-transform:uppercase;opacity:0;transition:opacity .2s;pointer-events:none}
+[data-detail]:hover::after{opacity:1}
+.detail-panel{display:none;width:100%;max-width:660px;margin:6px auto 0;padding:11px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(232,129,58,.25);border-radius:7px;font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.6;animation:detail-open .25s ease}
+.detail-panel.on{display:block}
+.detail-panel strong{color:var(--or);font-weight:600}
+.detail-panel .detail-close{float:right;background:none;border:none;color:rgba(255,255,255,.3);font-size:14px;cursor:pointer;padding:0 4px;line-height:1}
+.detail-panel .detail-close:hover{color:var(--or)}
+@keyframes detail-open{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.bg-navy{background:linear-gradient(170deg,#111828,#161B22,#111828)}
+.bg-navy .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-navy .breather-caption strong{color:var(--or)}
+.bg-earth{background:linear-gradient(170deg,#1a1815,#1a1a1a,#18151a)}
+.bg-earth .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-earth .breather-caption strong{color:var(--or)}
+.bg-warm{background:linear-gradient(170deg,#1e1a15,#1a1a1a,#1a1520)}
+.bg-warm .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-warm .breather-caption strong{color:var(--or)}
+
+/* Identity cards (S4 breather) */
+.id-cards{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;max-width:720px}
+.id-card{flex:1;min-width:190px;max-width:230px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:22px 18px;text-align:center;transition:all .3s;opacity:0;animation:card-in .5s ease forwards}
+.id-card:nth-child(1){animation-delay:.2s}
+.id-card:nth-child(2){animation-delay:.45s}
+.id-card:nth-child(3){animation-delay:.7s}
+@keyframes card-in{from{opacity:0;transform:translateY(14px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.id-card:hover{background:rgba(232,129,58,.08);border-color:var(--or);transform:translateY(-3px);box-shadow:0 6px 20px rgba(232,129,58,.15)}
+.id-icon{font-size:36px;margin-bottom:12px;display:block}
+.id-name{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:.3px}
+.id-examples{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.7}
+.id-footer{font-size:10.5px;color:var(--or);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}
+
+/* Lifecycle circle (S10 breather) */
+.lifecycle-ring{position:relative;width:360px;height:360px}
+.lc-stage{position:absolute;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;width:100px;opacity:0;animation:lc-in .4s ease forwards}
+.lc-stage:nth-child(1){animation-delay:.15s}
+.lc-stage:nth-child(2){animation-delay:.3s}
+.lc-stage:nth-child(3){animation-delay:.45s}
+.lc-stage:nth-child(4){animation-delay:.6s}
+.lc-stage:nth-child(5){animation-delay:.75s}
+.lc-stage:nth-child(6){animation-delay:.9s}
+@keyframes lc-in{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.lc-circle{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;transition:all .3s}
+.lc-label{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.5px;text-transform:uppercase}
+.lc-sub{font-size:10px;color:rgba(255,255,255,.35);line-height:1.3}
+.lc-stage.warn .lc-circle{border-color:var(--or);background:rgba(232,129,58,.15);color:var(--or)}
+.lc-stage.warn .lc-label{color:var(--or)}
+@keyframes lc-pulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 20px rgba(232,129,58,.45)}}
+.lc-stage.warn .lc-circle{animation:lc-pulse 3s ease-in-out infinite}
+
+/* Scatter locations (S13 breather) */
+.scatter{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:620px;padding:8px}
+.scatter-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:9px 14px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.3px;transition:all .3s;white-space:nowrap;opacity:0;animation:scatter-pop .35s ease forwards}
+.scatter-card:nth-child(1){animation-delay:.1s}.scatter-card:nth-child(2){animation-delay:.18s}.scatter-card:nth-child(3){animation-delay:.26s}.scatter-card:nth-child(4){animation-delay:.34s}
+.scatter-card:nth-child(5){animation-delay:.42s}.scatter-card:nth-child(6){animation-delay:.5s}.scatter-card:nth-child(7){animation-delay:.58s}.scatter-card:nth-child(8){animation-delay:.66s}
+.scatter-card:nth-child(9){animation-delay:.74s}.scatter-card:nth-child(10){animation-delay:.82s}.scatter-card:nth-child(11){animation-delay:.9s}.scatter-card:nth-child(12){animation-delay:.98s}
+@keyframes scatter-pop{from{opacity:0;transform:scale(.85) translateY(6px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.scatter-card:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);transform:translateY(-2px)}
+.scatter-card.danger{border-color:rgba(217,69,69,.5);color:#ff8888;background:rgba(217,69,69,.08)}
+.scatter-card.danger:hover{border-color:rgba(217,69,69,.7);background:rgba(217,69,69,.15)}
+
+/* Git-crypt sequence (S17 breather) */
+.seq-flow{display:flex;flex-direction:column;gap:7px;width:100%;max-width:600px}
+.seq-flow .seq-step{display:flex;align-items:center;gap:12px;padding:9px 14px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);transition:all .3s;opacity:0;animation:seq-in .35s ease forwards}
+.seq-flow .seq-step:nth-child(1){animation-delay:.15s}.seq-flow .seq-step:nth-child(2){animation-delay:.3s}.seq-flow .seq-step:nth-child(3){animation-delay:.45s}
+.seq-flow .seq-step:nth-child(4){animation-delay:.6s}.seq-flow .seq-step:nth-child(5){animation-delay:.75s}.seq-flow .seq-step:nth-child(6){animation-delay:.9s}.seq-flow .seq-step:nth-child(7){animation-delay:1.05s}
+@keyframes seq-in{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.seq-flow .seq-step:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15)}
+.seq-num{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.seq-text{font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.4;flex:1}
+.seq-text b{color:#fff;font-weight:600}
+.seq-tag{font-size:9px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:3px;flex-shrink:0;text-transform:uppercase}
+.seq-enc{background:rgba(217,69,69,.15);color:#ff8888;border:1px solid rgba(217,69,69,.4)}
+.seq-dec{background:rgba(46,173,107,.15);color:#7AD9A6;border:1px solid rgba(46,173,107,.4)}
+.seq-plain{background:rgba(232,129,58,.15);color:#FFB36B;border:1px solid rgba(232,129,58,.4)}
+
+/* Maturity spectrum (S19 breather) */
+.spectrum{width:100%;max-width:640px}
+.spectrum-bar{display:flex;height:44px;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+.spectrum-seg{flex:1;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;letter-spacing:.5px;color:rgba(255,255,255,.7);transition:all .3s;cursor:default;border-right:1px solid rgba(255,255,255,.06);text-align:center;padding:0 4px;opacity:0;animation:seg-in .3s ease forwards}
+.spectrum-seg:nth-child(1){animation-delay:.15s}.spectrum-seg:nth-child(2){animation-delay:.3s}.spectrum-seg:nth-child(3){animation-delay:.45s}
+.spectrum-seg:nth-child(4){animation-delay:.6s}.spectrum-seg:nth-child(5){animation-delay:.75s}.spectrum-seg:nth-child(6){animation-delay:.9s}
+@keyframes seg-in{from{opacity:0}to{opacity:1}}
+.spectrum-seg:last-child{border-right:none}
+.spectrum-seg:hover{background:rgba(255,255,255,.08)}
+.spectrum-labels{display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:rgba(255,255,255,.4);padding:0 4px}
+.spectrum-labels b{color:rgba(255,255,255,.6);font-weight:600}
+.spectrum-marker{text-align:center;margin-top:12px;font-size:12.5px;color:var(--or);font-weight:600}
+
+/* Auth flow (S6 breather) */
+.auth-flow{display:flex;align-items:center;gap:0;max-width:660px;width:100%;justify-content:center;flex-wrap:wrap}
+.af-node{display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 14px;text-align:center;opacity:0;animation:af-in .4s ease forwards}
+.af-node:nth-child(1){animation-delay:.15s}.af-node:nth-child(3){animation-delay:.4s}.af-node:nth-child(5){animation-delay:.65s}.af-node:nth-child(7){animation-delay:.9s}.af-node:nth-child(9){animation-delay:1.15s}
+@keyframes af-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.af-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);transition:all .3s}
+.af-node:hover .af-icon{border-color:var(--or);background:rgba(232,129,58,.12);transform:scale(1.05)}
+.af-label{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.5px;text-transform:uppercase;max-width:90px;line-height:1.3}
+.af-sub{font-size:10px;color:rgba(255,255,255,.4);line-height:1.3;max-width:90px}
+.af-arrow{font-size:18px;color:rgba(255,255,255,.25);flex-shrink:0;padding:0 2px;opacity:0;animation:arrow-fade .3s ease forwards}
+.af-arrow:nth-child(2){animation-delay:.3s}.af-arrow:nth-child(4){animation-delay:.55s}.af-arrow:nth-child(6){animation-delay:.8s}.af-arrow:nth-child(8){animation-delay:1.05s}
+@keyframes arrow-fade{from{opacity:0}to{opacity:1}}
+.af-services{display:flex;flex-direction:column;gap:5px}
+.af-svc{display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:4px;font-size:11px;color:rgba(255,255,255,.5);font-weight:600}
+
+/* Score results grid */
+.res-grid{display:flex;flex-direction:column;gap:12px;width:100%;max-width:600px;margin:0 auto}
+.res-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px}
+.res-q{flex:1;font-size:13px;color:rgba(255,255,255,.7);font-weight:500}
+.res-badge{font-size:11px;font-weight:800;padding:3px 10px;border-radius:12px;letter-spacing:.3px}
+.res-badge.correct{background:rgba(46,173,107,.15);color:#7AD9A6;border:1px solid rgba(46,173,107,.3)}
+.res-badge.wrong{background:rgba(217,69,69,.15);color:#ff8888;border:1px solid rgba(217,69,69,.3)}
+.res-badge.skip{background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.1)}
+.res-summary{text-align:center;padding:16px;margin-top:8px}
+.res-xp{font-size:36px;font-weight:300;color:#fff;letter-spacing:-.02em}
+.res-xp b{color:var(--or);font-weight:700}
+.res-rank{font-size:12px;color:rgba(255,255,255,.5);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-top:4px}
+
+/* Retake modal */
+#retake-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#retake-modal.on{display:flex;animation:rm-fade .25s ease}
+.retake-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(217,69,69,.35);border-radius:14px;padding:32px 36px 26px;max-width:480px;width:100%;text-align:center;color:#F5F2ED;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.retake-tag{font-size:10px;letter-spacing:4px;color:#ff8888;font-weight:700;text-transform:uppercase;margin-bottom:14px}
+.retake-q{font-size:20px;line-height:1.4;font-weight:300;margin-bottom:10px;color:#F5F2ED}
+.retake-sub{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:22px}
+.retake-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn.retake-confirm{background:#ff5555;border-color:#ff5555;color:#fff;font-weight:600}
+.btn.retake-confirm:hover{background:#e04545}
+
+/* Toast */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#1c1820;color:#F5F2ED;font-size:13px;padding:10px 18px;border-radius:8px;border:1px solid rgba(232,129,58,.35);box-shadow:0 8px 28px rgba(0,0,0,.4);opacity:0;transition:all .25s;z-index:9999;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:rgba(217,69,69,.5);color:#ff8888}
+
+@media(max-width:560px){
+  .split{flex-direction:column}
+  .sp-l{width:100%;padding:16px 18px}
+  .sp-l::after{display:none}
+  .sp-r{max-height:none}
+  .fbody{flex-direction:column;padding:32px 24px;gap:24px}
+  .fb-visual{width:160px;height:160px}
+  .fb-tt{font-size:28px}
+  .id-cards{flex-direction:column;align-items:center}
+  .id-card{max-width:none;min-width:0}
+  .auth-flow{flex-direction:column}
+  .af-arrow{transform:rotate(90deg)}
+}
+</style>
+</head>
+<body>
+<main class="lms-main">
+<div class="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Module 6a</span> · Secret Management</span><div class="pips" id="pp0"></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Security Champions · Module 6a</div>
+      <div class="fb-tt">Secret Management</div>
+      <div class="fb-sb">Understanding, storing, and managing secrets across your infrastructure. Part 1 of 2 — Fundamentals & Approaches.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <!-- Key icon with shield + lifecycle circle -->
+        <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1.5" stroke-dasharray="8 4">
+          <animateTransform attributeName="transform" type="rotate" values="0 100 100;360 100 100" dur="60s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+        <!-- Shield -->
+        <path d="M100 55 L130 72 L130 105 Q130 130 100 145 Q70 130 70 105 L70 72 Z" fill="rgba(232,129,58,.12)" stroke="var(--or)" stroke-width="2" opacity=".8">
+          <animate attributeName="opacity" values=".6;1;.6" dur="3s" repeatCount="indefinite"/>
+        </path>
+        <!-- Key -->
+        <circle cx="100" cy="88" r="10" fill="none" stroke="#fff" stroke-width="2" opacity=".7"/>
+        <line x1="100" y1="98" x2="100" y2="122" stroke="#fff" stroke-width="2" opacity=".7"/>
+        <line x1="100" y1="112" x2="108" y2="112" stroke="#fff" stroke-width="2" opacity=".7"/>
+        <line x1="100" y1="118" x2="106" y2="118" stroke="#fff" stroke-width="2" opacity=".7"/>
+        <!-- Lifecycle dots -->
+        <circle cx="100" cy="20" r="3" fill="var(--or)" opacity=".6"><animate attributeName="opacity" values=".3;.9;.3" dur="4s" begin="0s" repeatCount="indefinite"/></circle>
+        <circle cx="169" cy="60" r="3" fill="var(--or)" opacity=".6"><animate attributeName="opacity" values=".3;.9;.3" dur="4s" begin=".7s" repeatCount="indefinite"/></circle>
+        <circle cx="169" cy="140" r="3" fill="var(--or)" opacity=".6"><animate attributeName="opacity" values=".3;.9;.3" dur="4s" begin="1.4s" repeatCount="indefinite"/></circle>
+        <circle cx="100" cy="180" r="3" fill="var(--or)" opacity=".6"><animate attributeName="opacity" values=".3;.9;.3" dur="4s" begin="2.1s" repeatCount="indefinite"/></circle>
+        <circle cx="31" cy="140" r="3" fill="var(--or)" opacity=".6"><animate attributeName="opacity" values=".3;.9;.3" dur="4s" begin="2.8s" repeatCount="indefinite"/></circle>
+        <circle cx="31" cy="60" r="3" fill="var(--or)" opacity=".6"><animate attributeName="opacity" values=".3;.9;.3" dur="4s" begin="3.5s" repeatCount="indefinite"/></circle>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">Cover</span><div class="snav"><button class="btn pri" onclick="go(1)">Begin →</button></div></div>
+</div>
+
+<!-- ═══ S1 · The problem in one headline ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Why it matters</span><div class="pips" id="pp1"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">This keeps happening</div></div><div class="sp-r">
+    <div class="prose">In 2017, Gizmodo published a headline: users were storing passwords in Trello boards — publicly visible ones. The boards were indexed by search engines. Credentials for production systems, findable through Google.</div>
+    <div class="prose">This isn't ancient history. People continue to take insecure shortcuts: hardcoding secrets in source code, storing them in container images and config files, sharing them via email, Slack, and shared folders.</div>
+    <div class="prose">As your architecture grows — more services, more integrations, more APIs — the number of secrets multiplies. Managing them becomes a <strong>dedicated discipline</strong>.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">02 / 24 · Why it matters</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S2 · What is a secret? ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Why it matters</span><div class="pips" id="pp2"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The definition</div></div><div class="sp-r">
+    <div class="prose">A <span class="gloss" data-def="Any piece of information that, if exposed, would grant unauthorized access to a system or data. API keys, passwords, certificates, encryption keys, tokens, connection strings.">secret</span> is any piece of information that, if exposed, would grant unauthorized access to a system or data. API keys, passwords, certificates, encryption keys, tokens, connection strings — all secrets.</div>
+    <div class="prose">The important distinction: an <strong>identifier</strong> tells a system <em>who</em> you are. A <strong>secret</strong> proves that you are who you claim to be. Your login is an identifier. Your password is a secret.</div>
+    <div class="co">The test is simple: if leaking this value grants someone access to something, it's a secret.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">03 / 24 · Definitions</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S3 · Three identity types ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Why it matters</span><div class="pips" id="pp3"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Who (or what) has secrets</div></div><div class="sp-r">
+    <div class="prose">Secrets exist for three types of identity:</div>
+    <div class="prose"><strong>People</strong> — users, merchants, developers. Identifier: login or email. Secret: password, MFA token. The most familiar type.</div>
+    <div class="prose"><strong>Software</strong> — services, APIs, AI agents. Identifier: client ID or service name. Secret: API key, certificate, <span class="gloss" data-def="Open Authorization — a protocol that lets applications access resources on behalf of a user without sharing the user's credentials. Uses access tokens and refresh tokens.">OAuth</span> client secret. Sometimes the API key serves as both identifier and secret — if leaking it grants access, treat it as a secret.</div>
+    <div class="prose"><strong>Hardware</strong> — <span class="gloss" data-def="Hardware Security Module — a physical device that stores cryptographic keys and performs encryption operations. Keys stored inside an HSM cannot be extracted, even with physical access.">HSM</span>, <span class="gloss" data-def="Trusted Platform Module — a chip built into a device that stores keys and handles secure boot, disk encryption, and attestation.">TPM</span>, physical tokens. Keys stored in hardware that cannot be extracted even with physical access. Cloud providers offer this: AWS KMS is backed by HSM. Compliance frameworks (HIPAA, PCI DSS) sometimes require hardware-backed key storage.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">04 / 24 · Identity types</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S4 · Breather: three identity types ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Identity types</span><div class="pips" id="pp4"></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">THREE IDENTITY TYPES</div>
+    <div class="breather-visual">
+      <div class="id-cards">
+        <div class="id-card" data-detail="id-people" onclick="toggleDetail('id-people')">
+          <span class="id-icon">👤</span>
+          <div class="id-name">People</div>
+          <div class="id-examples">login + password<br>email + MFA<br>physical badge</div>
+          <div class="id-footer">Secret = proof of ownership</div>
+        </div>
+        <div class="id-card" data-detail="id-software" onclick="toggleDetail('id-software')">
+          <span class="id-icon">⚙️</span>
+          <div class="id-name">Software</div>
+          <div class="id-examples">API key<br>certificate<br>OAuth secret<br>connection string</div>
+          <div class="id-footer">Secret = proof of ownership</div>
+        </div>
+        <div class="id-card" data-detail="id-hardware" onclick="toggleDetail('id-hardware')">
+          <span class="id-icon">🔐</span>
+          <div class="id-name">Hardware</div>
+          <div class="id-examples">HSM serial<br>TPM key<br>physical token<br>smart card</div>
+          <div class="id-footer">Secret = proof of ownership</div>
+        </div>
+      </div>
+      <div class="detail-panel" id="id-people"><button class="detail-close" onclick="event.stopPropagation();closeDetail('id-people')">×</button><strong>Most teams manage people secrets well</strong> — password policies, MFA rollouts, SSO integration. The risk isn't that these secrets are unmanaged. It's that they create a false sense of maturity. "We have SSO" doesn't mean your API keys are safe.</div>
+      <div class="detail-panel" id="id-software"><button class="detail-close" onclick="event.stopPropagation();closeDetail('id-software')">×</button><strong>Software secrets are the biggest blind spot.</strong> API keys shared over Slack, connection strings hardcoded in config, OAuth secrets committed to Git. These often outlive the developer who created them, and nobody tracks who has a copy.</div>
+      <div class="detail-panel" id="id-hardware"><button class="detail-close" onclick="event.stopPropagation();closeDetail('id-hardware')">×</button><strong>Hardware secrets are rare but high-value.</strong> If your compliance framework requires HSM-backed keys (PCI DSS, HIPAA), managing these becomes a first-class concern. Cloud KMS services abstract the hardware away — but the key lifecycle management remains your responsibility.</div>
+    </div>
+    <div class="breather-caption"><p>Every identity type has secrets. Most teams manage <strong>people's secrets</strong> well. Software and hardware secrets are where the gaps appear.</p>
+    <div class="breather-hint">Click a card for <b>deeper context</b></div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn reflect-btn" onclick="openReflect('identity')">⏸ Reflect</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S5 · Long-lived vs ephemeral ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Why it matters</span><div class="pips" id="pp5"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Time is a security factor</div></div><div class="sp-r">
+    <div class="prose"><strong>Long-lived secrets</strong> persist for months or years: API keys, certificates, service account passwords, database connection strings. They're convenient because they don't expire — and dangerous for the same reason.</div>
+    <div class="prose"><strong>Ephemeral secrets</strong> last minutes or hours: <span class="gloss" data-def="JSON Web Token — a compact, signed token that carries claims (user ID, roles, expiration) between services. Verified by checking the signature, not by calling the issuer.">JWT</span> tokens, session IDs, IAM role temporary credentials. Their short lifespan limits the exposure window if they're stolen.</div>
+    <div class="prose">Ephemeral is inherently safer, but not all ephemeral tokens are well-protected. IAM role tokens, for example, remain valid until their expiration time regardless of whether the session that created them is still active.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">06 / 24 · Lifespan</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S6 · Breather: authentication flow ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Auth flow</span><div class="pips" id="pp6"></div></div>
+  <div class="sb"><div class="breather bg-earth">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">HOW SECRETS BECOME TOKENS</div>
+    <div class="breather-visual">
+      <div class="auth-flow">
+        <div class="af-node">
+          <div class="af-icon">👤</div>
+          <div class="af-label">Identity</div>
+          <div class="af-sub">person or service</div>
+        </div>
+        <div class="af-arrow">→</div>
+        <div class="af-node">
+          <div class="af-icon" style="font-size:14px;font-weight:800;color:rgba(255,255,255,.5)">ID+🔑</div>
+          <div class="af-label">Identifier + Secret</div>
+        </div>
+        <div class="af-arrow">→</div>
+        <div class="af-node">
+          <div class="af-icon" style="border-color:var(--or);background:rgba(232,129,58,.12)">🛡</div>
+          <div class="af-label">Access Broker</div>
+          <div class="af-sub">Azure AD, Okta, etc.</div>
+        </div>
+        <div class="af-arrow">→</div>
+        <div class="af-node">
+          <div class="af-icon" style="border-color:rgba(46,173,107,.5);background:rgba(46,173,107,.1)">🎟</div>
+          <div class="af-label">Token</div>
+          <div class="af-sub">signed JWT</div>
+        </div>
+        <div class="af-arrow">→</div>
+        <div class="af-node">
+          <div class="af-services">
+            <div class="af-svc">Service A</div>
+            <div class="af-svc">Service B</div>
+            <div class="af-svc">Service C</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>After authentication, the secret transforms into a <strong>token</strong>. The token becomes the new asset to protect.</p>
+    <div class="breather-notice">Below the JWT icon: <b>Signed, contains claims, verified at each service</b></div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn reflect-btn" onclick="openReflect('tokens')">⏸ Reflect</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S7 · The visibility problem ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Why it matters</span><div class="pips" id="pp7"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Can you trace who used a secret?</div></div><div class="sp-r">
+    <div class="prose">You find suspicious activity linked to a token ID in your logs. The critical question: can you trace it back to a specific person or service?</div>
+    <div class="prose">A <strong>refresh token</strong> — usually yes, through a database lookup that ties it to the issuing session.</div>
+    <div class="prose">An <strong>access token</strong> — maybe. If claims are logged and the token hasn't expired, you can read its contents. But many systems don't log token payloads.</div>
+    <div class="prose">The broader question: does your secret management solution support <strong>audit trails</strong>? Many solutions handle storage and distribution well. Far fewer answer "who accessed this secret at 3pm last Tuesday."</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">08 / 24 · Visibility</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S8 · Quiz: identity basics ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag">Knowledge check</span><div class="pips" id="pp8"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q1"><div class="qq">A microservice communicates with a payment processor using a single API key that serves as both identification and authentication. Is the API key a secret?</div>
+      <button class="qo" onclick="pk('q1',0)">A) No — API keys are identifiers, not secrets</button>
+      <button class="qo" onclick="pk('q1',1)">B) Yes — when a key serves as both identifier and proof of ownership, it is a secret</button>
+      <button class="qo" onclick="pk('q1',2)">C) Only if the key has an expiration date</button>
+      <button class="qo" onclick="pk('q1',3)">D) Only if the key grants write access</button>
+      <div class="qe" id="q1-e"><strong>B — Yes.</strong> When a single value serves as both "who you are" and "prove it," leaking that value grants full access. It is a secret and should be stored, rotated, and audited accordingly.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">09 / 24 · Quiz</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S9 · What is secret management? ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · Lifecycle</span><div class="pips" id="pp9"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">More than storage</div></div><div class="sp-r">
+    <div class="prose">Secret management is the discipline of handling secrets across their full lifecycle. It covers three areas:</div>
+    <div class="prose"><strong>Storage</strong> — where secrets live, how they're encrypted, who can access them.</div>
+    <div class="prose"><strong>Lifecycle</strong> — creation, modification, distribution, rotation, and destruction of secrets. Most solutions handle the first three well. Rotation and destruction are where gaps appear.</div>
+    <div class="prose"><strong>Recovery and remediation</strong> — what happens when a secret is compromised? How quickly can you rotate it? What happens if your secret storage itself fails?</div>
+    <div class="co">The ideal secret management solution doesn't exist. It should be tailored to your specific needs — and the more comprehensive the solution, the more complex and expensive it becomes.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">10 / 24 · Lifecycle</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S10 · Breather: the secret lifecycle ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Lifecycle</span><div class="pips" id="pp10"></div></div>
+  <div class="sb"><div class="breather bg-warm">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">THE SECRET LIFECYCLE</div>
+    <div class="breather-visual">
+      <div class="lifecycle-ring">
+        <!-- 6 stages in a circle -->
+        <div class="lc-stage" style="top:0;left:50%;transform:translateX(-50%)">
+          <div class="lc-circle">01</div>
+          <div class="lc-label">Create</div>
+          <div class="lc-sub">generate securely</div>
+        </div>
+        <div class="lc-stage" style="top:18%;right:0">
+          <div class="lc-circle">02</div>
+          <div class="lc-label">Store</div>
+          <div class="lc-sub">encrypt at rest</div>
+        </div>
+        <div class="lc-stage" style="bottom:18%;right:0">
+          <div class="lc-circle">03</div>
+          <div class="lc-label">Distribute</div>
+          <div class="lc-sub">secure channel</div>
+        </div>
+        <div class="lc-stage" style="bottom:0;left:50%;transform:translateX(-50%)">
+          <div class="lc-circle">04</div>
+          <div class="lc-label">Use</div>
+          <div class="lc-sub">audit access</div>
+        </div>
+        <div class="lc-stage warn" style="bottom:18%;left:0">
+          <div class="lc-circle">05</div>
+          <div class="lc-label">Rotate</div>
+          <div class="lc-sub">scheduled + triggered</div>
+        </div>
+        <div class="lc-stage warn" style="top:18%;left:0">
+          <div class="lc-circle">06</div>
+          <div class="lc-label">Destruct</div>
+          <div class="lc-sub">confirmed deletion</div>
+        </div>
+        <!-- Center text -->
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+          <svg viewBox="0 0 120 120" width="90" height="90">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1.5"/>
+            <path d="M60 10 A50 50 0 1 1 59.9 10" fill="none" stroke="rgba(232,129,58,.2)" stroke-width="2" stroke-dasharray="6 4">
+              <animateTransform attributeName="transform" type="rotate" values="0 60 60;360 60 60" dur="20s" repeatCount="indefinite"/>
+            </path>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Most solutions handle storage and distribution. The gaps are in <strong>rotation, auditing, and destruction</strong>.</p>
+    <div class="breather-notice"><b>Orange stages</b> = where most teams skip</div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn reflect-btn" onclick="openReflect('lifecycle')">⏸ Reflect</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · Requirements for a good solution ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · Lifecycle</span><div class="pips" id="pp11"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What to look for</div></div><div class="sp-r">
+    <div class="prose"><strong>Security requirements:</strong> encryption at rest and in transit, fine-grained access control, comprehensive access logs, separation of duties.</div>
+    <div class="prose"><strong>Usability requirements:</strong> central location for all secrets, easy management interface, straightforward integration with existing tools, scalability as the number of secrets grows.</div>
+    <div class="xp" id="x11a">
+      <button class="xh" aria-expanded="false" aria-controls="x11a-p" onclick="tg('x11a')"><span class="xt">The cost trade-off</span><span class="xa">›</span></button>
+      <div class="xb" id="x11a-p">The more ideal the solution, the more expensive it is — both in licensing and in operational overhead. The practical approach: define what you need today and where you'll be in 6 months, then choose the solution that covers that range without over-engineering.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">12 / 24 · Requirements</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S12 · Case: GitLab migration disaster ═══ -->
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · Real case</span><div class="pips" id="pp12"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">When the secret store disappears</div></div><div class="sp-r">
+    <div class="prose">A team ran self-hosted GitLab CE with all secrets stored in GitLab CI/CD variables — API keys, Azure service principal credentials, database connection strings. Encrypted at rest and in transit. Seemed adequate.</div>
+    <div class="prose">Then they migrated to the commercial edition. The migration crashed. They rebuilt from scratch, uploaded code from local repositories. But the GitLab variables — <strong>all the secrets — were gone</strong>.</div>
+    <div class="prose">Days of work to recreate and rotate every credential. Azure SPNs, API keys, service connections — all had to be regenerated, redistributed, and re-tested across every environment.</div>
+    <div class="co"><strong>Your secret management solution is also your disaster recovery plan.</strong> If it disappears, can you rebuild? How long would it take?</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">13 / 24 · Case study</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S13 · Breather: where secrets hide ═══ -->
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Secret sprawl</span><div class="pips" id="pp13"></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">WHERE SECRETS END UP</div>
+    <div class="breather-visual">
+      <div class="scatter">
+        <div class="scatter-card" data-detail="sc-gitlab" onclick="toggleDetail('sc-gitlab')">GitLab CI variables</div>
+        <div class="scatter-card" data-detail="sc-env" onclick="toggleDetail('sc-env')">.env files</div>
+        <div class="scatter-card" data-detail="sc-helm" onclick="toggleDetail('sc-helm')">Helm values</div>
+        <div class="scatter-card" data-detail="sc-docker" onclick="toggleDetail('sc-docker')">Docker env vars</div>
+        <div class="scatter-card danger" data-detail="sc-hardcoded" onclick="toggleDetail('sc-hardcoded')">Hardcoded in config</div>
+        <div class="scatter-card danger" data-detail="sc-slack" onclick="toggleDetail('sc-slack')">Slack messages</div>
+        <div class="scatter-card" data-detail="sc-aws" onclick="toggleDetail('sc-aws')">~/.aws/credentials</div>
+        <div class="scatter-card danger" data-detail="sc-cicd" onclick="toggleDetail('sc-cicd')">CI/CD pipeline logs</div>
+        <div class="scatter-card danger" data-detail="sc-trello" onclick="toggleDetail('sc-trello')">Trello boards</div>
+        <div class="scatter-card" data-detail="sc-drives" onclick="toggleDetail('sc-drives')">Shared drives</div>
+        <div class="scatter-card danger" data-detail="sc-comments" onclick="toggleDetail('sc-comments')">Code comments</div>
+        <div class="scatter-card" data-detail="sc-clip" onclick="toggleDetail('sc-clip')">Clipboard history</div>
+      </div>
+      <div class="detail-panel" id="sc-gitlab"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-gitlab')">×</button><strong>Encrypted at rest, but accessible to anyone with project maintainer access.</strong> If you migrate GitLab instances, these variables don't transfer — as the case study showed.</div>
+      <div class="detail-panel" id="sc-env"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-env')">×</button><strong>Often .gitignored but not always.</strong> Developers copy them between machines, share them over chat. No audit trail of who has which version.</div>
+      <div class="detail-panel" id="sc-helm"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-helm')">×</button><strong>Helm values.yaml files can contain secrets in plaintext.</strong> Use helm-secrets plugin or External Secrets Operator to pull from a vault instead.</div>
+      <div class="detail-panel" id="sc-docker"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-docker')">×</button><strong>Visible to any process inside the container</strong> and often logged by orchestrators. Prefer mounted volumes or runtime retrieval.</div>
+      <div class="detail-panel" id="sc-hardcoded"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-hardcoded')">×</button><strong>The most dangerous pattern.</strong> Persists in git history forever, even after deletion. Requires full credential rotation and history rewrite to remediate.</div>
+      <div class="detail-panel" id="sc-slack"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-slack')">×</button><strong>Searchable by anyone in the workspace.</strong> Slack retains message history. One shared API key in a channel is a credential visible to every member, past and future.</div>
+      <div class="detail-panel" id="sc-aws"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-aws')">×</button><strong>Long-lived access keys on developer laptops.</strong> If the laptop is compromised, so are all the AWS resources those keys can access. Use SSO and short-lived credentials instead.</div>
+      <div class="detail-panel" id="sc-cicd"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-cicd')">×</button><strong>Secrets leaked via echo, debug output, or error messages.</strong> Pipeline logs are often accessible to the entire team and may be retained for months.</div>
+      <div class="detail-panel" id="sc-trello"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-trello')">×</button><strong>Credentials pasted into cards "temporarily."</strong> Board visibility changes and nobody remembers which cards contain secrets.</div>
+      <div class="detail-panel" id="sc-drives"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-drives')">×</button><strong>Shared docs with access credentials, often with broad permissions.</strong> No version control, no access logging, no rotation triggers.</div>
+      <div class="detail-panel" id="sc-comments"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-comments')">×</button><strong>TODO comments with temporary passwords, debug keys left behind.</strong> Code review should flag these, but often doesn't until a scanner finds them.</div>
+      <div class="detail-panel" id="sc-clip"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sc-clip')">×</button><strong>Clipboard managers retain copied secrets.</strong> Cloud-synced clipboards can spread credentials across devices without any awareness.</div>
+    </div>
+    <div class="breather-caption"><p>Secrets migrate. They start in one place and end up in twelve. Your management strategy must account for <strong>all of them</strong>.</p>
+    <div class="breather-notice"><b>Red cards</b> = highest-risk locations</div>
+    <div class="breather-hint">Click any card for <b>why it's risky</b></div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn reflect-btn" onclick="openReflect('sprawl')">⏸ Reflect</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S14 · Quiz: lifecycle ═══ -->
+<div class="slide" id="s14">
+  <div class="sh"><span class="stag">Knowledge check</span><div class="pips" id="pp14"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q2"><div class="qq">Your team stores API keys in GitLab CI/CD variables. A developer leaves the company. Their laptop is returned and wiped. What's the immediate risk?</div>
+      <button class="qo" onclick="pk('q2',0)">A) No risk — the laptop is wiped and the GitLab variables are encrypted</button>
+      <button class="qo" onclick="pk('q2',1)">B) The developer may have cached copies of the secrets locally, and without rotation their knowledge still grants access</button>
+      <button class="qo" onclick="pk('q2',2)">C) Risk exists only if the developer had admin access</button>
+      <button class="qo" onclick="pk('q2',3)">D) GitLab variables are encrypted, so the developer never had access to plaintext values</button>
+      <div class="qe" id="q2-e"><strong>B — Cached copies.</strong> Developers who used the CI/CD variables likely had the secret values on their machines at some point (environment variables during builds, local configs for testing). Without rotating the secrets after their departure, their knowledge of those values continues to grant access. Personnel changes must trigger secret rotation.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">15 / 24 · Quiz</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S15 · Two fundamental approaches ═══ -->
+<div class="slide" id="s15">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Approaches</span><div class="pips" id="pp15"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">VCS vs orchestrator</div></div><div class="sp-r">
+    <div class="prose">Before comparing specific tools, there are two fundamental approaches to managing secrets:</div>
+    <div class="prose"><strong>Version control approach</strong> — secrets are encrypted and stored alongside code in Git. Changes go through merge requests. Tools like <span class="gloss" data-def="A tool that provides transparent encryption and decryption of files in a Git repository. Files specified in .gitattributes are automatically encrypted on push and decrypted on pull.">git-crypt</span> or <span class="gloss" data-def="Secrets OPerationS — a tool by Mozilla that encrypts values in YAML/JSON/ENV files. Supports multiple key management backends (AWS KMS, GCP KMS, Azure Key Vault, PGP).">SOPS</span> handle the encryption.</div>
+    <div class="prose"><strong>Orchestrator approach</strong> — secrets are stored in a dedicated service (cloud parameter stores, HashiCorp Vault, Kubernetes secrets). Applications retrieve secrets at runtime through API calls.</div>
+    <div class="prose">Each has clear trade-offs. The VCS approach is simpler to start with. The orchestrator approach scales better and provides the audit trails that VCS-based approaches lack.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">16 / 24 · Approaches</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn pri" onclick="go(16)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S16 · VCS approach: git-crypt ═══ -->
+<div class="slide" id="s16">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Approaches</span><div class="pips" id="pp16"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Secrets in Git</div></div><div class="sp-r">
+    <div class="prose">With git-crypt, you specify which files should be encrypted in <code>.gitattributes</code>. During <code>git push</code>, those files are encrypted automatically. When someone clones the repository, encrypted files remain encrypted until <code>git-crypt unlock</code> is run with the correct key.</div>
+    <div class="xp" id="x16a">
+      <button class="xh" aria-expanded="false" aria-controls="x16a-p" onclick="tg('x16a')"><span class="xt">The pros</span><span class="xa">›</span></button>
+      <div class="xb" id="x16a-p">Easy to start, encryption at rest and in transit, version history for secret changes, code review on changes via merge requests, some compartmentalization through access to decryption keys.</div>
+    </div>
+    <div class="xp" id="x16b">
+      <button class="xh" aria-expanded="false" aria-controls="x16b-p" onclick="tg('x16b')"><span class="xt">The cons</span><span class="xa">›</span></button>
+      <div class="xb" id="x16b-p">No access history (you can't tell who read a secret), difficult rotation (changing a secret requires a new commit), merge conflicts when parallel MRs change different secrets, repository tampering risk. The practical assessment: <strong>only good for small projects.</strong></div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">17 / 24 · git-crypt</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S17 · Breather: git-crypt sequence ═══ -->
+<div class="slide" id="s17">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · git-crypt flow</span><div class="pips" id="pp17"></div></div>
+  <div class="sb"><div class="breather bg-earth">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">GIT-CRYPT FLOW</div>
+    <div class="breather-visual">
+      <div class="seq-flow">
+        <div class="seq-step"><div class="seq-num">1</div><div class="seq-text"><b>Initialize</b> git + git-crypt in local repository</div><span class="seq-tag seq-plain">SETUP</span></div>
+        <div class="seq-step"><div class="seq-num">2</div><div class="seq-text">Specify encrypted files in <b>.gitattributes</b></div><span class="seq-tag seq-plain">SETUP</span></div>
+        <div class="seq-step"><div class="seq-num">3</div><div class="seq-text"><b>git push</b> — files encrypted automatically</div><span class="seq-tag seq-enc">ENCRYPT</span></div>
+        <div class="seq-step"><div class="seq-num">4</div><div class="seq-text">Remote stores <b>encrypted</b> blobs only</div><span class="seq-tag seq-enc">ENCRYPTED</span></div>
+        <div class="seq-step"><div class="seq-num">5</div><div class="seq-text">Clone returns <b>encrypted</b> files</div><span class="seq-tag seq-enc">ENCRYPTED</span></div>
+        <div class="seq-step"><div class="seq-num">6</div><div class="seq-text"><b>git-crypt unlock</b> with correct key</div><span class="seq-tag seq-dec">DECRYPT</span></div>
+        <div class="seq-step"><div class="seq-num">7</div><div class="seq-text">Modify secrets locally → <b>git push</b> re-encrypts</div><span class="seq-tag seq-enc">ENCRYPT</span></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Transparent encryption on push, decryption on unlock. <strong>Simple, but with no access audit trail.</strong></p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn reflect-btn" onclick="openReflect('gitcrypt')">⏸ Reflect</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S18 · Orchestrator approach ═══ -->
+<div class="slide" id="s18">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Approaches</span><div class="pips" id="pp18"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Dedicated secret stores</div></div><div class="sp-r">
+    <div class="prose">The orchestrator approach stores secrets in a dedicated service. Applications request secrets at runtime through authenticated API calls. Kubernetes secrets, Docker Swarm secrets, and cloud parameter stores all follow this model.</div>
+    <div class="xp" id="x18a">
+      <button class="xh" aria-expanded="false" aria-controls="x18a-p" onclick="tg('x18a')"><span class="xt">The pros</span><span class="xa">›</span></button>
+      <div class="xb" id="x18a-p">No code changes needed to manage secrets, no decryption keys distributed per developer node, can offload encryption to KMS, auditable access, single source of truth for the current secret value.</div>
+    </div>
+    <div class="xp" id="x18b">
+      <button class="xh" aria-expanded="false" aria-controls="x18b-p" onclick="tg('x18b')"><span class="xt">The cons</span><span class="xa">›</span></button>
+      <div class="xb" id="x18b-p">Trust bootstrapping required — the application needs initial credentials to authenticate to the secret store (the <strong>"secret zero" problem</strong>). Orchestrator lock-in if you rely on platform-specific APIs.</div>
+    </div>
+    <div class="co">The orchestrator approach is where the industry is heading. The remaining question is which orchestrator — cloud-native or platform-agnostic.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">19 / 24 · Orchestrator</span><div class="snav"><button class="btn" onclick="go(17)">← Back</button><button class="btn pri" onclick="go(19)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S19 · Breather: maturity spectrum ═══ -->
+<div class="slide" id="s19">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Maturity</span><div class="pips" id="pp19"></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">THE SECRET MANAGEMENT SPECTRUM</div>
+    <div class="breather-visual">
+      <div class="spectrum">
+        <div class="spectrum-bar">
+          <div class="spectrum-seg" style="background:rgba(217,69,69,.2);cursor:pointer" data-detail="sp-env" onclick="toggleDetail('sp-env')">.env</div>
+          <div class="spectrum-seg" style="background:rgba(217,69,69,.12);cursor:pointer" data-detail="sp-git" onclick="toggleDetail('sp-git')">Git vars</div>
+          <div class="spectrum-seg" style="background:rgba(232,129,58,.12);cursor:pointer" data-detail="sp-crypt" onclick="toggleDetail('sp-crypt')">git-crypt</div>
+          <div class="spectrum-seg" style="background:rgba(232,129,58,.08);cursor:pointer" data-detail="sp-param" onclick="toggleDetail('sp-param')">Param Store</div>
+          <div class="spectrum-seg" style="background:rgba(46,173,107,.08);cursor:pointer" data-detail="sp-sm" onclick="toggleDetail('sp-sm')">Secrets Mgr</div>
+          <div class="spectrum-seg" style="background:rgba(46,173,107,.12);cursor:pointer" data-detail="sp-kms" onclick="toggleDetail('sp-kms')">KMS</div>
+          <div class="spectrum-seg" style="background:rgba(74,143,212,.12);cursor:pointer" data-detail="sp-vault" onclick="toggleDetail('sp-vault')">Vault</div>
+          <div class="spectrum-seg" style="background:rgba(74,143,212,.18);cursor:pointer" data-detail="sp-hsm" onclick="toggleDetail('sp-hsm')">HSM</div>
+        </div>
+        <div class="spectrum-labels">
+          <span><b>←</b> Easy to start. Hard to scale.</span>
+          <span>Complex to set up. Scales to enterprise. <b>→</b></span>
+        </div>
+        <div class="spectrum-marker">▲ Where is your team right now?</div>
+        <div class="detail-panel" id="sp-env"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sp-env')">×</button><strong>Plaintext files on disk.</strong> No encryption, no access control, no audit trail. Fine for local development with fake data. Never acceptable for real credentials.</div>
+        <div class="detail-panel" id="sp-git"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sp-git')">×</button><strong>CI/CD variables (GitLab, GitHub Actions).</strong> Encrypted at rest, scoped to projects. Better than .env files, but no access audit and limited rotation support.</div>
+        <div class="detail-panel" id="sp-crypt"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sp-crypt')">×</button><strong>Encrypted files in Git.</strong> Secrets travel with code and go through merge requests. Good for small teams. Breaks down with parallel changes and provides no access log.</div>
+        <div class="detail-panel" id="sp-param"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sp-param')">×</button><strong>AWS key-value store.</strong> Path-based access control via IAM. Scales well, but no built-in rotation and 4KB/10K limits.</div>
+        <div class="detail-panel" id="sp-sm"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sp-sm')">×</button><strong>The sweet spot for most AWS teams.</strong> Runtime retrieval, built-in RDS rotation, KMS encryption under the hood. Per-request pricing can add up at scale.</div>
+        <div class="detail-panel" id="sp-kms"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sp-kms')">×</button><strong>HSM-backed key management.</strong> Envelope encryption, full key lifecycle, certificate management. Required for compliance frameworks mandating hardware key storage.</div>
+        <div class="detail-panel" id="sp-vault"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sp-vault')">×</button><strong>Platform-agnostic secret management.</strong> Works across AWS, Azure, GCP, and on-prem. Complete audit trails, dynamic secrets, policy-based access. Operational overhead to run.</div>
+        <div class="detail-panel" id="sp-hsm"><button class="detail-close" onclick="event.stopPropagation();closeDetail('sp-hsm')">×</button><strong>Dedicated hardware for key storage.</strong> Keys never leave the device. Maximum security, maximum cost and complexity. Required by some financial and government regulations.</div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Every team is somewhere on this spectrum. The question isn't where you are — it's where you need to be in <strong>six months</strong>.</p>
+    <div class="breather-hint">Click any segment to <b>learn more</b></div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(18)">← Back</button><button class="btn reflect-btn" onclick="openReflect('spectrum')">⏸ Reflect</button><button class="btn pri" onclick="go(20)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S20 · Quiz: approach selection ═══ -->
+<div class="slide" id="s20">
+  <div class="sh"><span class="stag">Knowledge check</span><div class="pips" id="pp20"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q3"><div class="qq">Your team manages secrets encrypted in Git via merge request workflow. Two developers submit parallel MRs that each modify different secrets in the same encrypted file. What happens?</div>
+      <button class="qo" onclick="pk('q3',0)">A) Both MRs merge cleanly because they change different secrets</button>
+      <button class="qo" onclick="pk('q3',1)">B) A merge conflict occurs on the encrypted file, and neither developer can verify the correct resolution without decrypting</button>
+      <button class="qo" onclick="pk('q3',2)">C) git-crypt automatically resolves the conflict</button>
+      <button class="qo" onclick="pk('q3',3)">D) The second MR overwrites the first without warning</button>
+      <div class="qe" id="q3-e"><strong>B — Merge conflict on encrypted file.</strong> Encrypted files are opaque to Git's merge logic. When two MRs modify the same encrypted file, Git sees a binary conflict that can't be auto-resolved. The developer resolving the conflict must decrypt, merge manually, and re-encrypt — a fragile process at scale. This is a fundamental limitation of the VCS approach.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">21 / 24 · Quiz</span><div class="snav"><button class="btn" onclick="go(19)">← Back</button><button class="btn pri" onclick="go(21)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S21 · Summary ═══ -->
+<div class="slide" id="s21">
+  <div class="sh"><span class="stag"><span class="hl">Summary</span> · Part 1</span><div class="pips" id="pp21"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What you covered</div></div><div class="sp-r">
+    <div class="numlist">
+      <b>01:</b> A secret is anything that grants access if leaked. The test: if it's both identifier and proof of ownership, it's a secret.<br><br>
+      <b>02:</b> Three identity types have secrets: people, software, and hardware. Software secrets are the most commonly mismanaged.<br><br>
+      <b>03:</b> The secret lifecycle has six stages — create, store, distribute, use, rotate, destruct. Most teams handle the first three but skip rotation and destruction.<br><br>
+      <b>04:</b> The VCS approach (git-crypt) works for small projects. The orchestrator approach (dedicated stores) scales better and provides audit trails.<br><br>
+      <b>05:</b> Your secret management solution is also your disaster recovery plan. Plan for the scenario where it fails.
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">22 / 24 · Summary</span><div class="snav"><button class="btn" onclick="go(20)">← Back</button><button class="btn pri" onclick="go(22)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S22 · Score grid ═══ -->
+<div class="slide" id="s22">
+  <div class="sh"><span class="stag"><span class="hl">Module 6a</span> · Your results</span><div class="pips" id="pp22"></div></div>
+  <div class="sb"><div class="breather bg-navy" style="justify-content:center;gap:14px;padding:28px 24px 16px">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase">YOUR RESULTS</div>
+    <div class="res-grid" id="results-grid"></div>
+    <div class="res-summary" id="results-summary"></div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:6px">
+      <button class="btn" onclick="openRetake()" style="border-color:rgba(217,69,69,.4);color:#ff8888">↻ Retake module</button>
+      <button class="btn pri" onclick="go(23)">Continue to Part 2 →</button>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">23 / 24 · Results</span><div class="snav"><button class="btn" onclick="go(21)">← Back</button><button class="btn pri" onclick="go(23)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S23 · Bridge ═══ -->
+<div class="slide" id="s23">
+  <div class="sh"><span class="stag"><span class="hl">Next</span> · Part 2</span><div class="pips" id="pp23"></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Next</div>
+      <div class="fb-tt">Cloud Solutions & Practice</div>
+      <div class="fb-sb">Part 2: AWS Parameter Store, Secrets Manager, and KMS. Azure Key Vault. Kubernetes secrets. HashiCorp Vault. And how to choose between them.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <rect x="30" y="50" width="140" height="100" rx="8" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1.5"/>
+        <rect x="45" y="70" width="35" height="25" rx="4" fill="rgba(232,129,58,.15)" stroke="rgba(232,129,58,.4)" stroke-width="1"/>
+        <text x="62" y="86" fill="rgba(255,255,255,.5)" font-size="7" text-anchor="middle" font-weight="700">AWS</text>
+        <rect x="85" y="70" width="35" height="25" rx="4" fill="rgba(74,143,212,.15)" stroke="rgba(74,143,212,.4)" stroke-width="1"/>
+        <text x="102" y="86" fill="rgba(255,255,255,.5)" font-size="7" text-anchor="middle" font-weight="700">Azure</text>
+        <rect x="125" y="70" width="35" height="25" rx="4" fill="rgba(46,173,107,.15)" stroke="rgba(46,173,107,.4)" stroke-width="1"/>
+        <text x="142" y="86" fill="rgba(255,255,255,.5)" font-size="7" text-anchor="middle" font-weight="700">K8s</text>
+        <rect x="65" y="110" width="70" height="25" rx="4" fill="rgba(123,111,174,.15)" stroke="rgba(123,111,174,.4)" stroke-width="1"/>
+        <text x="100" y="126" fill="rgba(255,255,255,.5)" font-size="7" text-anchor="middle" font-weight="700">HashiCorp Vault</text>
+        <!-- Arrows down -->
+        <line x1="62" y1="95" x2="80" y2="110" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <line x1="102" y1="95" x2="100" y2="110" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <line x1="142" y1="95" x2="120" y2="110" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">24 / 24 · Bridge</span><div class="snav"><button class="btn" onclick="go(22)">← Back</button><button class="btn" onclick="openRetake()" style="border-color:rgba(217,69,69,.4);color:#ff8888">↻ Retake</button></div></div>
+</div>
+
+</div><!-- end .deck -->
+
+<!-- Retake modal -->
+<div id="retake-modal" role="dialog" aria-modal="true">
+  <div class="retake-card">
+    <div class="retake-tag">↻ Retake the module</div>
+    <div class="retake-q">Reset all progress and start over?</div>
+    <div class="retake-sub">This will clear your XP, quiz answers, wagers, and reflections. The module returns to the cover slide.</div>
+    <div class="retake-actions">
+      <button class="btn" onclick="closeRetake()">Cancel</button>
+      <button class="btn retake-confirm" onclick="doRetake()">Yes, reset everything</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- Reflect modal -->
+<div id="reflect-modal" role="dialog" aria-modal="true" aria-labelledby="rm-q">
+  <div class="rm-card">
+    <button class="rm-close" aria-label="Close" onclick="closeReflect()">×</button>
+    <div class="rm-tag">⏸  Pause to reflect</div>
+    <div class="rm-q" id="rm-q"></div>
+    <div class="rm-sub" id="rm-sub"></div>
+    <div class="rm-actions"><button class="btn pri" onclick="closeReflect()">Got it →</button></div>
+  </div>
+</div>
+
+<script>
+const T=24;let c=0;
+
+const STORAGE_KEY='sc_m6a_sm_v1';
+const RANKS=[
+  {min:0,name:'RECRUIT'},
+  {min:8,name:'APPRENTICE'},
+  {min:18,name:'CHAMPION'},
+  {min:32,name:'CAPTAIN'},
+  {min:50,name:'LEGEND'}
+];
+const DEFAULT_STATE={xp:0,streak:0,bestStreak:0,answers:{},wagers:{},reflections:[]};
+let state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};
+
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const s=JSON.parse(raw);state={...DEFAULT_STATE,...s,answers:s.answers||{},wagers:s.wagers||{},reflections:s.reflections||[]}}}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+function rankFor(xp){let r=RANKS[0];for(const x of RANKS){if(xp>=x.min)r=x}return r}
+
+function renderChips(){
+  const r=rankFor(state.xp);
+  document.querySelectorAll('.scorechip').forEach(chip=>{
+    chip.querySelector('.sc-rank').textContent=r.name[0];
+    chip.querySelector('.sc-rank').title=r.name;
+    chip.querySelector('.sc-xp').innerHTML=`<b>${state.xp}</b> XP`;
+    const sk=chip.querySelector('.sc-streak');
+    if(state.streak>=2){sk.classList.add('live');sk.innerHTML=`<span class="sc-flame">🔥</span> ${state.streak}`}
+    else{sk.classList.remove('live');sk.innerHTML=`<span style="opacity:.5">·</span> ${r.name}`}
+  });
+}
+function bumpChips(){document.querySelectorAll('.scorechip').forEach(c=>{c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')})}
+
+function go(n){
+  if(n<0||n>=T)return;
+  document.getElementById('s'+c).classList.remove('on');
+  c=n;
+  const slide=document.getElementById('s'+n);
+  slide.classList.add('on');
+  const r=slide.querySelector('.sp-r');if(r)r.scrollTop=0;
+  document.querySelectorAll('.pips').forEach(p=>bp(p));
+  window.scrollTo(0,0);
+  if(n===22)populateResults();
+}
+function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(c-1)}});
+function tg(id){const el=document.getElementById(id),b=el.querySelector('.xb'),a=el.querySelector('.xa'),btn=el.querySelector('.xh');const isOpen=b.classList.toggle('op');if(a)a.classList.toggle('op');if(btn)btn.setAttribute('aria-expanded',isOpen?'true':'false')}
+
+const ans={q1:1,q2:1,q3:1};
+const QUIZ_LABELS={q1:'API key as secret',q2:'Developer departure risk',q3:'Encrypted file merge conflict'};
+
+const WAGERS=[
+  {key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},
+  {key:'pretty',mult:2,name:'Pretty sure',sub:'×2 if right · 1 if wrong'},
+  {key:'guess',mult:1,name:'Just guessing',sub:'×1 either way'}
+];
+function buildWagerUI(qw){
+  const qq=qw.querySelector('.qq');if(!qq)return;
+  const qid=qw.id;
+  const w=document.createElement('div');
+  w.className='wager';w.dataset.qid=qid;
+  w.innerHTML=`<div class="wager-lab">How confident are you?</div>
+    <div class="wager-row">${WAGERS.map(g=>`<button class="wager-btn" data-w="${g.key}" data-m="${g.mult}"><div class="wb-top"><span class="wb-mult">×${g.mult}</span><span class="wb-name">${g.name}</span></div><div class="wb-sub">${g.sub}</div></button>`).join('')}</div>`;
+  qq.parentNode.insertBefore(w,qq.nextSibling);
+  w.querySelectorAll('.wager-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      if(w.classList.contains('locked'))return;
+      w.querySelectorAll('.wager-btn').forEach(b=>b.classList.remove('pk'));
+      btn.classList.add('pk');
+      state.wagers[qid]=parseInt(btn.dataset.m,10);
+      saveState();
+    };
+  });
+  if(state.wagers[qid]){
+    const b=w.querySelector(`.wager-btn[data-m="${state.wagers[qid]}"]`);
+    if(b)b.classList.add('pk');
+  }
+}
+function lockWager(qid){
+  const w=document.querySelector(`.wager[data-qid="${qid}"]`);
+  if(!w)return;
+  w.classList.add('locked');
+  w.querySelectorAll('.wager-btn').forEach(b=>b.disabled=true);
+  const mult=state.wagers[qid]||1;
+  const wname=WAGERS.find(g=>g.mult===mult)?.name||'Just guessing';
+  w.innerHTML=`<div class="wager-locked-note">🎯 You wagered <b>${wname}</b> (×${mult})</div>`;
+}
+
+function pk(q,i){
+  const w=document.getElementById(q),o=w.querySelectorAll('.qo');
+  if(o[0].classList.contains('pk'))return;
+  if(!state.wagers[q])state.wagers[q]=1;
+  const mult=state.wagers[q];
+  const k=ans[q];
+  const correct=(i===k);
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});
+  let pts=0,kind='zero',msg='';
+  if(correct){
+    pts=mult*3;
+    state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak;
+    kind='';
+    if(mult===3)msg=`Confident and correct. <b>+${pts} XP</b>${state.streak>=2?` · 🔥 ${state.streak} streak`:''}`;
+    else if(mult===2)msg=`Right call. <b>+${pts} XP</b>`;
+    else msg=`Lucky guess — still counts. <b>+${pts} XP</b>`;
+  }else{
+    if(mult===3){pts=0;kind='zero';msg=`Confidence didn't pay off here. <b>+0 XP</b> · streak reset.`}
+    else if(mult===2){pts=1;kind='humility';msg=`Humility bonus — knowing you might be wrong is half the skill. <b>+1 XP</b>`}
+    else{pts=1;kind='humility';msg=`Honest guess — keep going. <b>+1 XP</b>`}
+    state.streak=0;
+  }
+  state.xp+=pts;
+  state.answers[q]={picked:i,correct,wager:mult,points:pts};
+  saveState();renderChips();bumpChips();lockWager(q);
+  const e=document.getElementById(q+'-e');
+  e.classList.add('sh');
+  if(!e.querySelector('.qe-score')){
+    const s=document.createElement('div');s.className='qe-score';
+    s.innerHTML=`<span class="qs-pts ${kind}">${pts>0?'+':''}${pts} XP</span><span class="qs-msg">${msg}</span>`;
+    e.appendChild(s);
+  }
+}
+
+function populateResults(){
+  const grid=document.getElementById('results-grid');
+  const summary=document.getElementById('results-summary');
+  if(!grid||!summary)return;
+  grid.innerHTML='';
+  const correct=Object.values(state.answers).filter(a=>a.correct).length;
+  const total=Object.keys(QUIZ_LABELS).length;
+  /* Quiz rows */
+  Object.keys(QUIZ_LABELS).forEach(q=>{
+    const a=state.answers[q];
+    const row=document.createElement('div');row.className='res-row';
+    if(a){
+      row.innerHTML=`<div class="res-q">${QUIZ_LABELS[q]}</div><span class="res-badge ${a.correct?'correct':'wrong'}">${a.correct?'✓ Correct':'✗ Wrong'} · +${a.points} XP</span>`;
+    }else{
+      row.innerHTML=`<div class="res-q">${QUIZ_LABELS[q]}</div><span class="res-badge skip">— Skipped</span>`;
+    }
+    grid.appendChild(row);
+  });
+  const r=rankFor(state.xp);
+  /* Stats + badges */
+  const badges=[];
+  if(correct===total)badges.push('✓ Perfect score');
+  if(state.bestStreak>=2)badges.push('🔥 '+state.bestStreak+'-streak');
+  const sureRight=Object.values(state.answers).filter(a=>a.correct&&a.wager===3).length;
+  if(sureRight>=1)badges.push('🎯 Confident ×'+sureRight);
+  const humility=Object.values(state.answers).filter(a=>!a.correct&&a.wager<3).length;
+  if(humility>=1)badges.push('🪞 Humility ×'+humility);
+  if(state.reflections.length>=3)badges.push('💭 Deep thinker');
+  summary.innerHTML=`
+    <div style="display:flex;gap:0;border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;margin-bottom:14px;max-width:480px;margin-left:auto;margin-right:auto">
+      <div style="flex:1;padding:12px 8px;text-align:center;border-right:1px solid rgba(255,255,255,.08)"><div style="font-size:28px;font-weight:800;color:var(--or)">${state.xp}</div><div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:3px">XP</div></div>
+      <div style="flex:1;padding:12px 8px;text-align:center;border-right:1px solid rgba(255,255,255,.08)"><div style="font-size:28px;font-weight:800;color:#fff">${correct}/${total}</div><div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:3px">Quizzes</div></div>
+      <div style="flex:1;padding:12px 8px;text-align:center;border-right:1px solid rgba(255,255,255,.08)"><div style="font-size:28px;font-weight:800;color:#fff">${state.bestStreak}</div><div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:3px">Streak</div></div>
+      <div style="flex:1;padding:12px 8px;text-align:center"><div style="font-size:28px;font-weight:800;color:#fff">${state.reflections.length}</div><div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:3px">Reflects</div></div>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,.5);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:8px">${r.name}</div>
+    ${badges.length?`<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">${badges.map(b=>`<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(232,129,58,.12);color:#FFB36B;font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;letter-spacing:.2px">${b}</span>`).join('')}</div>`:''}
+  `;
+}
+
+function injectChips(){
+  document.querySelectorAll('.sh').forEach(sh=>{
+    const stag=sh.querySelector('.stag');
+    const pips=sh.querySelector('.pips');
+    if(!stag||!pips)return;
+    const right=document.createElement('div');right.className='sh-right';
+    pips.parentNode.insertBefore(right,pips);right.appendChild(pips);
+    const chip=document.createElement('div');chip.className='scorechip';chip.title='Your XP and streak';
+    chip.innerHTML=`<span class="sc-rank">R</span><span class="sc-xp"><b>0</b> XP</span><span class="sc-streak"><span style="opacity:.5">·</span> RECRUIT</span>`;
+    right.insertBefore(chip,pips);
+  });
+}
+
+loadState();
+injectChips();
+document.querySelectorAll('.qw').forEach(buildWagerUI);
+Object.keys(state.answers).forEach(q=>{
+  const a=state.answers[q];
+  const qw=document.getElementById(q);if(!qw)return;
+  const o=qw.querySelectorAll('.qo'),k=ans[q];
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===a.picked&&j!==k)x.classList.add('no')});
+  const e=document.getElementById(q+'-e');if(e){e.classList.add('sh');if(!e.querySelector('.qe-score')){const s=document.createElement('div');s.className='qe-score';s.innerHTML=`<span class="qs-pts ${a.points===0?'zero':(a.correct?'':'humility')}">+${a.points} XP</span><span class="qs-msg">Already answered. ${a.correct?'Correct.':'Try the retake to improve.'}</span>`;e.appendChild(s)}}
+  lockWager(q);
+});
+renderChips();
+document.querySelectorAll('.pips').forEach(p=>bp(p));
+
+const REFLECT_PROMPTS={
+  identity:{q:'Think about your project. Which <em>identity type</em> — people, software, or hardware — has the most secrets you can\'t fully account for?',sub:'If you had to list every software identity and its credentials right now, how many would be missing from your inventory?'},
+  tokens:{q:'After a user authenticates, how many <em>services</em> in your stack accept the resulting token — and do all of them validate it the same way?',sub:'Inconsistent token validation is one of the most common gaps. A token accepted by one service may carry more privileges than another service expects.'},
+  lifecycle:{q:'Pick one secret your team uses daily. Can you trace it through <em>all six stages</em> — create, store, distribute, use, rotate, destruct?',sub:'If "rotate" or "destruct" drew a blank, that\'s the gap the lifecycle model is designed to surface.'},
+  sprawl:{q:'If you ran <code>grep</code> across your repos, CI/CD configs, and deployment scripts right now — how many <em>unexpected locations</em> would secrets turn up in?',sub:'Secret sprawl is usually invisible until you look. The first audit is always the most surprising.'},
+  gitcrypt:{q:'Does your team use any form of <em>encrypted secrets in Git</em> today? If yes — can you tell who last read those secrets?',sub:'If the answer is no, you\'ve identified the main limitation of VCS-based approaches. Audit trails require an orchestrator.'},
+  spectrum:{q:'Look at the <em>maturity spectrum</em>. Where does your team sit today — and where do you need to be in six months?',sub:'If the answer is "we should have moved already," that\'s the gap worth flagging in your next sprint retro.'}
+};
+function openReflect(key){
+  const p=REFLECT_PROMPTS[key];if(!p)return;
+  document.getElementById('rm-q').innerHTML=p.q;
+  document.getElementById('rm-sub').textContent=p.sub;
+  document.getElementById('reflect-modal').classList.add('on');
+  if(state.reflections&&!state.reflections.includes(key)){
+    state.reflections.push(key);
+    state.xp+=2;saveState();renderChips();bumpChips();
+  }
+}
+function closeReflect(){document.getElementById('reflect-modal').classList.remove('on')}
+document.getElementById('reflect-modal').addEventListener('click',e=>{if(e.target.id==='reflect-modal')closeReflect()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('reflect-modal').classList.contains('on'))closeReflect()});
+
+/* Retake */
+function openRetake(){document.getElementById('retake-modal').classList.add('on')}
+function closeRetake(){document.getElementById('retake-modal').classList.remove('on')}
+function doRetake(){
+  try{localStorage.removeItem(STORAGE_KEY)}catch(e){}
+  window.location.reload();
+}
+document.getElementById('retake-modal').addEventListener('click',e=>{if(e.target.id==='retake-modal')closeRetake()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('retake-modal').classList.contains('on'))closeRetake()});
+
+/* Toast */
+let toastTimer=null;
+function showToast(msg,kind){
+  const t=document.getElementById('toast');if(!t)return;
+  t.textContent=msg;
+  t.classList.remove('err','on');
+  if(kind==='err')t.classList.add('err');
+  void t.offsetWidth;
+  t.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('on'),2400);
+}
+
+/* Glossary */
+(function(){
+  const tip=document.createElement('div');tip.id='gloss-tip';document.body.appendChild(tip);
+  let cur=null;
+  function place(el){
+    const def=el.getAttribute('data-def')||'';
+    tip.textContent=def;
+    const r=el.getBoundingClientRect();
+    tip.classList.remove('below');
+    tip.style.left='0px';tip.style.top='0px';
+    const tw=tip.offsetWidth,th=tip.offsetHeight;
+    let left=r.left;
+    if(left+tw>window.innerWidth-8)left=window.innerWidth-tw-8;
+    if(left<8)left=8;
+    let top=r.top-th-10;
+    if(top<8){top=r.bottom+10;tip.classList.add('below')}
+    tip.style.left=left+'px';tip.style.top=top+'px';
+    tip.classList.add('on');cur=el;
+  }
+  function hide(){tip.classList.remove('on');cur=null}
+  document.addEventListener('mouseover',e=>{const g=e.target.closest('.gloss');if(g&&g!==cur)place(g)});
+  document.addEventListener('mouseout',e=>{const g=e.target.closest('.gloss');if(g&&!e.relatedTarget?.closest?.('.gloss'))hide()});
+  document.addEventListener('click',e=>{const g=e.target.closest('.gloss');if(g&&window.matchMedia('(hover:none)').matches){if(cur===g)hide();else place(g);e.preventDefault();return}if(!g)hide()});
+  document.addEventListener('scroll',hide,true);
+  window.addEventListener('resize',hide);
+})();
+
+/* Clickable breather details */
+function toggleDetail(id){
+  const el=document.getElementById(id);if(!el)return;
+  const wasOpen=el.classList.contains('on');
+  document.querySelectorAll('.detail-panel.on').forEach(p=>p.classList.remove('on'));
+  if(!wasOpen)el.classList.add('on');
+}
+function closeDetail(id){
+  const el=document.getElementById(id);if(el)el.classList.remove('on');
+}
+</script>
+</main>
+</body>
+</html>

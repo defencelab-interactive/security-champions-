@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWASP Top 10 · Lens 3 — Architecture against you</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:si .35s cubic-bezier(.2,.6,.2,1) both}
+@keyframes si{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.slide:not(.on) *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.slide.on{animation:none}*,*::before,*::after{animation-duration:.001s!important;transition-duration:.01s!important}}
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh .sh-right{display:flex;align-items:center;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}.btn.pri:hover{background:var(--od)}
+.btn.reflect-btn{border-color:rgba(232,129,58,.4);color:var(--or);background:rgba(232,129,58,.06)}.btn.reflect-btn:hover{background:rgba(232,129,58,.15);color:#fff}
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:280px;justify-content:flex-end}
+.pip{width:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}.pip.on{background:var(--or);transform:scaleY(1.8)}
+.split{display:flex;min-height:480px}.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:20px;font-weight:700;color:var(--wh);line-height:1.25}.sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:480px}
+.sp-r::-webkit-scrollbar{width:3px}.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.sb{padding:0}.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
+.prose{font-size:15.5px;color:var(--tm);line-height:1.78}.prose strong{color:var(--td);font-weight:600}.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}.co em{font-style:italic;font-weight:500;color:var(--or)}.co strong{font-weight:600}
+.gloss{border-bottom:1px dotted var(--or);cursor:help;font-weight:600;color:inherit}
+#gloss-tip{position:fixed;background:#1a1620;color:#F5F2ED;font-size:12px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.4);box-shadow:0 8px 28px rgba(0,0,0,.55);max-width:300px;width:max-content;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none;z-index:9999;text-align:left;font-family:inherit}
+#gloss-tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+.scenario{margin:6px 0;background:linear-gradient(170deg,#1c1820,#181820);border-radius:10px;padding:16px 20px;color:#F5F2ED;border-left:3px solid var(--or);box-shadow:0 6px 22px rgba(0,0,0,.18)}
+.scenario-tag{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--or);margin-bottom:8px}
+.scenario-text{font-size:15px;line-height:1.65;color:rgba(245,242,237,.85);font-style:italic}.scenario-text em{color:var(--or);font-style:normal;font-weight:600}
+.qw{margin:6px 0}.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}.qo.ok{border-color:var(--gr);background:var(--gl)}.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55}.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block}.qe strong{color:var(--td)}
+.wager{margin:6px 0 10px;background:linear-gradient(135deg,#fff8f2,#fff);border:1px dashed rgba(232,129,58,.4);border-radius:8px;padding:11px 14px;transition:all .25s}
+.wager.locked{opacity:.55;border-style:solid;border-color:var(--bd);background:var(--ow)}
+.wager-lab{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:6px}.wager-lab::before{content:'';width:14px;height:1px;background:var(--or)}
+.wager-row{display:flex;gap:6px;flex-wrap:wrap}
+.wager-btn{flex:1;min-width:90px;background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .12s}
+.wager-btn:hover{border-color:var(--or);transform:translateY(-1px);box-shadow:0 2px 8px rgba(232,129,58,.15)}
+.wager-btn.pk{border-color:var(--or);background:var(--ol)}.wager-btn.pk .wb-mult{background:var(--or);color:#fff}
+.wager-btn:disabled{cursor:not-allowed;opacity:.5}
+.wb-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.wb-mult{display:inline-flex;align-items:center;justify-content:center;background:var(--card);color:var(--td);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;letter-spacing:.3px}
+.wb-name{font-size:13px;font-weight:700;color:var(--td)}
+.wb-sub{font-size:11px;color:var(--mu);line-height:1.3}
+.wager-locked-note{font-size:11px;color:var(--mu);font-style:italic;display:flex;align-items:center;gap:6px}.wager-locked-note b{color:var(--td);font-style:normal;font-weight:600}
+.qe .qe-score{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:13px}
+.qe .qe-score .qs-pts{display:inline-flex;align-items:center;gap:4px;background:var(--gl);color:var(--gr);font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px;letter-spacing:.3px}
+.qe .qe-score .qs-pts.zero{background:var(--rl);color:var(--rd)}
+.qe .qe-score .qs-pts.humility{background:rgba(123,111,174,.12);color:var(--pu)}
+.qe .qe-score .qs-msg{color:var(--tm);font-size:12px}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .2s ease both}
+.slide.on .sp-r>*:nth-child(1){animation-delay:.03s}.slide.on .sp-r>*:nth-child(2){animation-delay:.06s}.slide.on .sp-r>*:nth-child(3){animation-delay:.09s}.slide.on .sp-r>*:nth-child(4){animation-delay:.12s}.slide.on .sp-r>*:nth-child(5){animation-delay:.15s}.slide.on .sp-r>*:nth-child(6){animation-delay:.18s}.slide.on .sp-r>*:nth-child(7){animation-delay:.21s}
+
+/* Reveal Steps */
+.reveal-steps{display:flex;flex-direction:column;gap:2px}
+.reveal-step{display:flex;gap:14px;padding:10px 14px;border-radius:8px;transition:all .25s;opacity:.35;filter:blur(2px);pointer-events:none}
+.reveal-step.active{opacity:1;filter:none;background:var(--ol);pointer-events:auto;padding:12px 14px}
+.reveal-step.done{opacity:1;filter:none;background:var(--ow);pointer-events:auto;padding:12px 14px}
+.reveal-step.locked .reveal-text{display:none}
+.reveal-num{width:28px;height:28px;border-radius:50%;background:var(--bd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--mu);flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.reveal-step.active .reveal-num{background:var(--or);color:#fff}
+.reveal-step.done .reveal-num{background:var(--gr);color:#fff}
+.reveal-title{font-size:14px;font-weight:700;color:var(--td);margin-bottom:3px}.reveal-text{font-size:13px;color:var(--tm);line-height:1.6}
+.reveal-btn{margin-top:12px;background:var(--or);border:none;color:#fff;padding:7px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}.reveal-btn:hover{background:var(--od)}.reveal-btn:disabled{opacity:.4;cursor:default}
+
+/* Terminal */
+.term{background:#0a0c10;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;font-family:'JetBrains Mono',monospace}
+.term-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)}
+.term-dot{width:10px;height:10px;border-radius:50%}.term-dot:nth-child(1){background:#ff5f57}.term-dot:nth-child(2){background:#febc2e}.term-dot:nth-child(3){background:#28c840}
+.term-title{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1px;margin-left:8px;font-weight:600;text-transform:uppercase}
+.term-body{padding:16px 18px;min-height:120px;max-height:220px;overflow-y:auto;scrollbar-width:thin}
+.term-line{font-size:12px;line-height:1.7;color:rgba(255,255,255,.55);white-space:pre-wrap;word-break:break-all;opacity:0;transform:translateY(3px);animation:ta .2s ease forwards}
+.term-line.cmd{color:rgba(255,255,255,.85)}.term-line.cmd::before{content:'$ ';color:var(--gr)}
+.term-line.atk{color:var(--rd)}.term-line.atk::before{content:'⚠ ';color:var(--rd)}
+.term-line.ok{color:var(--gr)}.term-line.ok::before{content:'✓ ';color:var(--gr)}
+.term-line.info{color:#E5A832}.term-line.info::before{content:'→ ';color:#E5A832}
+.term-line.blank{height:8px}
+@keyframes ta{to{opacity:1;transform:translateY(0)}}
+.term-play{background:var(--or);border:none;color:#fff;padding:7px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;margin-top:10px}.term-play:hover{background:var(--od)}.term-play:disabled{opacity:.4;cursor:default}
+
+/* Code Diff */
+.cdiff{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;margin:6px 0}
+.cdiff-col{padding:0}
+.cdiff-head{padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06)}
+.cdiff-bad .cdiff-head{background:rgba(217,69,69,.1);color:var(--rd)}
+.cdiff-good .cdiff-head{background:rgba(46,173,107,.08);color:var(--gr)}
+.cdiff-bad{border-right:1px solid rgba(255,255,255,.06)}
+.cdiff-code{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.8;color:rgba(255,255,255,.6);white-space:pre;overflow-x:auto;background:#0a0c10}
+.cdiff-code .hl-bad{background:rgba(217,69,69,.15);color:rgba(255,255,255,.85);padding:1px 3px;border-radius:2px}
+.cdiff-code .hl-good{background:rgba(46,173,107,.12);color:rgba(255,255,255,.85);padding:1px 3px;border-radius:2px}
+.cdiff-fix{grid-column:1/-1;padding:10px 16px;background:rgba(46,173,107,.06);border-top:1px solid rgba(46,173,107,.2);display:flex;align-items:flex-start;gap:8px;font-size:12px;color:rgba(255,255,255,.7);line-height:1.5}
+.cdiff-fix strong{color:var(--gr);font-weight:700}
+@media(max-width:560px){.cdiff{grid-template-columns:1fr}.cdiff-bad{border-right:none;border-bottom:1px solid rgba(255,255,255,.06)}}
+
+/* Myth/Reality shatter */
+.mr-body{min-height:480px;display:flex;align-items:center;justify-content:center;padding:40px 48px;position:relative;overflow:hidden;background:#0F0E14}
+.mr-container{position:relative;width:100%;max-width:620px;min-height:320px}
+.mr-myth{text-align:center;transition:all .4s ease;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mr-icon{font-size:48px;margin-bottom:20px;display:block}
+.mr-label{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--rd);margin-bottom:16px}
+.mr-quote{font-size:26px;font-weight:700;line-height:1.3;color:#F5F2ED;margin-bottom:24px;text-wrap:balance}
+.mr-reveal-btn{background:var(--or);border:none;color:#fff;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}.mr-reveal-btn:hover{background:var(--od);transform:translateY(-1px)}
+.mr-reality{text-align:center;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transform:scale(.95);transition:all .5s ease .35s;pointer-events:none}
+.mr-reality-label{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gr);margin-bottom:16px}
+.mr-reality-text{font-size:17px;line-height:1.7;color:rgba(245,242,237,.8)}.mr-reality-text strong{color:#fff;font-weight:700}
+.mr-back{margin-top:20px;background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);padding:6px 16px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit}.mr-back:hover{border-color:var(--or);color:#fff}
+.mr-body.revealed .mr-myth{opacity:0;pointer-events:none;animation:shatter .5s ease forwards}
+.mr-body.revealed .mr-reality{opacity:1;transform:scale(1);pointer-events:auto}
+.mr-body:not(.revealed) .mr-myth{animation:none;opacity:1;transform:none}
+@keyframes shatter{0%{opacity:1;transform:scale(1);filter:none}15%{transform:scale(1.02);filter:brightness(1.3)}30%{opacity:.8;transform:scale(1) skewX(2deg);filter:brightness(1.1)}50%{opacity:.5;transform:scale(.98) skewX(-3deg) skewY(1deg);filter:brightness(.8) blur(1px)}70%{opacity:.2;transform:scale(.95) skewX(5deg) skewY(-2deg);filter:blur(3px)}100%{opacity:0;transform:scale(.85) skewX(8deg) skewY(-4deg);filter:blur(6px)}}
+.mr-cracks{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:10}.mr-body.revealed .mr-cracks{animation:crs .3s ease forwards}@keyframes crs{0%{opacity:0}50%{opacity:1}100%{opacity:0}}.mr-crack{position:absolute;background:rgba(232,129,58,.6)}.mc1{width:2px;height:80px;top:30%;left:48%;transform:rotate(15deg)}.mc2{width:2px;height:60px;top:25%;left:52%;transform:rotate(-25deg)}.mc3{width:1.5px;height:100px;top:20%;left:45%;transform:rotate(35deg)}.mc4{width:1.5px;height:50px;top:40%;left:55%;transform:rotate(-10deg)}.mc5{width:1px;height:70px;top:28%;left:50%;transform:rotate(-40deg)}.mc6{width:2px;height:40px;top:50%;left:47%;transform:rotate(50deg)}
+.mr-body::before,.mr-body::after{content:'';position:absolute;width:60px;height:60px;border:2px solid rgba(255,255,255,.06);pointer-events:none;transition:all .5s;z-index:1}.mr-body::before{top:20px;left:20px;border-right:none;border-bottom:none;border-radius:4px 0 0 0}.mr-body::after{bottom:20px;right:20px;border-left:none;border-top:none;border-radius:0 0 4px 0}.mr-body.revealed::before,.mr-body.revealed::after{border-color:rgba(46,173,107,.25)}
+
+/* You-are-here */
+.yah{display:flex;align-items:center;gap:0;width:100%;max-width:560px}
+.yah-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative}
+.yah-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:rgba(255,255,255,.4);border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);font-family:'JetBrains Mono',monospace}
+.yah-step.done .yah-dot{background:rgba(46,173,107,.15);border-color:var(--gr);color:var(--gr)}
+.yah-step.active .yah-dot{background:rgba(232,129,58,.2);border-color:var(--or);color:var(--or);box-shadow:0 0 16px rgba(232,129,58,.25);animation:yp 2s ease-in-out infinite}
+@keyframes yp{0%,100%{box-shadow:0 0 16px rgba(232,129,58,.15)}50%{box-shadow:0 0 24px rgba(232,129,58,.35)}}
+.yah-name{font-size:10px;color:rgba(255,255,255,.35);text-align:center;line-height:1.3;max-width:80px;font-weight:500}
+.yah-step.done .yah-name{color:rgba(255,255,255,.5)}.yah-step.active .yah-name{color:var(--or);font-weight:700}
+.yah-line{flex:0 0 auto;width:40px;height:2px;background:rgba(255,255,255,.08);margin:0 -4px;margin-bottom:20px}
+
+/* Breather */
+.breather{display:flex;flex-direction:column;align-items:center;padding:18px 24px 10px;min-height:480px;gap:12px}
+.breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.breather-caption{text-align:center;padding:4px 0 2px;max-width:640px}
+.breather-caption p{font-size:14px;line-height:1.6}
+.breather-caption strong{font-weight:700}
+.bg-warm{background:linear-gradient(170deg,#1e1a15,#1a1a1a,#1a1520)}
+.bg-warm .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-warm .breather-caption strong{color:var(--or)}
+
+/* Threat Spotlight */
+.ts-diagram{width:100%;max-width:580px;margin:0 auto}
+.ts-diagram svg{width:100%;height:auto}
+.ts-node{cursor:pointer;transition:all .2s}
+.ts-node:hover .ts-box{filter:brightness(1.3)}
+.ts-info{display:none;margin-top:10px;padding:12px 16px;background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.3);border-radius:8px;font-size:13px;color:rgba(245,242,237,.85);line-height:1.65;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.ts-info.open{display:block;animation:ta .25s ease forwards;opacity:1}
+.ts-info strong{color:#fff;font-weight:600}
+.ts-info .ts-tag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:10px;margin-bottom:6px}
+.ts-tag-ok{background:rgba(46,173,107,.15);color:var(--gr)}
+.ts-tag-warn{background:rgba(229,168,50,.15);color:#E5A832}
+.ts-tag-fail{background:rgba(217,69,69,.15);color:var(--rd)}
+
+/* Info dot */
+.idot-wrap{position:relative;margin:4px 0}.idot-trigger{display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none;background:none;padding:0;font-family:inherit}
+.idot{width:22px;height:22px;border-radius:50%;background:var(--or);color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;position:relative;z-index:1;flex-shrink:0;cursor:pointer;border:none;font-family:inherit}
+.idot::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--or);opacity:0;animation:ip 2s ease-in-out infinite}.idot-wrap.opened .idot::before{animation:none}
+@keyframes ip{0%{opacity:0;transform:scale(.8)}50%{opacity:.45;transform:scale(1.2)}100%{opacity:0;transform:scale(1.5)}}
+.idot-label{font-size:13px;color:var(--mu);font-weight:500}.idot-trigger:hover .idot-label{color:var(--td)}
+.idot-pop{display:none;margin-top:8px;padding:14px 16px;background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:10px;font-size:13.5px;color:rgba(245,242,237,.85);line-height:1.7;box-shadow:0 8px 28px rgba(0,0,0,.4)}
+.idot-pop.open{display:block;animation:ta .25s ease forwards;opacity:1}.idot-pop strong{color:#fff;font-weight:600}
+
+/* Reflect modal */
+#reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#reflect-modal.on{display:flex}
+.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:14px;padding:36px 40px 28px;max-width:560px;width:100%;text-align:center;color:#F5F2ED;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+.rm-q{font-size:22px;line-height:1.45;font-weight:300;margin-bottom:14px;color:#F5F2ED}.rm-q em{color:var(--or);font-style:normal;font-weight:600}
+.rm-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin:0 auto 24px;max-width:440px}
+.rm-actions{display:flex;gap:10px;justify-content:center}
+.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;width:28px;height:28px;border-radius:6px}.rm-close:hover{background:rgba(255,255,255,.08);color:#fff}
+
+@media(max-width:700px){.split{flex-direction:column}.sp-l{width:100%;min-height:auto;padding:16px 18px}.sp-r{max-height:none}.fbody{flex-direction:column;padding:32px 24px;gap:24px}.fb-visual{width:180px;height:180px}.fb-tt{font-size:28px}.mr-quote{font-size:20px}.mr-reality-text{font-size:15px}.mr-body{padding:28px 20px}.yah{flex-wrap:wrap;gap:4px}.yah-line{width:20px}.cdiff{grid-template-columns:1fr}.cdiff-bad{border-right:none;border-bottom:1px solid rgba(255,255,255,.06)}}
+</style>
+</head>
+<body>
+<main class="lms-main">
+<div class="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · Architecture against you</span><div class="sh-right"><div class="pips" id="pp0"></div></div></div>
+  <div class="sb"><div class="fbody"><div class="fb-content"><div class="fb-tg">Lens 3</div><div class="fb-tt">Architecture against you</div><div class="fb-sb">Broken access control, security misconfiguration, insecure design. Three risks with a common root: architectural decisions that create risk by default.</div></div>
+    <div class="fb-visual"><svg viewBox="0 0 200 200" width="200" height="200">
+      <!-- Building blocks that shift apart -->
+      <rect x="60" y="40" width="35" height="35" rx="4" fill="rgba(232,129,58,.15)" stroke="rgba(232,129,58,.4)" stroke-width="1.5"><animate attributeName="x" values="60;55;60" dur="4s" repeatCount="indefinite"/></rect>
+      <rect x="105" y="40" width="35" height="35" rx="4" fill="rgba(232,129,58,.15)" stroke="rgba(232,129,58,.4)" stroke-width="1.5"><animate attributeName="x" values="105;112;105" dur="4s" repeatCount="indefinite"/></rect>
+      <rect x="60" y="85" width="35" height="35" rx="4" fill="rgba(232,129,58,.1)" stroke="rgba(232,129,58,.3)" stroke-width="1"><animate attributeName="y" values="85;90;85" dur="5s" repeatCount="indefinite"/></rect>
+      <rect x="105" y="85" width="35" height="35" rx="4" fill="rgba(217,69,69,.12)" stroke="rgba(217,69,69,.4)" stroke-width="1.5"><animate attributeName="opacity" values="1;.5;1" dur="3s" repeatCount="indefinite"/></rect>
+      <rect x="60" y="130" width="80" height="30" rx="4" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+      <!-- Gap indicators -->
+      <line x1="95" y1="48" x2="105" y2="48" stroke="rgba(217,69,69,.5)" stroke-width="1" stroke-dasharray="2 2"><animate attributeName="opacity" values=".3;.8;.3" dur="2s" repeatCount="indefinite"/></line>
+      <text x="100" y="180" fill="rgba(255,255,255,.2)" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace" letter-spacing="1">GAP BY DESIGN</text>
+    </svg></div>
+  </div></div>
+  <div class="sf"><span class="shint">01 / 16</span><div class="snav"><button class="btn pri" onclick="go(1)">Start →</button></div></div>
+</div>
+
+<!-- ═══ S1 · YOU ARE HERE ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">Module 3</span> · Your progress</span><div class="sh-right"><div class="pips" id="pp1"></div></div></div>
+  <div class="sb"><div class="breather bg-warm" style="justify-content:center">
+    <div class="breather-visual" style="flex-direction:column;gap:28px">
+      <div class="yah">
+        <div class="yah-step done"><div class="yah-dot">&#10003;</div><div class="yah-name">Risk ≠ vulnerability</div></div>
+        <div class="yah-line" style="background:rgba(46,173,107,.3)"></div>
+        <div class="yah-step done"><div class="yah-dot">&#10003;</div><div class="yah-name">What changed and why</div></div>
+        <div class="yah-line" style="background:rgba(46,173,107,.3)"></div>
+        <div class="yah-step active"><div class="yah-dot">3</div><div class="yah-name">Architecture against you</div></div>
+        <div class="yah-line"></div>
+        <div class="yah-step"><div class="yah-dot">4</div><div class="yah-name">Someone else's code</div></div>
+        <div class="yah-line"></div>
+        <div class="yah-step"><div class="yah-dot">5</div><div class="yah-name">We can't predict everything</div></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Lenses 1 and 2 covered the <strong>foundation</strong> — what risks are, and how the list evolved. Now we look at three risks that share an uncomfortable root: <strong>your architecture creates them by default</strong>.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">02 / 16</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S2 · A01 INTRO ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · A01 — Broken access control</span><div class="sh-right"><div class="pips" id="pp2"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Permissions = capacities</div><div class="sp-s">A01 · Broken Access Control</div></div><div class="sp-r">
+    <div class="prose">Access control isn't just about data. <span class="gloss" data-def="Permissions define the capacities of a subject — a user, a service, a role. Capacities can be access to data, access to actions (functions), or both. Example: 'read file with this function' — both data and action.">Permissions</span> cover <strong>data and actions</strong> — what you can see and what you can do. A permission to "read file with this function" is both at once.</div>
+    <div class="prose">Two principles define the boundary:</div>
+    <div class="co"><strong><span class="gloss" data-def="Least privilege — every subject (user, service, process) gets only the permissions strictly needed for the task at hand. Nothing more.">Least privilege</span></strong> — every subject gets only what it strictly needs. <strong><span class="gloss" data-def="Separation of duties — no single subject should hold the full path to a sensitive outcome. Requires collaboration between multiple subjects to complete critical operations.">Separation of duties</span></strong> — no single subject holds the full path to a sensitive outcome.</div>
+    <div class="prose">What are the "objects" being protected? Anything electronic — database records, S3 bucket files, files on an nginx disk. There is no formal difference between a record in a database and a file in S3. It's all some electronic object with access that must be controlled.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">03 / 16</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S3 · THREAT SPOTLIGHT — distributed auth ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag"><span class="hl">Threat spotlight</span> · Where authorization breaks</span><div class="sh-right"><div class="pips" id="pp3"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Distributed auth</div><div class="sp-s">Click each service to see what happens inside</div></div><div class="sp-r" style="background:#0d0f14;padding:18px 20px">
+    <div class="ts-diagram">
+      <svg viewBox="0 0 520 130" xmlns="http://www.w3.org/2000/svg">
+        <!-- IdP -->
+        <rect x="10" y="42" width="72" height="42" rx="5" fill="rgba(74,143,212,.15)" stroke="rgba(74,143,212,.5)" stroke-width="1.5"/>
+        <text x="46" y="60" fill="rgba(74,143,212,.9)" font-size="10" font-weight="700" text-anchor="middle" font-family="DM Sans">IdP</text>
+        <text x="46" y="74" fill="rgba(255,255,255,.3)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">identity</text>
+        <!-- Arrow IdP → Token -->
+        <line x1="82" y1="63" x2="118" y2="63" stroke="rgba(255,255,255,.2)" stroke-width="1" stroke-dasharray="4 3"><animate attributeName="stroke-dashoffset" from="7" to="0" dur="1.5s" repeatCount="indefinite"/></line>
+        <!-- Token -->
+        <rect x="118" y="46" width="54" height="34" rx="4" fill="rgba(232,129,58,.12)" stroke="rgba(232,129,58,.4)" stroke-width="1.5"/>
+        <text x="145" y="60" fill="var(--or)" font-size="9" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">JWT</text>
+        <text x="145" y="72" fill="rgba(255,255,255,.25)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">token</text>
+        <!-- Arrows to services -->
+        <line x1="172" y1="55" x2="220" y2="22" stroke="rgba(255,255,255,.15)" stroke-width="1" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="6" to="0" dur="1.2s" repeatCount="indefinite"/></line>
+        <line x1="172" y1="63" x2="220" y2="63" stroke="rgba(255,255,255,.15)" stroke-width="1" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="6" to="0" dur="1.4s" repeatCount="indefinite"/></line>
+        <line x1="172" y1="71" x2="220" y2="106" stroke="rgba(255,255,255,.15)" stroke-width="1" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="6" to="0" dur="1.6s" repeatCount="indefinite"/></line>
+        <!-- Service A (checks roles) -->
+        <g class="ts-node" onclick="tsClick('ts-a')">
+          <rect class="ts-box" x="220" y="4" width="110" height="38" rx="5" fill="rgba(46,173,107,.08)" stroke="rgba(46,173,107,.4)" stroke-width="1.5"/>
+          <text x="275" y="21" fill="rgba(46,173,107,.85)" font-size="9" font-weight="700" text-anchor="middle" font-family="DM Sans">Service A</text>
+          <text x="275" y="34" fill="rgba(255,255,255,.3)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">checks roles ✓</text>
+        </g>
+        <!-- Service B (no check!) -->
+        <g class="ts-node" onclick="tsClick('ts-b')">
+          <rect class="ts-box" x="220" y="45" width="110" height="38" rx="5" fill="rgba(217,69,69,.1)" stroke="rgba(217,69,69,.45)" stroke-width="1.5">
+            <animate attributeName="stroke-opacity" values=".45;.8;.45" dur="2s" repeatCount="indefinite"/>
+          </rect>
+          <text x="275" y="62" fill="rgba(217,69,69,.85)" font-size="9" font-weight="700" text-anchor="middle" font-family="DM Sans">Service B</text>
+          <text x="275" y="75" fill="rgba(255,255,255,.3)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">no authz check ✗</text>
+        </g>
+        <!-- Service C (caches) -->
+        <g class="ts-node" onclick="tsClick('ts-c')">
+          <rect class="ts-box" x="220" y="87" width="110" height="38" rx="5" fill="rgba(229,168,50,.1)" stroke="rgba(229,168,50,.4)" stroke-width="1.5"/>
+          <text x="275" y="104" fill="rgba(229,168,50,.85)" font-size="9" font-weight="700" text-anchor="middle" font-family="DM Sans">Service C</text>
+          <text x="275" y="117" fill="rgba(255,255,255,.3)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">caches perms ⚡</text>
+        </g>
+        <!-- DB -->
+        <line x1="330" y1="23" x2="395" y2="63" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line x1="330" y1="64" x2="395" y2="63" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line x1="330" y1="106" x2="395" y2="63" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <ellipse cx="440" cy="63" rx="48" ry="26" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+        <text x="440" y="60" fill="rgba(255,255,255,.35)" font-size="9" font-weight="600" text-anchor="middle" font-family="DM Sans">Database</text>
+        <text x="440" y="74" fill="rgba(255,255,255,.2)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">tables</text>
+      </svg>
+    </div>
+    <div style="font-size:11px;color:rgba(232,129,58,.5);text-align:center;margin:6px 0 2px;font-weight:600;letter-spacing:.5px">↑ Click a service to inspect ↑</div>
+    <div class="ts-info" id="ts-a"><span class="ts-tag ts-tag-ok">Checks role claims</span><br>Service A validates the JWT signature <strong>and</strong> checks role claims against its own policy. If the token says <code style="color:var(--gr)">role: viewer</code>, write operations are denied. This is the correct pattern — but it's one service out of three.</div>
+    <div class="ts-info" id="ts-b"><span class="ts-tag ts-tag-fail">No authorization check</span><br>Service B validates the JWT signature but <strong>does not check role claims or permissions at all</strong>. Any valid token — regardless of role — gets full access. The team assumed "if the token is valid, the user is authorized." That assumption is the vulnerability.</div>
+    <div class="ts-info" id="ts-c"><span class="ts-tag ts-tag-warn">Caches permissions</span><br>Service C checks roles — but <strong>caches the result for 15 minutes</strong>. If a user's permissions are revoked, the cached version keeps granting access. The delay between revocation and enforcement is a window of exposure.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">04 / 16 · Interactive</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S4 · MYTH/REALITY — SSO solves authorization ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">Myth vs reality</span></span><div class="sh-right"><div class="pips" id="pp4"></div></div></div>
+  <div class="mr-body" id="mr0"><div class="mr-cracks"><div class="mr-crack mc1"></div><div class="mr-crack mc2"></div><div class="mr-crack mc3"></div><div class="mr-crack mc4"></div><div class="mr-crack mc5"></div><div class="mr-crack mc6"></div></div><div class="mr-container"><div class="mr-myth">
+      <span class="mr-icon">🔑</span><div class="mr-label">Common assumption</div>
+      <div class="mr-quote">"Okta / SSO solves our authorization problem"</div>
+      <button class="mr-reveal-btn" onclick="reveal('mr0')">Think again →</button>
+    </div><div class="mr-reality"><div class="mr-reality-label">Reality</div>
+      <div class="mr-reality-text">SSO solves <strong>identity</strong>. Authorization — who can access what — happens inside <strong>each service separately</strong>. Every microservice parses the token and makes its own access-control decisions. One service checks role claims. Another doesn't. A third caches permissions and misses revocations.<br><br><strong>"Tables have different shapes and structures — and that's why we have broken access control and security misconfiguration in first and second place."</strong></div>
+      <button class="mr-back" onclick="unreveal('mr0')">← Show myth again</button>
+  </div></div></div>
+  <div class="sf"><span class="shint">05 / 16</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S5 · QUIZ 1 — JWT scenario ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag">Knowledge check · scenario</span><div class="sh-right"><div class="pips" id="pp5"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="scenario"><div class="scenario-tag">Scenario</div><div class="scenario-text">Your microservice authorizes requests using JWT tokens. It validates the token <em>signature</em> to confirm the token wasn't tampered with — but it does not check the <em>expiration</em> field. A token stolen two weeks ago still grants access.</div></div>
+    <div class="qw" id="q1"><div class="qq">Which OWASP risk does this fall under?</div>
+      <button class="qo" onclick="pk('q1',0)">A) A02 — Security Misconfiguration</button>
+      <button class="qo" onclick="pk('q1',1)">B) A01 — Broken Access Control</button>
+      <button class="qo" onclick="pk('q1',2)">C) A07 — Authentication Failures</button>
+      <button class="qo" onclick="pk('q1',3)">D) A04 — Cryptographic Failures</button>
+      <div class="qe" id="q1-e"><strong>B — Broken Access Control.</strong> The token verification is partially implemented — the signature check works, but insufficient validation of the token's claims (expiration) means an attacker with a stolen token retains access indefinitely. This is an access control failure: the system fails to properly restrict access based on token validity. It's not misconfiguration (nothing was left at default) and not a crypto failure (the crypto itself is correct).</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">06 / 16 · Quiz</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S6 · A02 INTRO — Security Misconfiguration ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · A02 — Security Misconfiguration</span><div class="sh-right"><div class="pips" id="pp6"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Four ways configuration fails</div><div class="sp-s">A02 · Security Misconfiguration</div></div><div class="sp-r">
+    <div class="prose" style="font-size:14px">The old name was "shrink-wrap code attack" — using defaults straight out of the box. Today, four categories:</div>
+    <div class="reveal-steps" id="rv1">
+      <div class="reveal-step active" data-step="0"><div class="reveal-num">1</div><div class="reveal-body"><div class="reveal-title">Default configurations still in place</div><div class="reveal-text">Default users, default permissions, default databases. Remember <code>mysql_secure_installation</code>? Its entire purpose is removing defaults. With hundreds of components, forcing this step has become more important, not less.</div></div></div>
+      <div class="reveal-step locked" data-step="1"><div class="reveal-num">2</div><div class="reveal-body"><div class="reveal-title">Unnecessary features enabled</div><div class="reveal-text">Features you don't use can leak memory, eat resources, or expose attack surface — leading to application-level denial of service, or simply paying for resources you didn't need.</div></div></div>
+      <div class="reveal-step locked" data-step="2"><div class="reveal-num">3</div><div class="reveal-body"><div class="reveal-title">Backward compatibility / legacy support</div><div class="reveal-text">Maintaining backward compatibility sometimes forces insecure configurations. Launching a tool with Windows XP compatibility, for instance, can raise a vulnerable situation. Legacy support is a security cost.</div></div></div>
+      <div class="reveal-step locked" data-step="3"><div class="reveal-num">4</div><div class="reveal-body"><div class="reveal-title">Missing protective flags</div><div class="reveal-text">Cookie flags like <code>HttpOnly</code> and <code>Secure</code> are not set by default. Missing them means JavaScript can read your cookies and cookies travel over unencrypted connections. The absence of a flag is itself a misconfiguration.</div></div></div>
+    </div>
+    <button class="reveal-btn" onclick="advanceStep('rv1')">Reveal next category →</button>
+  </div></div></div>
+  <div class="sf"><span class="shint">07 / 16</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S7 · CODE DIFF — Cookie flags ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · The decisive fix</span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Cookie flags</div><div class="sp-s">The fix you can ship today</div></div><div class="sp-r" style="background:#0d0f14;padding:22px 20px">
+    <div class="cdiff">
+      <div class="cdiff-col cdiff-bad"><div class="cdiff-head">✗ Default (insecure)</div><div class="cdiff-code">Set-Cookie: session=abc123
+<span class="hl-bad">  // no flags</span>
+  // JS can read it
+  // sent over HTTP too</div></div>
+      <div class="cdiff-col cdiff-good"><div class="cdiff-head">✓ Hardened</div><div class="cdiff-code">Set-Cookie: session=abc123;
+  <span class="hl-good">HttpOnly</span>;
+  <span class="hl-good">Secure</span>;
+  SameSite=Strict;
+  Path=/</div></div>
+      <div class="cdiff-fix"><strong>The decisive fix:</strong> Add <code style="color:var(--gr)">HttpOnly</code> (prevents JS access) and <code style="color:var(--gr)">Secure</code> (HTTPS only). These two flags neutralize the most common cookie-theft vectors.</div>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:12px;line-height:1.5">By default, there is no HttpOnly, no Secure flag in the headers. Absence leads to potential data leakage.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">08 / 16</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S8 · TERMINAL — mysql_secure_installation ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · What secure defaults look like</span><div class="sh-right"><div class="pips" id="pp8"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Removing defaults</div><div class="sp-s">mysql_secure_installation</div></div><div class="sp-r" style="background:#0d0f14;padding:22px 20px">
+    <div class="term" id="term1"><div class="term-bar"><div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div><span class="term-title">secure installation</span></div><div class="term-body" id="term1-body"></div></div>
+    <button class="term-play" id="term1-play" onclick="playTerm('term1')">▶ Run it</button>
+    <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:14px;line-height:1.5">This command exists because <strong style="color:rgba(255,255,255,.6)">defaults are insecure by design</strong>. Every component you install comes with its own set of defaults that need hardening.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">09 / 16</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S9 · QUIZ 2 — refresh/access tokens ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag">Knowledge check · scenario</span><div class="sh-right"><div class="pips" id="pp9"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="scenario"><div class="scenario-tag">Scenario</div><div class="scenario-text">Your team stores <em>refresh tokens</em> in secure, HttpOnly cookies. But <em>access tokens</em> are stored in localStorage — accessible to any JavaScript running on the page.</div></div>
+    <div class="qw" id="q2"><div class="qq">Where's the problem?</div>
+      <button class="qo" onclick="pk('q2',0)">A) Refresh tokens should also be in localStorage</button>
+      <button class="qo" onclick="pk('q2',1)">B) Access tokens should also be in secure cookies</button>
+      <button class="qo" onclick="pk('q2',2)">C) Both should be in sessionStorage</button>
+      <button class="qo" onclick="pk('q2',3)">D) This setup is fine — access tokens are short-lived anyway</button>
+      <div class="qe" id="q2-e"><strong>B — Access tokens should also be in secure cookies.</strong> localStorage is accessible to any JavaScript on the page — including injected scripts from XSS attacks. A short-lived token in localStorage is still stealable during its lifetime. The same HttpOnly + Secure protections applied to refresh tokens should apply to access tokens. "Short-lived" is a mitigation, not a solution.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">10 / 16 · Quiz</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S10 · A06 — Insecure Design ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · A06 — Insecure Design</span><div class="sh-right"><div class="pips" id="pp10"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Insecure Design</div><div class="sp-s">A06 · Under pressure, checks get skipped</div></div><div class="sp-r">
+    <div class="scenario"><div class="scenario-tag">Key principle</div><div class="scenario-text">"Being under pressure, we didn't gather the requirements and environmental conditions properly. We didn't consider them in the design phase."</div></div>
+    <div class="prose">Insecure design isn't about missing a single check. It's about the <strong>design phase</strong> — when teams under delivery pressure skip gathering security requirements, environmental conditions, and boundary analysis altogether. The rank dropped from #4 to #6, but the number of CVEs hasn't decreased. The risk is as real as ever.</div>
+    <div class="co">Compare with decisions where teams <em>do</em> internalize risk: adding elasticity for load, using a VM scale set instead of a single VM. When the team is aware of consequences, they do preliminary checks. <strong>Insecure design is what happens when those checks aren't done.</strong></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">11 / 16</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · REVEAL STEPS — Dog analogy ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · Why it happens</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Running from a dog</div><div class="sp-s">The analogy that explains A06</div></div><div class="sp-r">
+    <div class="reveal-steps" id="rv2">
+      <div class="reveal-step active" data-step="0"><div class="reveal-num">1</div><div class="reveal-body"><div class="reveal-title">"When you're crossing the road, do you check for cars?"</div><div class="reveal-text">Of course. You look both ways. You have the time and awareness to evaluate risk before stepping off the curb.</div></div></div>
+      <div class="reveal-step locked" data-step="1"><div class="reveal-num">2</div><div class="reveal-body"><div class="reveal-title">"Do you always have the time to check?"</div><div class="reveal-text">Under normal conditions — yes. The background risk (cars) is always there, but you've internalized the check. It's automatic.</div></div></div>
+      <div class="reveal-step locked" data-step="2"><div class="reveal-num">3</div><div class="reveal-body"><div class="reveal-title">"When you run from a dog, you will not check."</div><div class="reveal-text">When the immediate risk feels survival-level, the background risk gets ignored. You just cross. <strong>Engineering teams running from a delivery deadline behave exactly like someone running from a dog — they skip the check.</strong></div></div></div>
+    </div>
+    <button class="reveal-btn" onclick="advanceStep('rv2')">Reveal next step →</button>
+  </div></div></div>
+  <div class="sf"><span class="shint">12 / 16</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S12 · QUIZ 3 — insecure design scenario ═══ -->
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag">Knowledge check · classify</span><div class="sh-right"><div class="pips" id="pp12"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="scenario"><div class="scenario-tag">Scenario</div><div class="scenario-text">A team under deadline pressure pushes a new payment feature to production. They skip the security review — "we'll do it next sprint." The feature has no rate limiting, no input validation on the amount field, and no fraud-detection hooks.</div></div>
+    <div class="qw" id="q3"><div class="qq">This is primarily an example of:</div>
+      <button class="qo" onclick="pk('q3',0)">A) A vulnerability — the missing validation is a bug</button>
+      <button class="qo" onclick="pk('q3',1)">B) A misconfiguration — rate limiting wasn't turned on</button>
+      <button class="qo" onclick="pk('q3',2)">C) A supply chain failure — they should have used a library</button>
+      <button class="qo" onclick="pk('q3',3)">D) Insecure design — security requirements were never gathered</button>
+      <div class="qe" id="q3-e"><strong>D — Insecure Design.</strong> The individual missing controls (validation, rate limiting, fraud detection) look like bugs or misconfigurations — but the root cause is deeper. The team never gathered security requirements during the design phase. Under deadline pressure, they skipped the check entirely. That's the dog analogy in action: the immediate threat (deadline) made the background risk (security) invisible.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">13 / 16 · Quiz</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S13 · BREATHER — Distributed auth animation ═══ -->
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · The picture</span><div class="sh-right"><div class="pips" id="pp13"></div></div></div>
+  <div class="sb"><div class="breather bg-warm">
+    <div class="breather-visual">
+      <svg viewBox="0 0 480 240" width="480" height="240" xmlns="http://www.w3.org/2000/svg">
+        <!-- Four microservices -->
+        <rect x="40" y="90" width="80" height="50" rx="6" fill="rgba(46,173,107,.08)" stroke="rgba(46,173,107,.35)" stroke-width="1.5"/>
+        <text x="80" y="112" fill="rgba(46,173,107,.8)" font-size="9" font-weight="700" text-anchor="middle" font-family="DM Sans">Auth ✓</text>
+        <text x="80" y="128" fill="rgba(255,255,255,.25)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">svc-users</text>
+
+        <rect x="150" y="90" width="80" height="50" rx="6" fill="rgba(46,173,107,.08)" stroke="rgba(46,173,107,.35)" stroke-width="1.5"/>
+        <text x="190" y="112" fill="rgba(46,173,107,.8)" font-size="9" font-weight="700" text-anchor="middle" font-family="DM Sans">Auth ✓</text>
+        <text x="190" y="128" fill="rgba(255,255,255,.25)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">svc-orders</text>
+
+        <rect x="260" y="90" width="80" height="50" rx="6" fill="rgba(46,173,107,.08)" stroke="rgba(46,173,107,.35)" stroke-width="1.5"/>
+        <text x="300" y="112" fill="rgba(46,173,107,.8)" font-size="9" font-weight="700" text-anchor="middle" font-family="DM Sans">Auth ✓</text>
+        <text x="300" y="128" fill="rgba(255,255,255,.25)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">svc-billing</text>
+
+        <!-- The failed one -->
+        <rect x="370" y="90" width="80" height="50" rx="6" fill="rgba(217,69,69,.1)" stroke="rgba(217,69,69,.5)" stroke-width="2">
+          <animate attributeName="stroke-opacity" values=".5;1;.5" dur="1.5s" repeatCount="indefinite"/>
+        </rect>
+        <text x="410" y="112" fill="rgba(217,69,69,.9)" font-size="9" font-weight="700" text-anchor="middle" font-family="DM Sans">Auth ✗</text>
+        <text x="410" y="128" fill="rgba(255,255,255,.25)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">svc-reports</text>
+        <!-- Red pulse ring -->
+        <rect x="365" y="85" width="90" height="60" rx="10" fill="none" stroke="rgba(217,69,69,.2)" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0;.4;0" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="rx" values="10;14;10" dur="2s" repeatCount="indefinite"/>
+        </rect>
+
+        <!-- Token arrows -->
+        <g>
+          <line x1="80" y1="75" x2="80" y2="90" stroke="rgba(232,129,58,.3)" stroke-width="1" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="6" to="0" dur="1s" repeatCount="indefinite"/></line>
+          <line x1="190" y1="75" x2="190" y2="90" stroke="rgba(232,129,58,.3)" stroke-width="1" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="6" to="0" dur="1.2s" repeatCount="indefinite"/></line>
+          <line x1="300" y1="75" x2="300" y2="90" stroke="rgba(232,129,58,.3)" stroke-width="1" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="6" to="0" dur="1.4s" repeatCount="indefinite"/></line>
+          <line x1="410" y1="75" x2="410" y2="90" stroke="rgba(217,69,69,.4)" stroke-width="1" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="6" to="0" dur="0.8s" repeatCount="indefinite"/></line>
+        </g>
+        <!-- Token labels -->
+        <text x="80" y="68" fill="rgba(232,129,58,.5)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">token</text>
+        <text x="190" y="68" fill="rgba(232,129,58,.5)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">token</text>
+        <text x="300" y="68" fill="rgba(232,129,58,.5)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">token</text>
+        <text x="410" y="68" fill="rgba(217,69,69,.5)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">token</text>
+
+        <!-- Bottom caption -->
+        <text x="240" y="185" fill="rgba(255,255,255,.45)" font-size="11" text-anchor="middle" font-family="DM Sans, sans-serif" font-weight="600">One missed check. That's all it takes.</text>
+        <text x="240" y="205" fill="rgba(255,255,255,.2)" font-size="8" text-anchor="middle" font-family="JetBrains Mono" letter-spacing="1">DISTRIBUTED AUTHORIZATION</text>
+      </svg>
+    </div>
+    <div class="breather-caption"><p>Every service makes its own authorization decision. Three out of four get it right. But the attacker only needs the <strong>one that doesn't</strong>.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">14 / 16</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn reflect-btn" onclick="openReflect('arch')">⏸ Reflect</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S14 · REFLECT (inline prompt, modal triggered from S13) ═══ -->
+<!-- S14 is the summary — reflect is triggered from S13 footer -->
+
+<!-- ═══ S14 · SUMMARY + SCORE ═══ -->
+<div class="slide" id="s14">
+  <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · What we covered</span><div class="sh-right"><div class="pips" id="pp14"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Lens 3 complete</div><div class="sp-s">Architecture against you</div></div><div class="sp-r">
+    <div class="co"><strong>A01 — Broken Access Control:</strong> distributed authorization means every service makes its own access decisions. Permissions = data + actions. One missed check is enough.</div>
+    <div class="co"><strong>A02 — Security Misconfiguration:</strong> defaults are insecure by design. Four categories: default configs, unnecessary features, backward compatibility, missing flags. Cookie flags are the lowest-hanging fruit.</div>
+    <div class="co"><strong>A06 — Insecure Design:</strong> under deadline pressure, security checks get skipped entirely. The root cause isn't laziness — it's the dog analogy. When the immediate threat dominates, background risk becomes invisible.</div>
+    <div class="co" id="final-score" style="text-align:center;font-size:15px;padding:16px 20px"><strong>Your score:</strong> calculating...</div>
+    <div class="prose">Next: <strong>Lens 4</strong> — supply chain, cryptographic failures, and data integrity. Three risks connected by trust in code you didn't write.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">15 / 16</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S15 · CLOSING NAV ═══ -->
+<div class="slide" id="s15">
+  <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · Done</span><div class="sh-right"><div class="pips" id="pp15"></div></div></div>
+  <div class="sb"><div class="fbody" style="min-height:320px;justify-content:center">
+    <div class="fb-content" style="text-align:center;max-width:500px;margin:0 auto">
+      <div class="fb-tg">Lens 3 complete</div>
+      <div class="fb-tt" style="font-size:28px;margin:0 auto 18px">Architecture creates risk by default. Your job is to make it explicit.</div>
+      <div class="fb-sb" style="max-width:420px;margin:0 auto">Three risks. One root: the decisions made (or not made) at the architecture level echo through every service, every config, every sprint.</div>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">16 / 16</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn" onclick="doRetake()">↻ Retake</button><button class="btn pri" onclick="go(0)">Finish Lens 3 ✓</button></div></div>
+</div>
+
+</div><!-- end deck -->
+
+<!-- REFLECT MODAL -->
+<div id="reflect-modal" role="dialog" aria-modal="true"><div class="rm-card">
+  <button class="rm-close" onclick="closeReflect()">×</button>
+  <div class="rm-tag">⏸ Pause to reflect</div>
+  <div class="rm-q" id="rm-q"></div>
+  <div class="rm-sub" id="rm-sub"></div>
+  <div class="rm-actions"><button class="btn pri" onclick="closeReflect()">Got it →</button></div>
+</div></div>
+
+<script>
+const T=16;let c=0;
+const DEFAULT_STATE={xp:0,streak:0,answers:{},wagers:{},reflections:[]};
+let state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};
+
+function go(n){if(n<0||n>=T)return;document.getElementById('s'+c).classList.remove('on');c=n;const s=document.getElementById('s'+n);s.classList.add('on');const r=s.querySelector('.sp-r');if(r)r.scrollTop=0;document.querySelectorAll('.pips').forEach(p=>bp(p));window.scrollTo(0,0);if(n===14){const fs=document.getElementById('final-score');if(fs){const tq=Object.keys(ans).length;const aw=Object.keys(state.answers).length;const cr=Object.values(state.answers).filter(a=>a.correct).length;if(aw===0)fs.innerHTML='<strong>You haven\'t answered any quizzes yet.</strong> Go back and try them.';else fs.innerHTML=`<strong>${cr} out of ${tq}</strong> correct · <strong>${state.xp} XP</strong> earned`;}}}
+
+function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}}
+
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'){e.preventDefault();go(c-1)}});
+
+function doRetake(){state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};document.querySelectorAll('.qo').forEach(o=>{o.classList.remove('pk','ok','no')});document.querySelectorAll('.qe').forEach(e=>{e.classList.remove('sh');const s=e.querySelector('.qe-score');if(s)s.remove()});document.querySelectorAll('.wager').forEach(w=>w.remove());document.querySelectorAll('.qw').forEach(buildWagerUI);document.querySelectorAll('.reveal-step').forEach((s,i)=>{s.classList.remove('active','done','locked');if(i===0)s.classList.add('active');else s.classList.add('locked')});document.querySelectorAll('.reveal-btn').forEach(b=>{b.disabled=false;b.textContent='Reveal next step →';b.textContent=b.closest('#s6')?'Reveal next category →':'Reveal next step →'});document.querySelectorAll('.mr-body').forEach(b=>b.classList.remove('revealed'));document.querySelectorAll('.ts-info').forEach(i=>{i.classList.remove('open')});go(0)}
+
+const ans={q1:1,q2:1,q3:3};
+const WAGERS=[{key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},{key:'pretty',mult:2,name:'Pretty sure',sub:'×2 if right · 1 if wrong'},{key:'guess',mult:1,name:'Just guessing',sub:'×1 either way'}];
+
+function buildWagerUI(qw){const qq=qw.querySelector('.qq');if(!qq)return;const qid=qw.id;const w=document.createElement('div');w.className='wager';w.dataset.qid=qid;w.innerHTML=`<div class="wager-lab">How confident are you?</div><div class="wager-row">${WAGERS.map(g=>`<button class="wager-btn" data-w="${g.key}" data-m="${g.mult}"><div class="wb-top"><span class="wb-mult">×${g.mult}</span><span class="wb-name">${g.name}</span></div><div class="wb-sub">${g.sub}</div></button>`).join('')}</div>`;qq.parentNode.insertBefore(w,qq.nextSibling);w.querySelectorAll('.wager-btn').forEach(btn=>{btn.onclick=()=>{if(w.classList.contains('locked'))return;w.querySelectorAll('.wager-btn').forEach(b=>b.classList.remove('pk'));btn.classList.add('pk');state.wagers[qid]=parseInt(btn.dataset.m,10)}});if(state.wagers[qid]){const b=w.querySelector(`.wager-btn[data-m="${state.wagers[qid]}"]`);if(b)b.classList.add('pk')}}
+
+function lockWager(qid){const w=document.querySelector(`.wager[data-qid="${qid}"]`);if(!w)return;w.classList.add('locked');w.querySelectorAll('.wager-btn').forEach(b=>b.disabled=true);const mult=state.wagers[qid]||1;const wn=WAGERS.find(g=>g.mult===mult)?.name||'Just guessing';w.innerHTML=`<div class="wager-locked-note">🎯 You wagered <b>${wn}</b> (×${mult})</div>`}
+
+function pk(q,i){const w=document.getElementById(q),o=w.querySelectorAll('.qo');if(o[0].classList.contains('pk'))return;if(!state.wagers[q])state.wagers[q]=1;const mult=state.wagers[q];const k=ans[q];const correct=(i===k);o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});let pts=0,kind='zero',msg='';if(correct){pts=mult*3;state.streak++;kind='';if(mult===3)msg=`Confident and correct. <b>+${pts} XP</b>`;else if(mult===2)msg=`Right call. <b>+${pts} XP</b>`;else msg=`Lucky guess — still counts. <b>+${pts} XP</b>`}else{if(mult===3){pts=0;kind='zero';msg=`Confidence didn\'t pay off. <b>+0 XP</b>`}else{pts=1;kind='humility';msg=`Humility bonus. <b>+1 XP</b>`}state.streak=0}state.xp+=pts;state.answers[q]={picked:i,correct,wager:mult,points:pts};lockWager(q);const e=document.getElementById(q+'-e');e.classList.add('sh');if(!e.querySelector('.qe-score')){const s=document.createElement('div');s.className='qe-score';s.innerHTML=`<span class="qs-pts ${kind}">${pts>0?'+':''}${pts} XP</span><span class="qs-msg">${msg}</span>`;e.appendChild(s)}}
+
+document.querySelectorAll('.qw').forEach(buildWagerUI);
+document.querySelectorAll('.pips').forEach(p=>bp(p));
+
+function advanceStep(gid){const g=document.getElementById(gid);const ss=g.querySelectorAll('.reveal-step');let cur=-1;ss.forEach((s,i)=>{if(s.classList.contains('active'))cur=i});if(cur<0||cur+1>=ss.length)return;ss[cur].classList.remove('active');ss[cur].classList.add('done');ss[cur+1].classList.remove('locked');ss[cur+1].classList.add('active');if(cur+2>=ss.length){const btn=g.parentElement.querySelector('.reveal-btn');if(btn){btn.textContent='All steps revealed ✓';btn.disabled=true}}}
+
+function tgd(id){const el=document.getElementById(id),p=el.querySelector('.idot-pop');if(p){p.classList.toggle('open');el.classList.toggle('opened')}}
+
+function reveal(id){document.getElementById(id).classList.add('revealed')}
+function unreveal(id){document.getElementById(id).classList.remove('revealed')}
+
+/* Threat Spotlight */
+function tsClick(id){const all=document.querySelectorAll('.ts-info');const target=document.getElementById(id);const isOpen=target.classList.contains('open');all.forEach(el=>el.classList.remove('open'));if(!isOpen)target.classList.add('open')}
+
+/* Terminal */
+const TERM_DATA={term1:[
+  {type:'cmd',text:'mysql_secure_installation'},
+  {type:'blank'},
+  {type:'info',text:'Securing the MySQL server deployment.'},
+  {type:'blank'},
+  {type:'info',text:'VALIDATE PASSWORD — Set password validation policy'},
+  {type:'ok',text:'Password validation enabled'},
+  {type:'blank'},
+  {type:'info',text:'Remove anonymous users?'},
+  {type:'ok',text:'Removing anonymous users... Success'},
+  {type:'blank'},
+  {type:'info',text:'Disallow root login remotely?'},
+  {type:'ok',text:'Removing remote root access... Success'},
+  {type:'blank'},
+  {type:'info',text:'Remove test database?'},
+  {type:'ok',text:'Dropping test database... Success'},
+  {type:'blank'},
+  {type:'atk',text:'4 default insecure configurations removed'},
+  {type:'ok',text:'All done. MySQL is now hardened.'}
+]};
+
+function playTerm(id){const body=document.getElementById(id+'-body');const btn=document.getElementById(id+'-play');const lines=TERM_DATA[id];if(!lines)return;body.innerHTML='';btn.disabled=true;lines.forEach((l,i)=>{setTimeout(()=>{const d=document.createElement('div');d.className='term-line'+(l.type?' '+l.type:'');if(l.type==='blank')d.innerHTML='&nbsp;';else d.textContent=l.text;d.style.animationDelay=(i*0)+'ms';body.appendChild(d);body.scrollTop=body.scrollHeight},i*280)});setTimeout(()=>{btn.disabled=false},lines.length*280+200)}
+
+/* Reflect */
+const REFLECT_PROMPTS={
+  arch:{
+    q:'Think about <em>your</em> architecture. How many services make their own authorization decisions?',
+    sub:'Who last verified that all of them check the same things? If nobody has — that\'s exactly where A01 lives.'
+  }
+};
+
+function openReflect(key){const p=REFLECT_PROMPTS[key];if(!p)return;document.getElementById('rm-q').innerHTML=p.q;document.getElementById('rm-sub').textContent=p.sub;document.getElementById('reflect-modal').classList.add('on');if(state.reflections&&!state.reflections.includes(key)){state.reflections.push(key);state.xp+=2}}
+function closeReflect(){document.getElementById('reflect-modal').classList.remove('on')}
+document.getElementById('reflect-modal').addEventListener('click',e=>{if(e.target.id==='reflect-modal')closeReflect()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeReflect()});
+
+/* Glossary tooltip */
+(function(){const tip=document.createElement('div');tip.id='gloss-tip';document.body.appendChild(tip);let cur=null;function place(el){tip.textContent=el.getAttribute('data-def')||'';const r=el.getBoundingClientRect();tip.style.left='0';tip.style.top='0';let left=r.left,top=r.top-tip.offsetHeight-10;if(left+tip.offsetWidth>window.innerWidth-8)left=window.innerWidth-tip.offsetWidth-8;if(left<8)left=8;if(top<8)top=r.bottom+10;tip.style.left=left+'px';tip.style.top=top+'px';tip.classList.add('on');cur=el}function hide(){tip.classList.remove('on');cur=null}document.addEventListener('mouseover',e=>{const g=e.target.closest('.gloss');if(g&&g!==cur)place(g)});document.addEventListener('mouseout',e=>{if(e.target.closest('.gloss'))hide()});document.addEventListener('click',e=>{const g=e.target.closest('.gloss');if(g&&window.matchMedia('(hover:none)').matches){if(cur===g)hide();else place(g);e.preventDefault();return}if(!g)hide()});document.addEventListener('scroll',hide,true)})();
+</script>
+</main>
+</body>
+</html>

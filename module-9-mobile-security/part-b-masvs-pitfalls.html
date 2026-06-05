@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MASVS &amp; Developer Pitfalls · Security Champions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:slide-in .4s cubic-bezier(.2,.6,.2,1) both}
+@keyframes slide-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.slide:not(.on) *{animation-play-state:paused!important}
+
+@media(prefers-reduced-motion:reduce){
+  .slide.on{animation:none}
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.01s!important}
+}
+
+/* ═══ Header & footer ═══ */
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh .sh-right{display:flex;align-items:center;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}
+.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}
+.btn.pri:hover{background:var(--od)}
+.btn.reflect-btn{border-color:rgba(232,129,58,.4);color:var(--or);background:rgba(232,129,58,.06)}
+.btn.reflect-btn:hover{background:rgba(232,129,58,.15);color:#fff}
+
+/* ═══ Pips ═══ */
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:280px;justify-content:flex-end}
+.pip{width:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}
+.pip.on{background:var(--or);transform:scaleY(1.8)}
+
+/* ═══ Score chip ═══ */
+.scorechip{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:4px 10px 4px 6px;margin-left:10px;font-family:inherit;cursor:default;transition:all .2s}
+.scorechip.bump{animation:sc-bump .5s ease}
+@keyframes sc-bump{0%{transform:scale(1)}30%{transform:scale(1.12);background:rgba(232,129,58,.18);border-color:rgba(232,129,58,.4)}100%{transform:scale(1)}}
+.scorechip .sc-rank{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--or);font-size:10px;font-weight:800;color:#1A1A1A;letter-spacing:.5px}
+.scorechip .sc-xp{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px}
+.scorechip .sc-xp b{color:var(--or)}
+.scorechip .sc-streak{font-size:10px;color:rgba(255,255,255,.5);font-weight:600;display:flex;align-items:center;gap:2px;border-left:1px solid rgba(255,255,255,.1);padding-left:8px}
+.scorechip .sc-streak.live{color:#FFB36B}
+.scorechip .sc-streak.live .sc-flame{filter:drop-shadow(0 0 4px rgba(255,150,80,.6));animation:flame-flick .8s ease-in-out infinite}
+@keyframes flame-flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.1) rotate(2deg)}}
+@media(max-width:560px){.scorechip .sc-streak{display:none}.scorechip{margin-left:6px;padding:3px 8px 3px 4px}}
+
+/* ═══ Split layout ═══ */
+.split{display:flex;min-height:480px}
+.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:20px;font-weight:700;color:var(--wh);line-height:1.25}
+.sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:480px}
+.sp-r::-webkit-scrollbar{width:3px}
+.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+
+/* ═══ Full-bleed dark ═══ */
+.sb{padding:0}
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}
+.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
+
+/* ═══ Cover particles ═══ */
+.cover-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.cover-particle{position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(232,129,58,.3);animation:cp-float linear infinite}
+@keyframes cp-float{0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-420px) scale(0);opacity:0}}
+
+/* ═══ Prose ═══ */
+.prose{font-size:15.5px;color:var(--tm);line-height:1.78}
+.prose strong{color:var(--td);font-weight:600}
+.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.prose em{font-style:italic}
+
+/* ═══ Callout ═══ */
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}
+.co em{font-style:italic;font-weight:500;color:var(--or)}
+.co strong{font-weight:600}
+
+/* ═══ Numbered callout ═══ */
+.numlist{padding:14px 18px;background:var(--ol);border-left:3px solid var(--or);border-radius:0 7px 7px 0;font-size:14px;line-height:1.7;color:var(--td)}
+.numlist b{font-weight:700}
+
+/* ═══ Glossary ═══ */
+.gloss{border-bottom:1px dotted var(--or);cursor:help;font-weight:600;color:inherit}
+#gloss-tip{position:fixed;background:#1a1620;color:#F5F2ED;font-size:12px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.4);box-shadow:0 8px 28px rgba(0,0,0,.55);max-width:300px;width:max-content;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none;z-index:9999;text-align:left;font-family:inherit}
+#gloss-tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+#gloss-tip::after{content:'';position:absolute;left:14px;top:100%;width:0;height:0;border:6px solid transparent;border-top-color:rgba(232,129,58,.5)}
+#gloss-tip.below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:rgba(232,129,58,.5)}
+
+/* ═══ Expand / accordion ═══ */
+.xp{margin:4px 0}
+.xh{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card);border:none;border-radius:6px;padding:12px 16px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--td);text-align:left;transition:background .1s}
+.xh:hover{background:#e5e5e5}
+.xa{font-size:13px;color:var(--mu);transition:transform .18s;margin-left:8px}.xa.op{transform:rotate(90deg);color:var(--or)}
+.xb{display:none;padding:14px 16px;background:var(--ow);border-radius:0 0 6px 6px;font-size:14px;color:var(--tm);line-height:1.7}
+.xb.op{display:block;animation:xb-open .25s ease both}
+@keyframes xb-open{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.xb strong{color:var(--td);font-weight:600}
+.xb code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* ═══ Quiz ═══ */
+.qw{margin:6px 0}
+.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}
+.qo.ok{border-color:var(--gr);background:var(--gl);animation:qo-correct .4s ease}
+@keyframes qo-correct{0%{transform:scale(1)}40%{transform:scale(1.02)}100%{transform:scale(1)}}
+.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55;animation:qo-wrong .35s ease}
+@keyframes qo-wrong{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block;animation:xb-open .3s ease both}.qe strong{color:var(--td)}
+.qe .qe-score{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:13px}
+.qe .qe-score .qs-pts{display:inline-flex;align-items:center;gap:4px;background:var(--gl);color:var(--gr);font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px;letter-spacing:.3px}
+.qe .qe-score .qs-pts.zero{background:var(--rl);color:var(--rd)}
+.qe .qe-score .qs-pts.humility{background:rgba(123,111,174,.12);color:var(--pu)}
+.qe .qe-score .qs-msg{color:var(--tm);font-size:12px}
+
+/* ═══ Wager UI ═══ */
+.wager{margin:6px 0 10px;background:linear-gradient(135deg,#fff8f2,#fff);border:1px dashed rgba(232,129,58,.4);border-radius:8px;padding:11px 14px;transition:all .25s}
+.wager.locked{opacity:.55;border-style:solid;border-color:var(--bd);background:var(--ow)}
+.wager-lab{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.wager-lab::before{content:'';width:14px;height:1px;background:var(--or)}
+.wager-row{display:flex;gap:6px;flex-wrap:wrap}
+.wager-btn{flex:1;min-width:90px;background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .12s}
+.wager-btn:hover{border-color:var(--or);transform:translateY(-1px);box-shadow:0 2px 8px rgba(232,129,58,.15)}
+.wager-btn.pk{border-color:var(--or);background:var(--ol)}
+.wager-btn.pk .wb-mult{background:var(--or);color:#fff}
+.wager-btn:disabled{cursor:not-allowed;opacity:.5}
+.wb-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.wb-mult{display:inline-flex;align-items:center;justify-content:center;background:var(--card);color:var(--td);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;letter-spacing:.3px}
+.wb-name{font-size:13px;font-weight:700;color:var(--td)}
+.wb-sub{font-size:11px;color:var(--mu);line-height:1.3}
+.wager-locked-note{font-size:11px;color:var(--mu);font-style:italic;display:flex;align-items:center;gap:6px}
+.wager-locked-note b{color:var(--td);font-style:normal;font-weight:600}
+
+/* ═══ Reflect modal ═══ */
+#reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#reflect-modal.on{display:flex;animation:rm-fade .25s ease}
+@keyframes rm-fade{from{opacity:0}to{opacity:1}}
+.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:14px;padding:36px 40px 28px;max-width:560px;width:100%;text-align:center;color:#F5F2ED;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:rm-card-in .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rm-card-in{from{opacity:0;transform:scale(.92) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+.rm-q{font-size:22px;line-height:1.45;font-weight:300;margin-bottom:14px;text-wrap:pretty;color:#F5F2ED}
+.rm-q em{color:var(--or);font-style:normal;font-weight:600}
+.rm-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin:0 auto 24px;max-width:440px}
+.rm-actions{display:flex;gap:10px;justify-content:center}
+.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;width:28px;height:28px;line-height:1;border-radius:6px}
+.rm-close:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* ═══ Retake modal ═══ */
+#retake-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#retake-modal.on{display:flex;animation:rm-fade .25s ease}
+.retake-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(217,69,69,.35);border-radius:14px;padding:32px 36px 26px;max-width:480px;width:100%;text-align:center;color:#F5F2ED;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.retake-tag{font-size:10px;letter-spacing:4px;color:#ff8888;font-weight:700;text-transform:uppercase;margin-bottom:14px}
+.retake-q{font-size:20px;line-height:1.4;font-weight:300;margin-bottom:10px;color:#F5F2ED}
+.retake-sub{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:22px}
+.retake-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn.retake-confirm{background:#ff5555;border-color:#ff5555;color:#fff;font-weight:600}
+.btn.retake-confirm:hover{background:#e04545}
+
+/* ═══ Toast ═══ */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1c1820;color:#F5F2ED;font-size:13px;padding:10px 20px;border-radius:8px;border:1px solid rgba(232,129,58,.3);opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:rgba(217,69,69,.4);color:#ff8888}
+
+/* ═══ Stagger fade-in for sp-r children ═══ */
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .3s ease both}
+.slide.on .sp-r>*:nth-child(1){animation-delay:.05s}
+.slide.on .sp-r>*:nth-child(2){animation-delay:.10s}
+.slide.on .sp-r>*:nth-child(3){animation-delay:.15s}
+.slide.on .sp-r>*:nth-child(4){animation-delay:.20s}
+.slide.on .sp-r>*:nth-child(5){animation-delay:.25s}
+.slide.on .sp-r>*:nth-child(6){animation-delay:.30s}
+
+/* ═══ Breather shared ═══ */
+.breather{display:flex;flex-direction:column;align-items:center;padding:18px 24px 10px;min-height:480px;gap:12px}
+.breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.breather-caption{text-align:center;padding:4px 0 2px;max-width:640px}
+.breather-caption p{font-size:14px;line-height:1.6}
+.breather-caption strong{font-weight:700}
+.breather-notice{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.4px;text-align:center;margin-top:6px;font-style:italic}
+.breather-notice b{color:rgba(255,255,255,.65);font-style:normal;font-weight:600}
+.bg-warm{background:linear-gradient(170deg,#1e1a15,#1a1a1a,#1a1520)}
+.bg-warm .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-warm .breather-caption strong{color:var(--or)}
+.bg-navy{background:linear-gradient(170deg,#12141e,#141822,#161420)}
+.bg-navy .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-navy .breather-caption strong{color:var(--or)}
+
+
+/* ═══ MASVS level cards ═══ */
+.masvs-levels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:660px}
+.masvs-lvl{padding:14px 12px;border-radius:8px;text-align:center;border:1px solid rgba(255,255,255,.08);transition:all .3s;position:relative;overflow:hidden}
+.masvs-lvl.lvl-1{background:rgba(46,173,107,.08);border-color:rgba(46,173,107,.2)}
+.masvs-lvl.lvl-2{background:rgba(232,129,58,.08);border-color:rgba(232,129,58,.2)}
+.masvs-lvl.lvl-r{background:rgba(123,111,174,.08);border-color:rgba(123,111,174,.2)}
+.masvs-lvl:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.slide.on .masvs-lvl{animation:m10-pop .4s cubic-bezier(.2,.8,.2,1) both}
+.slide.on .masvs-lvl:nth-child(1){animation-delay:.1s}
+.slide.on .masvs-lvl:nth-child(2){animation-delay:.25s}
+.slide.on .masvs-lvl:nth-child(3){animation-delay:.4s}
+/* Shimmer sweep on level cards */
+.masvs-lvl::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);animation:masvs-shimmer 5s ease-in-out infinite;pointer-events:none}
+@keyframes masvs-shimmer{0%,100%{left:-100%}50%{left:100%}}
+.masvs-tag{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.lvl-1 .masvs-tag{color:var(--gr)}.lvl-2 .masvs-tag{color:var(--or)}.lvl-r .masvs-tag{color:var(--pu)}
+.masvs-name{font-size:14px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:4px}
+.masvs-desc{font-size:11px;color:rgba(255,255,255,.5);line-height:1.5}
+@media(max-width:560px){.masvs-levels{grid-template-columns:1fr}}
+
+/* ═══ Checklist items ═══ */
+.chk-grid{display:flex;flex-direction:column;gap:6px}
+.chk-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--card);border-radius:6px;font-size:14px;color:var(--td);line-height:1.6;transition:all .15s}
+.chk-item:hover{background:#e5e5e5}
+/* Staggered checklist entrance */
+.slide.on .chk-item{animation:chk-slide .35s cubic-bezier(.2,.8,.2,1) both}
+.slide.on .chk-item:nth-child(1){animation-delay:.08s}
+.slide.on .chk-item:nth-child(2){animation-delay:.16s}
+.slide.on .chk-item:nth-child(3){animation-delay:.24s}
+.slide.on .chk-item:nth-child(4){animation-delay:.32s}
+@keyframes chk-slide{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+/* Icon pop on entrance */
+.slide.on .chk-icon{animation:chk-icon-pop .3s ease both}
+.slide.on .chk-item:nth-child(1) .chk-icon{animation-delay:.2s}
+.slide.on .chk-item:nth-child(2) .chk-icon{animation-delay:.28s}
+.slide.on .chk-item:nth-child(3) .chk-icon{animation-delay:.36s}
+.slide.on .chk-item:nth-child(4) .chk-icon{animation-delay:.44s}
+@keyframes chk-icon-pop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.chk-icon{flex-shrink:0;width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-top:1px}
+.chk-icon.pass{background:var(--gl);color:var(--gr)}
+.chk-icon.fail{background:var(--rl);color:var(--rd)}
+.chk-icon.warn{background:rgba(232,168,50,.12);color:#E5A832}
+.chk-text{flex:1}
+.chk-text strong{font-weight:600;color:var(--td)}
+.chk-text code{background:#e8e8e8;padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* ═══ Pitfall cards ═══ */
+.pitfall{border-left:3px solid var(--rd);padding:12px 16px;background:var(--rl);border-radius:0 7px 7px 0;margin:4px 0;position:relative;overflow:hidden}
+/* Entrance animation */
+.slide.on .pitfall{animation:pitfall-enter .4s cubic-bezier(.2,.8,.2,1) both .1s}
+@keyframes pitfall-enter{from{opacity:0;transform:translateX(-8px);border-left-width:0}to{opacity:1;transform:translateX(0);border-left-width:3px}}
+/* Pulsing left border */
+.pitfall::before{content:'';position:absolute;left:-1px;top:0;width:3px;height:100%;background:var(--rd);animation:pitfall-pulse 3s ease-in-out infinite}
+@keyframes pitfall-pulse{0%,100%{opacity:.5;box-shadow:none}50%{opacity:1;box-shadow:4px 0 12px rgba(217,69,69,.3)}}
+.pitfall-tag{font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--rd);text-transform:uppercase;margin-bottom:4px}
+.pitfall-body{font-size:14px;color:var(--td);line-height:1.65}
+.pitfall-body strong{font-weight:600}
+.pitfall-fix{margin-top:8px;padding:8px 12px;background:var(--gl);border-radius:5px;font-size:13px;color:var(--td);line-height:1.55}
+.pitfall-fix strong{color:var(--gr);font-weight:700}
+/* Fix card slides in after pitfall */
+.slide.on .pitfall-fix{animation:fix-reveal .3s ease both .5s}
+@keyframes fix-reveal{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ BREATHER: MASVS pyramid ═══ */
+.masvs-pyramid{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;max-width:500px}
+.masvs-pyr-row{display:flex;align-items:center;justify-content:center;border-radius:6px;padding:12px 18px;text-align:center;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .4s;position:relative}
+.masvs-pyr-row.pr-r{width:40%;background:rgba(123,111,174,.15);border:1px solid rgba(123,111,174,.35);color:var(--pu)}
+.masvs-pyr-row.pr-2{width:65%;background:rgba(232,129,58,.12);border:1px solid rgba(232,129,58,.3);color:var(--or)}
+.masvs-pyr-row.pr-1{width:90%;background:rgba(46,173,107,.1);border:1px solid rgba(46,173,107,.25);color:var(--gr)}
+/* pyramid rows animated via class-specific rules below */
+@keyframes pyr-grow{from{opacity:0;transform:scaleX(.5)}to{opacity:1;transform:scaleX(1)}}
+/* Gentle glow pulse after pyramid grows in */
+.masvs-pyr-row.pr-r{animation:pyr-grow .5s cubic-bezier(.2,.8,.2,1) both .1s,pyr-glow-pu 4s ease-in-out infinite 1s}
+.masvs-pyr-row.pr-2{animation:pyr-grow .5s cubic-bezier(.2,.8,.2,1) both .3s,pyr-glow-or 4s ease-in-out infinite 1.5s}
+.masvs-pyr-row.pr-1{animation:pyr-grow .5s cubic-bezier(.2,.8,.2,1) both .5s,pyr-glow-gr 4s ease-in-out infinite 2s}
+@keyframes pyr-glow-pu{0%,100%{box-shadow:none}50%{box-shadow:0 0 16px rgba(123,111,174,.25)}}
+@keyframes pyr-glow-or{0%,100%{box-shadow:none}50%{box-shadow:0 0 16px rgba(232,129,58,.2)}}
+@keyframes pyr-glow-gr{0%,100%{box-shadow:none}50%{box-shadow:0 0 16px rgba(46,173,107,.2)}}
+/* Pop animation for cards (referenced by MASVS level cards) */
+@keyframes m10-pop{from{opacity:0;transform:scale(.8) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.masvs-pyr-sub{font-size:9px;font-weight:400;letter-spacing:.5px;text-transform:none;color:rgba(255,255,255,.45);margin-top:2px;display:block}
+
+/* ═══ BREATHER: Cloud pitfall visual ═══ */
+.cloud-vis{display:flex;align-items:center;gap:16px;width:100%;max-width:600px;justify-content:center;flex-wrap:wrap}
+.cloud-node{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;min-width:100px;transition:all .4s}
+.cloud-node .cn-icon{font-size:24px;opacity:.7}
+.cloud-node .cn-label{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.cloud-node .cn-risk{font-size:9px;color:rgba(255,255,255,.35);text-align:center;line-height:1.4;max-width:90px}
+.cloud-arrow{color:rgba(255,255,255,.15);font-size:18px;font-weight:800}
+/* Cascade glow for cloud nodes */
+@keyframes dlayer-cascade{0%,100%{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06);box-shadow:none}8%{background:rgba(232,129,58,.15);border-color:rgba(232,129,58,.45);box-shadow:0 0 20px rgba(232,129,58,.2)}20%{background:rgba(232,129,58,.06);border-color:rgba(232,129,58,.2);box-shadow:none}30%{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)}}
+.slide.on .cloud-node{animation:dlayer-cascade 8s ease-in-out infinite}
+.slide.on .cloud-node:nth-child(1){animation-delay:0s}
+.slide.on .cloud-node:nth-child(3){animation-delay:2s}
+.slide.on .cloud-node:nth-child(5){animation-delay:4s}
+/* Arrow pulse following cascade */
+.slide.on .cloud-arrow{animation:carrow-pulse 8s ease-in-out infinite}
+.slide.on .cloud-arrow:nth-of-type(1){animation-delay:1s}
+.slide.on .cloud-arrow:nth-of-type(2){animation-delay:3s}
+@keyframes carrow-pulse{0%,100%{color:rgba(255,255,255,.15)}8%{color:var(--or)}20%{color:rgba(255,255,255,.15)}}
+
+/* ═══ Score grid ═══ */
+.score-summary{padding:16px 20px;text-align:center}
+.score-summary .score-title{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--or);margin-bottom:14px}
+.score-summary .score-body{font-size:16px;color:var(--wh);line-height:1.6}
+.score-summary .score-body b{color:var(--or)}
+
+/* ═══ Responsive ═══ */
+@media(max-width:560px){
+  .split{flex-direction:column}
+  .sp-l{width:100%;padding:14px 18px;min-height:auto}
+  .sp-l::after{display:none}
+  .sp-r{max-height:none}
+  .fbody{flex-direction:column;padding:28px 20px;gap:24px}
+  .fb-visual{width:160px;height:160px}
+  .fb-tt{font-size:28px}
+  .cloud-vis{flex-direction:column}
+  .cloud-arrow{transform:rotate(90deg)}
+}
+</style>
+</head>
+<body>
+<main class="lms-main">
+<div class="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Module 9b</span> · MASVS & Pitfalls</span><div class="pips" id="pp0"></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="cover-particles" id="cover-particles"></div>
+    <div class="fb-content" style="animation:fi .8s ease .2s both">
+      <div class="fb-tg">Security Champions · Module 9b</div>
+      <div class="fb-tt" style="animation:fi .8s ease .35s both">MASVS Framework &amp; Developer Pitfalls</div>
+      <div class="fb-sb" style="animation:fi .8s ease .5s both">Part 2 — using OWASP MASVS as a practical verification checklist, avoiding common mobile developer mistakes, and building your security pipeline.</div>
+    </div>
+    <div class="fb-visual" style="animation:fi 1s ease .4s both">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter></defs>
+        <rect x="50" y="30" width="100" height="140" rx="8" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/>
+        <line x1="70" y1="30" x2="70" y2="170" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+        <rect x="56" y="50" width="10" height="10" rx="2" fill="rgba(46,173,107,.3)" stroke="rgba(46,173,107,.5)" stroke-width="1.5"><animate attributeName="opacity" values=".3;1;.3" dur="4s" repeatCount="indefinite"/></rect>
+        <path d="M58 55 L60 57.5 L64 52" fill="none" stroke="var(--gr)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="78" y1="56" x2="135" y2="56" stroke="rgba(255,255,255,.2)" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="56" y="74" width="10" height="10" rx="2" fill="rgba(46,173,107,.3)" stroke="rgba(46,173,107,.5)" stroke-width="1.5"><animate attributeName="opacity" values=".3;1;.3" dur="4s" repeatCount="indefinite" begin="1s"/></rect>
+        <path d="M58 79 L60 81.5 L64 76" fill="none" stroke="var(--gr)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="78" y1="80" x2="125" y2="80" stroke="rgba(255,255,255,.2)" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="56" y="98" width="10" height="10" rx="2" fill="rgba(232,129,58,.2)" stroke="rgba(232,129,58,.5)" stroke-width="1.5"><animate attributeName="opacity" values=".3;1;.3" dur="3s" repeatCount="indefinite"/></rect>
+        <line x1="78" y1="104" x2="140" y2="104" stroke="rgba(255,255,255,.15)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="146" cy="104" r="3" fill="var(--or)" opacity=".6" filter="url(#glow)"><animate attributeName="opacity" values=".3;.8;.3" dur="1.5s" repeatCount="indefinite"/><animate attributeName="r" values="2;4;2" dur="1.5s" repeatCount="indefinite"/></circle>
+        <rect x="56" y="122" width="10" height="10" rx="2" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+        <line x1="78" y1="128" x2="118" y2="128" stroke="rgba(255,255,255,.08)" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="56" y="146" width="10" height="10" rx="2" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1.5"/>
+        <line x1="78" y1="152" x2="130" y2="152" stroke="rgba(255,255,255,.06)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">1 / 18</span><div class="snav"><button class="btn pri" onclick="go(1)">Start →</button></div></div>
+</div>
+
+<!-- ═══ S1 · Recap from Part 1 ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">Recap</span> · Part 1</span><div class="sh-right"><div class="pips" id="pp1"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Where we left off</div></div><div class="sp-r">
+    <div class="prose">Part 1 covered the <strong>OWASP Mobile Top 10</strong> — ten categories of risk, from hardcoded credentials (M1) to insufficient cryptography (M10). Two patterns emerged: "insecure" means absent controls; "insufficient" means weak controls.</div>
+    <div class="prose">Part 2 shifts from <em>what can go wrong</em> to <em>how to verify it's right.</em> The tool is <span class="gloss" data-def="Mobile Application Security Verification Standard — an OWASP framework providing a structured checklist for verifying mobile app security. Three levels: L1, L2, and R (resilience).">MASVS</span> — a structured verification framework that turns the Top 10 risks into actionable checklists.</div>
+    <div class="co">Part 1 was the threat landscape. Part 2 is the <em>verification discipline</em> — and the developer habits that either support or undermine it.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">2 / 18 · Recap</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S2 · MASVS intro ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · MASVS intro</span><div class="sh-right"><div class="pips" id="pp2"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">A checklist, not a policy</div></div><div class="sp-r">
+    <div class="prose">MASVS — the Mobile Application Security Verification Standard — is OWASP's answer to a simple question: <strong>how do you know your mobile app is secure enough?</strong> Not through opinion or intuition, but through a structured list of verifiable requirements.</div>
+    <div class="prose">Unlike the Mobile Top 10 (which describes <em>risks</em>), MASVS describes <em>controls</em> — concrete, testable statements like "the app does not export sensitive data via IPC mechanisms" or "all cryptographic operations use platform-provided implementations."</div>
+    <div class="xp" id="x2a"><button class="xh" aria-expanded="false" aria-controls="x2a-p" onclick="tg('x2a')"><span class="xt">MASVS vs MASTG — what's the difference?</span><span class="xa">›</span></button>
+      <div class="xb" id="x2a-p"><strong>MASVS</strong> defines <em>what</em> to verify (the requirements). <strong>MASTG</strong> (Mobile Application Security Testing Guide) defines <em>how</em> to test each requirement — specific tools, techniques, and test cases. Think of MASVS as the checklist and MASTG as the lab manual. Your team needs both, but MASVS comes first because it tells you what "done" looks like.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">3 / 18 · MASVS</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S3 · Breather: MASVS pyramid ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag"><span class="hl">Visual</span> · Three verification levels</span><div class="sh-right"><div class="pips" id="pp3"></div></div></div>
+  <div class="sb"><div class="breather bg-navy" style="padding:24px 28px 14px">
+    <div style="font-size:11px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:12px">MASVS Verification Levels</div>
+    <div class="breather-visual" style="flex-direction:column;gap:10px">
+      <div class="masvs-pyramid">
+        <div class="masvs-pyr-row pr-r">R · Resilience<span class="masvs-pyr-sub">Anti-tampering, anti-reverse-engineering</span></div>
+        <div class="masvs-pyr-row pr-2">L2 · Defense in Depth<span class="masvs-pyr-sub">Threat model driven. Financial, healthcare, regulated.</span></div>
+        <div class="masvs-pyr-row pr-1">L1 · Standard Security<span class="masvs-pyr-sub">Every app. Baseline hygiene. Non-negotiable.</span></div>
+      </div>
+      <div class="masvs-levels">
+        <div class="masvs-lvl lvl-1"><div class="masvs-tag">L1</div><div class="masvs-name">Standard</div><div class="masvs-desc">Every app must pass. Covers storage, network, auth basics. Your CI/CD minimum gate.</div></div>
+        <div class="masvs-lvl lvl-2"><div class="masvs-tag">L2</div><div class="masvs-name">Defense in Depth</div><div class="masvs-desc">Threat-model-driven. Certificate pinning, advanced auth, data classification. For apps handling sensitive data.</div></div>
+        <div class="masvs-lvl lvl-r"><div class="masvs-tag">R</div><div class="masvs-name">Resilience</div><div class="masvs-desc">Anti-tampering, jailbreak detection, debugger checks. For apps where the binary itself is a target.</div></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Pick the level that matches your <strong>threat model</strong>, not your ambition. L1 is mandatory for every app. L2 and R add cost — spend it where the risk justifies it.</p></div>
+    <div class="breather-notice">Notice — <b>the pyramid gets narrower at the top.</b> Fewer apps need R-level resilience. Most need L1 done well.</div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn reflect-btn" onclick="openReflect('masvs')">⏸ Reflect</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S4 · MASVS Storage checklist ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Storage checks</span><div class="sh-right"><div class="pips" id="pp4"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">MASVS-STORAGE</div><div class="sp-s">What to verify</div></div><div class="sp-r">
+    <div class="prose">The MASVS storage category has the highest failure rate in mobile assessments. These are the checks that matter most:</div>
+    <div class="chk-grid">
+      <div class="chk-item"><div class="chk-icon fail">✗</div><div class="chk-text"><strong>No sensitive data in logs.</strong> Check for <code>NSLog</code>, <code>Log.d</code>, <code>print()</code> statements that output tokens, emails, or session IDs.</div></div>
+      <div class="chk-item"><div class="chk-icon fail">✗</div><div class="chk-text"><strong>No sensitive data in backups.</strong> Verify <code>allowBackup=false</code> on Android and exclude sensitive files from iCloud backup on iOS.</div></div>
+      <div class="chk-item"><div class="chk-icon pass">✓</div><div class="chk-text"><strong>Keychain / Keystore for secrets.</strong> All tokens, keys, and credentials stored via platform secure storage — not SharedPreferences or NSUserDefaults.</div></div>
+      <div class="chk-item"><div class="chk-icon pass">✓</div><div class="chk-text"><strong>Clipboard cleared.</strong> Sensitive fields use <code>secureTextEntry</code> (iOS) or <code>TYPE_TEXT_VARIATION_PASSWORD</code> (Android) to prevent clipboard caching.</div></div>
+    </div>
+    <div class="xp" id="x4a"><button class="xh" aria-expanded="false" aria-controls="x4a-p" onclick="tg('x4a')"><span class="xt">How to automate these checks</span><span class="xa">›</span></button>
+      <div class="xb" id="x4a-p">Most storage checks can run as SAST rules in your CI/CD pipeline. Tools like <strong>MobSF</strong> (Mobile Security Framework) scan APK/IPA files and flag storage violations automatically. The champion's job isn't running the tool — it's ensuring the pipeline <em>blocks the build</em> when it finds violations, rather than generating reports nobody reads.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">5 / 18 · Storage</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S5 · MASVS Crypto checklist ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Crypto checks</span><div class="sh-right"><div class="pips" id="pp5"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">MASVS-CRYPTO</div><div class="sp-s">What to verify</div></div><div class="sp-r">
+    <div class="prose">Cryptography failures aren't about missing encryption — they're about using it incorrectly. MASVS crypto checks catch the implementation mistakes:</div>
+    <div class="chk-grid">
+      <div class="chk-item"><div class="chk-icon fail">✗</div><div class="chk-text"><strong>No deprecated algorithms.</strong> MD5, SHA-1 for security purposes, DES, 3DES, RC4 — all banned. Check dependencies too; an SDK may use weak crypto internally.</div></div>
+      <div class="chk-item"><div class="chk-icon fail">✗</div><div class="chk-text"><strong>No hardcoded keys.</strong> Encryption keys stored as string literals in source code. Use platform key generation APIs instead.</div></div>
+      <div class="chk-item"><div class="chk-icon pass">✓</div><div class="chk-text"><strong>Random IVs per operation.</strong> AES requires a unique initialization vector for every encryption call. Static IVs mean identical plaintexts produce identical ciphertexts.</div></div>
+      <div class="chk-item"><div class="chk-icon pass">✓</div><div class="chk-text"><strong>Platform crypto APIs.</strong> Use <code>Security</code> framework (iOS) or <code>javax.crypto</code> with Android Keystore provider — not custom implementations.</div></div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">6 / 18 · Crypto</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S6 · MASVS Auth checklist ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Auth checks</span><div class="sh-right"><div class="pips" id="pp6"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">MASVS-AUTH</div><div class="sp-s">What to verify</div></div><div class="sp-r">
+    <div class="prose">Authentication and authorization verification requires testing <em>both</em> the client and the backend. A client-side biometric check without server-side session validation is a UX feature, not a security control.</div>
+    <div class="chk-grid">
+      <div class="chk-item"><div class="chk-icon pass">✓</div><div class="chk-text"><strong>Server-side session management.</strong> All auth decisions enforced on the backend. The client displays UI — the server decides access.</div></div>
+      <div class="chk-item"><div class="chk-icon pass">✓</div><div class="chk-text"><strong>Token expiration and refresh.</strong> Short-lived access tokens with server-validated refresh tokens. No eternal sessions.</div></div>
+      <div class="chk-item"><div class="chk-icon fail">✗</div><div class="chk-text"><strong>No client-only authorization.</strong> If the app hides a button to restrict access, but the API endpoint accepts the request anyway — that's a BOLA vulnerability, not access control.</div></div>
+      <div class="chk-item"><div class="chk-icon warn">!</div><div class="chk-text"><strong>Biometrics backed by crypto.</strong> L2 apps should bind biometric auth to a cryptographic key in the secure enclave — not just a boolean <code>isAuthenticated</code> flag.</div></div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">7 / 18 · Auth</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S7 · Best practice: MASVS as living checklist ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">Best practice</span> · Living checklist</span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">MASVS as a living document</div></div><div class="sp-r">
+    <div class="prose">The most common mistake with MASVS: treating it as a one-time audit checklist. Run it once, get a report, file it. Six months later, new features have introduced new storage patterns, new SDKs, new API endpoints — and the report is stale.</div>
+    <div class="prose">The better model: <strong>MASVS as a living checklist integrated into your release process.</strong> Each release gets a lightweight MASVS pass on the areas that changed. New storage? Run the storage checks. New auth flow? Run the auth checks. Not the full list every time — just the sections that match the delta.</div>
+    <div class="co"><em>A Champion's role with MASVS:</em> maintain a mapping between your app's features and the relevant MASVS sections. When a feature changes, the corresponding checks are triggered automatically — or at minimum, flagged for manual review.</div>
+    <div class="xp" id="x7a"><button class="xh" aria-expanded="false" aria-controls="x7a-p" onclick="tg('x7a')"><span class="xt">The MASVS coverage spreadsheet pattern</span><span class="xa">›</span></button>
+      <div class="xb" id="x7a-p">Some teams maintain a spreadsheet mapping each MASVS requirement to: the feature it applies to, the last time it was verified, the tool or method used, and the result. This sounds bureaucratic, but it takes 30 minutes to set up and converts MASVS from an abstract standard into a concrete, auditable record. When a pentest report asks "do you follow MASVS?" you have a timestamped answer.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">8 / 18 · Best practice</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S8 · Quiz 1: MASVS ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag">Knowledge check · MASVS levels</span><div class="sh-right"><div class="pips" id="pp8"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q1">
+      <div class="qq">Your team builds a banking app that handles financial transactions and stores payment credentials. Which MASVS level is the minimum appropriate verification target?</div>
+      <button class="qo" onclick="pk('q1',0)">A) L1 only — it covers the baseline security every app needs</button>
+      <button class="qo" onclick="pk('q1',1)">B) L2 — the app handles sensitive financial data, requiring defense-in-depth verification</button>
+      <button class="qo" onclick="pk('q1',2)">C) R only — banking apps need anti-tampering above all else</button>
+      <button class="qo" onclick="pk('q1',3)">D) L1 + R — standard security plus resilience, but no need for L2</button>
+    </div>
+    <div class="qe" id="q1-e"><strong>Correct: B.</strong> Financial apps handling transactions and payment credentials fall squarely into L2 territory — defense-in-depth with threat-model-driven controls like certificate pinning, advanced session management, and data classification. L1 alone is insufficient for regulated data. R (resilience) may also apply if the binary processes sensitive algorithms locally, but L2 is the minimum baseline. The levels are additive: L2 includes all L1 requirements.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">9 / 18 · Quiz</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S9 · Pitfall 1: Client trust ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · Pitfall · Client trust</span><div class="sh-right"><div class="pips" id="pp9"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Trusting the client</div></div><div class="sp-r">
+    <div class="pitfall"><div class="pitfall-tag">Developer pitfall</div><div class="pitfall-body">Business logic runs <strong>only</strong> on the client. The backend trusts whatever the app sends — prices, quantities, authorization flags, feature toggles.</div><div class="pitfall-fix"><strong>Fix:</strong> Server-side enforcement for every decision that affects money, access, or data. The client is a display layer.</div></div>
+    <div class="prose">This is the single most common mobile development mistake. It manifests differently in every app, but the pattern is identical: a developer implements a check on the client, assumes it's sufficient, and skips the backend validation.</div>
+    <div class="xp" id="x9a"><button class="xh" aria-expanded="false" aria-controls="x9a-p" onclick="tg('x9a')"><span class="xt">Feature flags as a security boundary</span><span class="xa">›</span></button>
+      <div class="xb" id="x9a-p">A common variant: premium features "disabled" on the client via a feature flag. The API endpoints for those features still accept requests from any authenticated user. An attacker with a proxy enables the features by flipping the client flag — or just calls the API directly. <strong>Feature access must be enforced server-side.</strong></div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">10 / 18 · Pitfall 1</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S10 · Pitfall 2: Secrets & AI ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · Pitfall · Secrets & AI</span><div class="sh-right"><div class="pips" id="pp10"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Secrets in the age of AI</div></div><div class="sp-r">
+    <div class="pitfall"><div class="pitfall-tag">Developer pitfall</div><div class="pitfall-body">AI-generated code includes <strong>placeholder credentials that become production secrets.</strong> The LLM suggests an API key format, the developer fills it in, and it ships.</div><div class="pitfall-fix"><strong>Fix:</strong> Pre-commit hooks with secret detection (e.g., <code>gitleaks</code>, <code>trufflehog</code>). Catch secrets before they enter version control.</div></div>
+    <div class="prose">The AI coding assistant problem is new and subtle. The tool generates code that <em>works</em> — with hardcoded connection strings, API keys in config files, and inline credentials. The developer reviews the logic, not the secrets. The code passes review because the reviewer is checking functionality, not scanning for credential patterns.</div>
+    <div class="xp" id="x10a"><button class="xh" aria-expanded="false" aria-controls="x10a-p" onclick="tg('x10a')"><span class="xt">The three-layer secret defense</span><span class="xa">›</span></button>
+      <div class="xb" id="x10a-p"><strong>Layer 1 — IDE plugin:</strong> flag secrets as you type (GitGuardian, GitHub Copilot security). <strong>Layer 2 — Pre-commit hook:</strong> scan staged files before commit (<code>gitleaks</code>). <strong>Layer 3 — CI pipeline:</strong> scan the full repo on every PR. Three layers because no single layer catches everything, and developers will bypass any layer that interrupts their flow too aggressively.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">11 / 18 · Pitfall 2</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · Pitfall 3: CI/CD ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · Pitfall · CI/CD gaps</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The pipeline that doesn't block</div></div><div class="sp-r">
+    <div class="pitfall"><div class="pitfall-tag">Developer pitfall</div><div class="pitfall-body">Security scanning runs in CI/CD but <strong>only generates reports</strong> — it never blocks the build. Teams accumulate findings they never fix because there's no enforcement mechanism.</div><div class="pitfall-fix"><strong>Fix:</strong> Security gates that break the build on critical/high findings. Non-blocking for low/medium — but tracked with SLAs.</div></div>
+    <div class="prose">The gap between "we run security scans" and "security scans affect our releases" is where most mobile security programs die. A scan that produces a PDF is a compliance artifact. A scan that blocks a release is a security control.</div>
+    <div class="xp" id="x11a"><button class="xh" aria-expanded="false" aria-controls="x11a-p" onclick="tg('x11a')"><span class="xt">The minimum mobile CI/CD security gates</span><span class="xa">›</span></button>
+      <div class="xb" id="x11a-p"><strong>Gate 1:</strong> Secret detection (block on any credential found). <strong>Gate 2:</strong> Dependency check for known vulnerabilities (block on critical CVEs). <strong>Gate 3:</strong> Configuration validation — debug disabled, ATS enabled, backup disabled. <strong>Gate 4:</strong> SAST for mobile-specific patterns (block on high). These four gates catch the majority of shippable mobile security issues. They add ~2 minutes to a build.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">12 / 18 · Pitfall 3</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S12 · Pitfall 4: Cloud backend ═══ -->
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · Pitfall · Cloud backend</span><div class="sh-right"><div class="pips" id="pp12"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The backend you forgot to secure</div></div><div class="sp-r">
+    <div class="pitfall"><div class="pitfall-tag">Developer pitfall</div><div class="pitfall-body">Mobile teams focus on app security but <strong>leave cloud infrastructure with default configurations</strong> — open S3 buckets, Firebase rules set to public, misconfigured API gateways.</div><div class="pitfall-fix"><strong>Fix:</strong> Infrastructure-as-code security scanning. Treat backend config as part of the mobile security scope.</div></div>
+    <div class="prose">A mobile app is only as secure as its backend. Open Firebase Realtime Database rules, publicly accessible S3 buckets storing user uploads, API gateways without rate limiting — these aren't "backend team problems." If the mobile app depends on them, they're mobile security problems.</div>
+    <div class="xp" id="x12a"><button class="xh" aria-expanded="false" aria-controls="x12a-p" onclick="tg('x12a')"><span class="xt">The Firebase rules mistake</span><span class="xa">›</span></button>
+      <div class="xb" id="x12a-p">During development, Firebase rules are often set to <code>{ ".read": true, ".write": true }</code> for convenience. This ships to production more than you'd think. A single curl command to <code>your-project.firebaseio.com/.json</code> returns the entire database. Google Cloud's security scanner can detect this, but it needs to be enabled and integrated into the release process — not run quarterly.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">13 / 18 · Pitfall 4</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S13 · Breather: Cloud attack surface ═══ -->
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag"><span class="hl">Visual</span> · Mobile backend surface</span><div class="sh-right"><div class="pips" id="pp13"></div></div></div>
+  <div class="sb"><div class="breather bg-warm" style="padding:24px 28px 14px">
+    <div style="font-size:11px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:12px">The Mobile Backend Attack Surface</div>
+    <div class="breather-visual" style="flex-direction:column;gap:10px">
+      <div class="cloud-vis">
+        <div class="cloud-node"><div class="cn-icon">📱</div><div class="cn-label">App</div><div class="cn-risk">Client code<br>SDK data</div></div>
+        <div class="cloud-arrow">→</div>
+        <div class="cloud-node"><div class="cn-icon">🌐</div><div class="cn-label">API</div><div class="cn-risk">Auth, rate limits<br>Input validation</div></div>
+        <div class="cloud-arrow">→</div>
+        <div class="cloud-node"><div class="cn-icon">☁️</div><div class="cn-label">Cloud</div><div class="cn-risk">Firebase rules<br>S3 permissions<br>IAM policies</div></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>The mobile attack surface doesn't end at the app binary. Your <strong>cloud backend configuration</strong> is part of your mobile security scope.</p></div>
+    <div class="breather-notice">Notice — <b>each node glows in sequence.</b> An attacker moves through the same chain, looking for the weakest link.</div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn reflect-btn" onclick="openReflect('cloud')">⏸ Reflect</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S14 · Quiz 2: Pitfalls ═══ -->
+<div class="slide" id="s14">
+  <div class="sh"><span class="stag">Knowledge check · Developer pitfalls</span><div class="sh-right"><div class="pips" id="pp14"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q2">
+      <div class="qq">A team runs SAST and dependency scanning in their mobile CI/CD pipeline. Scan results are emailed to the security team weekly. What is the most critical gap in this setup?</div>
+      <button class="qo" onclick="pk('q2',0)">A) SAST alone is insufficient — they need DAST as well</button>
+      <button class="qo" onclick="pk('q2',1)">B) Weekly emails mean findings accumulate without blocking releases — the pipeline should break the build on critical issues</button>
+      <button class="qo" onclick="pk('q2',2)">C) The security team shouldn't be the recipient — developers should receive the results directly</button>
+      <button class="qo" onclick="pk('q2',3)">D) Dependency scanning is redundant if SAST is already running</button>
+    </div>
+    <div class="qe" id="q2-e"><strong>Correct: B.</strong> The fundamental gap is enforcement, not coverage. Scanning that generates reports without blocking releases is a compliance exercise, not a security control. Critical and high findings should break the build. Medium and low findings get tracked with SLAs. The shift from "we scan" to "scans affect our releases" is where security programs go from aspirational to operational.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">15 / 18 · Quiz</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S15 · Summary ═══ -->
+<div class="slide" id="s15">
+  <div class="sh"><span class="stag"><span class="hl">Summary</span> · Part 2</span><div class="sh-right"><div class="pips" id="pp15"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What you covered</div></div><div class="sp-r">
+    <div class="numlist"><b>01:</b> MASVS provides three verification levels — L1 (every app), L2 (defense-in-depth for sensitive data), R (resilience against reverse engineering). Pick the level that matches your threat model.</div>
+    <div class="numlist"><b>02:</b> Storage, crypto, and auth each have concrete MASVS checklists. The champion's job is integrating these into the release process, not running them once.</div>
+    <div class="numlist"><b>03:</b> Four developer pitfalls dominate mobile security failures: client trust, AI-introduced secrets, non-blocking CI/CD scans, and unsecured cloud backends.</div>
+    <div class="numlist"><b>04:</b> The pipeline is the enforcement mechanism. A security scan that doesn't block a release is a report, not a control.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">16 / 18 · Summary</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn pri" onclick="go(16)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S16 · Score grid ═══ -->
+<div class="slide" id="s16">
+  <div class="sh"><span class="stag"><span class="hl">Module 9b</span> · Your score</span><div class="sh-right"><div class="pips" id="pp16"></div></div></div>
+  <div class="sb"><div class="fbody" style="justify-content:center;flex-direction:column;align-items:center;text-align:center;gap:20px">
+    <div class="score-summary">
+      <div class="score-title">Part 2 Results</div>
+      <div class="score-body" id="final-score">Calculating...</div>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">17 / 18 · Score</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn" onclick="openRetake()">↻ Retake</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S17 · Bridge to Part 3 ═══ -->
+<div class="slide" id="s17">
+  <div class="sh"><span class="stag"><span class="hl">Next</span> · Part 3</span><div class="pips" id="pp17"></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content" style="animation:fi .8s ease .2s both">
+      <div class="fb-tg">Next</div>
+      <div class="fb-tt" style="animation:fi .8s ease .35s both">Action Plan &amp; Course Finale</div>
+      <div class="fb-sb" style="animation:fi .8s ease .5s both">Part 3: building your five-step mobile security action plan, the security kernel concept, and completing the Security Champions journey.</div>
+    </div>
+    <div class="fb-visual" style="animation:fi 1s ease .4s both">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(232,129,58,.15)" stroke-width="1.5" stroke-dasharray="6 4"><animateTransform attributeName="transform" type="rotate" values="0 100 100;360 100 100" dur="30s" repeatCount="indefinite"/></circle>
+        <circle cx="100" cy="100" r="40" fill="none" stroke="rgba(46,173,107,.2)" stroke-width="1.5"><animate attributeName="r" values="38;42;38" dur="4s" repeatCount="indefinite"/></circle>
+        <path d="M100 75 L112 81 L112 95 C112 103 106 109 100 115 C94 109 88 103 88 95 L88 81 Z" fill="rgba(232,129,58,.15)" stroke="var(--or)" stroke-width="1.5"><animate attributeName="opacity" values=".7;1;.7" dur="3s" repeatCount="indefinite"/></path>
+        <text x="100" y="100" fill="var(--or)" font-size="16" text-anchor="middle" font-weight="800">✓</text>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">18 / 18 · Bridge</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="alert('Part 3 — Action Plan & Course Finale — coming next.')">Finish Part 2 ✓</button></div></div>
+</div>
+
+</div>
+
+<!-- Retake modal -->
+<div id="retake-modal" role="dialog" aria-modal="true">
+  <div class="retake-card">
+    <div class="retake-tag">↻ Retake the module</div>
+    <div class="retake-q">Reset all progress and start over?</div>
+    <div class="retake-sub">This will clear your XP, quiz answers, and wagers. The module returns to the cover slide.</div>
+    <div class="retake-actions">
+      <button class="btn" onclick="closeRetake()">Cancel</button>
+      <button class="btn retake-confirm" onclick="doRetake()">Yes, reset everything</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<div id="reflect-modal" role="dialog" aria-modal="true" aria-labelledby="rm-q">
+  <div class="rm-card">
+    <button class="rm-close" aria-label="Close" onclick="closeReflect()">×</button>
+    <div class="rm-tag">⏸  Pause to reflect</div>
+    <div class="rm-q" id="rm-q"></div>
+    <div class="rm-sub" id="rm-sub"></div>
+    <div class="rm-actions"><button class="btn pri" onclick="closeReflect()">Got it →</button></div>
+  </div>
+</div>
+
+<script>
+var T=18,c=0;
+var STORAGE_KEY='sc_m9b_mob_v1';
+var RANKS=[{min:0,name:'RECRUIT'},{min:8,name:'APPRENTICE'},{min:18,name:'CHAMPION'},{min:32,name:'CAPTAIN'},{min:50,name:'LEGEND'}];
+var DEFAULT_STATE={xp:0,streak:0,bestStreak:0,answers:{},wagers:{},reflections:[]};
+var state={xp:0,streak:0,bestStreak:0,answers:{},wagers:{},reflections:[]};
+
+function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var s=JSON.parse(raw);state={xp:s.xp||0,streak:s.streak||0,bestStreak:s.bestStreak||0,answers:s.answers||{},wagers:s.wagers||{},reflections:s.reflections||[]}}}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+function rankFor(xp){var r=RANKS[0];for(var i=0;i<RANKS.length;i++){if(xp>=RANKS[i].min)r=RANKS[i]}return r}
+
+function renderChips(){var r=rankFor(state.xp);document.querySelectorAll('.scorechip').forEach(function(chip){chip.querySelector('.sc-rank').textContent=r.name[0];chip.querySelector('.sc-rank').title=r.name;chip.querySelector('.sc-xp').innerHTML='<b>'+state.xp+'</b> XP';var sk=chip.querySelector('.sc-streak');if(state.streak>=2){sk.classList.add('live');sk.innerHTML='<span class="sc-flame">🔥</span> '+state.streak}else{sk.classList.remove('live');sk.innerHTML='<span style="opacity:.5">·</span> '+r.name}})}
+function bumpChips(){document.querySelectorAll('.scorechip').forEach(function(c){c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')})}
+function toast(msg,err){var t=document.getElementById('toast');t.textContent=msg;t.className=err?'on err':'on';setTimeout(function(){t.className=''},2500)}
+
+function go(n){
+  if(n<0||n>=T)return;
+  document.getElementById('s'+c).classList.remove('on');
+  c=n;
+  document.getElementById('s'+n).classList.add('on');
+  var r=document.getElementById('s'+n).querySelector('.sp-r');if(r)r.scrollTop=0;
+  if(n===16) populateResults();
+  document.querySelectorAll('.pips').forEach(function(p){bp(p)});
+  document.querySelector('.lms-main').scrollTo(0,0);
+}
+
+function populateResults(){
+  var fs=document.getElementById('final-score');if(!fs)return;
+  var totalQ=Object.keys(ans).length;
+  var answered=Object.keys(state.answers).length;
+  var correct=0;for(var k in state.answers){if(state.answers[k].correct)correct++}
+  var reflectCount=state.reflections?state.reflections.length:0;
+  if(answered===0)fs.innerHTML="You haven't answered any quizzes yet. Go back and try them.";
+  else fs.innerHTML='<b>'+correct+'</b> out of <b>'+totalQ+'</b> correct · <b>'+state.xp+' XP</b> earned · <b>'+reflectCount+'</b> reflection'+(reflectCount!==1?'s':'')+' completed';
+}
+
+function bp(el){if(!el)return;el.innerHTML='';for(var i=0;i<T;i++){var b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=(function(idx){return function(){go(idx)}})(i);b.setAttribute('aria-label','Slide '+(i+1));el.appendChild(b)}}
+document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(c-1)}});
+function tg(id){var el=document.getElementById(id),b=el.querySelector('.xb'),a=el.querySelector('.xa');var isOpen=b.classList.toggle('op');if(a)a.classList.toggle('op');var btn=el.querySelector('.xh');if(btn)btn.setAttribute('aria-expanded',isOpen?'true':'false')}
+
+var ans={q1:1,q2:1};
+
+var WAGERS=[{key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},{key:'pretty',mult:2,name:'Pretty sure',sub:'×2 if right · 1 if wrong'},{key:'guess',mult:1,name:'Just guessing',sub:'×1 either way'}];
+function buildWagerUI(qw){var qq=qw.querySelector('.qq');if(!qq)return;var qid=qw.id;var w=document.createElement('div');w.className='wager';w.dataset.qid=qid;w.innerHTML='<div class="wager-lab">How confident are you?</div><div class="wager-row">'+WAGERS.map(function(g){return '<button class="wager-btn" data-w="'+g.key+'" data-m="'+g.mult+'"><div class="wb-top"><span class="wb-mult">×'+g.mult+'</span><span class="wb-name">'+g.name+'</span></div><div class="wb-sub">'+g.sub+'</div></button>'}).join('')+'</div>';qq.parentNode.insertBefore(w,qq.nextSibling);w.querySelectorAll('.wager-btn').forEach(function(btn){btn.onclick=function(){if(w.classList.contains('locked'))return;w.querySelectorAll('.wager-btn').forEach(function(b){b.classList.remove('pk')});btn.classList.add('pk');state.wagers[qid]=parseInt(btn.dataset.m,10);saveState()}});if(state.wagers[qid]){var b=w.querySelector('.wager-btn[data-m="'+state.wagers[qid]+'"]');if(b)b.classList.add('pk')}}
+function lockWager(qid){var w=document.querySelector('.wager[data-qid="'+qid+'"]');if(!w)return;w.classList.add('locked');w.querySelectorAll('.wager-btn').forEach(function(b){b.disabled=true});var mult=state.wagers[qid]||1;var wname='Just guessing';for(var i=0;i<WAGERS.length;i++){if(WAGERS[i].mult===mult){wname=WAGERS[i].name;break}}w.innerHTML='<div class="wager-locked-note">🎯 You wagered <b>'+wname+'</b> (×'+mult+')</div>'}
+
+function pk(q,i){var w=document.getElementById(q),o=w.querySelectorAll('.qo');if(o[0].classList.contains('pk'))return;if(!state.wagers[q])state.wagers[q]=1;var mult=state.wagers[q];var k=ans[q];var correct=(i===k);o.forEach(function(x,j){x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});var pts=0,kind='zero',msg='';if(correct){pts=mult*3;state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak;kind='';if(mult===3)msg='Confident and correct. <b>+'+pts+' XP</b>'+(state.streak>=2?' · 🔥 '+state.streak+' streak':'');else if(mult===2)msg='Right call. <b>+'+pts+' XP</b>';else msg='Lucky guess — still counts. <b>+'+pts+' XP</b>'}else{if(mult===3){pts=0;kind='zero';msg='Confidence didn\'t pay off here. <b>+0 XP</b> · streak reset.'}else if(mult===2){pts=1;kind='humility';msg='Humility bonus. <b>+1 XP</b>'}else{pts=1;kind='humility';msg='Honest guess — keep going. <b>+1 XP</b>'}state.streak=0}state.xp+=pts;state.answers[q]={picked:i,correct:correct,wager:mult,points:pts};saveState();renderChips();bumpChips();lockWager(q);var e=document.getElementById(q+'-e');e.classList.add('sh');if(!e.querySelector('.qe-score')){var s=document.createElement('div');s.className='qe-score';s.innerHTML='<span class="qs-pts '+kind+'">'+(pts>0?'+':'')+pts+' XP</span><span class="qs-msg">'+msg+'</span>';e.appendChild(s)}}
+
+function injectChips(){document.querySelectorAll('.sh').forEach(function(sh){var stag=sh.querySelector('.stag');var pips=sh.querySelector('.pips');if(!stag||!pips)return;if(sh.querySelector('.scorechip'))return;var right=sh.querySelector('.sh-right')||document.createElement('div');if(!right.classList.contains('sh-right')){right.className='sh-right';pips.parentNode.insertBefore(right,pips);right.appendChild(pips)}var chip=document.createElement('div');chip.className='scorechip';chip.title='Your XP and streak';chip.innerHTML='<span class="sc-rank">R</span><span class="sc-xp"><b>0</b> XP</span><span class="sc-streak"><span style="opacity:.5">·</span> RECRUIT</span>';right.insertBefore(chip,pips)})}
+
+/* Cover particles */
+function initCoverParticles(){var container=document.getElementById('cover-particles');if(!container)return;for(var i=0;i<14;i++){var p=document.createElement('div');p.className='cover-particle';p.style.left=Math.random()*100+'%';p.style.bottom='-10px';p.style.animationDuration=(3+Math.random()*5)+'s';p.style.animationDelay=(Math.random()*6)+'s';p.style.width=p.style.height=(1+Math.random()*2.5)+'px';p.style.opacity=.2+Math.random()*.4;container.appendChild(p)}}
+
+/* Reflect */
+var REFLECT_PROMPTS={masvs:{q:'What <em>MASVS level</em> does your team\'s current mobile app need — and which level are you actually testing against?',sub:'If you\'re not sure, you\'re probably at L1 by default. The question is whether L1 is sufficient for the data your app handles. Financial data, health records, and payment credentials push you to L2.'},cloud:{q:'Does your team treat <em>cloud backend configuration</em> as part of the mobile security scope? Who owns Firebase rules and S3 permissions?',sub:'If the answer is "the backend team," that\'s an ownership gap. Mobile security doesn\'t end at the app binary. The champion needs visibility into the infrastructure the app depends on.'}};
+function openReflect(key){var p=REFLECT_PROMPTS[key];if(!p)return;document.getElementById('rm-q').innerHTML=p.q;document.getElementById('rm-sub').textContent=p.sub;document.getElementById('reflect-modal').classList.add('on');if(state.reflections&&state.reflections.indexOf(key)===-1){state.reflections.push(key);state.xp+=2;saveState();renderChips();bumpChips();toast('⏸ +2 XP for reflecting')}}
+function closeReflect(){document.getElementById('reflect-modal').classList.remove('on')}
+document.getElementById('reflect-modal').addEventListener('click',function(e){if(e.target.id==='reflect-modal')closeReflect()});
+
+/* Retake */
+function openRetake(){document.getElementById('retake-modal').classList.add('on')}
+function closeRetake(){document.getElementById('retake-modal').classList.remove('on')}
+function doRetake(){state={xp:0,streak:0,bestStreak:0,answers:{},wagers:{},reflections:[]};try{localStorage.removeItem(STORAGE_KEY)}catch(e){}document.querySelectorAll('.qo').forEach(function(o){o.classList.remove('pk','ok','no');o.disabled=false});document.querySelectorAll('.qe').forEach(function(e){e.classList.remove('sh');var sc=e.querySelector('.qe-score');if(sc)sc.remove()});document.querySelectorAll('.wager').forEach(function(w){w.remove()});document.querySelectorAll('.qw').forEach(buildWagerUI);document.querySelectorAll('.xb').forEach(function(b){b.classList.remove('op')});document.querySelectorAll('.xa').forEach(function(a){a.classList.remove('op')});document.querySelectorAll('.xh').forEach(function(h){h.setAttribute('aria-expanded','false')});renderChips();closeRetake();go(0)}
+document.getElementById('retake-modal').addEventListener('click',function(e){if(e.target.id==='retake-modal')closeRetake()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('retake-modal').classList.contains('on'))closeRetake();if(document.getElementById('reflect-modal').classList.contains('on'))closeReflect()}});
+
+/* Glossary */
+(function(){var tip=document.createElement('div');tip.id='gloss-tip';document.body.appendChild(tip);var cur=null;function place(el){var def=el.getAttribute('data-def')||'';tip.textContent=def;var r=el.getBoundingClientRect();tip.classList.remove('below');tip.style.left='0px';tip.style.top='0px';var tw=tip.offsetWidth,th=tip.offsetHeight;var left=r.left;if(left+tw>window.innerWidth-8)left=window.innerWidth-tw-8;if(left<8)left=8;var top=r.top-th-10;if(top<8){top=r.bottom+10;tip.classList.add('below')}tip.style.left=left+'px';tip.style.top=top+'px';tip.classList.add('on');cur=el}function hide(){tip.classList.remove('on');cur=null}document.addEventListener('mouseover',function(e){var g=e.target.closest('.gloss');if(g&&g!==cur)place(g)});document.addEventListener('mouseout',function(e){var g=e.target.closest('.gloss');if(g)hide()});document.addEventListener('click',function(e){var g=e.target.closest('.gloss');if(g&&window.matchMedia('(hover:none)').matches){if(cur===g)hide();else place(g);e.preventDefault();return}if(!g)hide()});document.addEventListener('scroll',hide,true);window.addEventListener('resize',hide)})();
+
+/* Init */
+loadState();
+injectChips();
+initCoverParticles();
+document.querySelectorAll('.qw').forEach(buildWagerUI);
+Object.keys(state.answers).forEach(function(q){var a=state.answers[q];var qw=document.getElementById(q);if(!qw)return;var o=qw.querySelectorAll('.qo'),k=ans[q];o.forEach(function(x,j){x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===a.picked&&j!==k)x.classList.add('no')});var e=document.getElementById(q+'-e');if(e){e.classList.add('sh');if(!e.querySelector('.qe-score')){var s=document.createElement('div');s.className='qe-score';s.innerHTML='<span class="qs-pts '+(a.points===0?'zero':(a.correct?'':'humility'))+'">+'+a.points+' XP</span><span class="qs-msg">Already answered. '+(a.correct?'Correct.':'Try the retake to improve.')+'</span>';e.appendChild(s)}}lockWager(q)});
+renderChips();
+document.querySelectorAll('.pips').forEach(function(p){bp(p)});
+</script>
+</main>
+</body>
+</html>

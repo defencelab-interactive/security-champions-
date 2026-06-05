@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWASP Top 10 · Lens 4 — Someone else's code</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:si .35s cubic-bezier(.2,.6,.2,1) both}
+@keyframes si{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.slide:not(.on) *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.slide.on{animation:none}*,*::before,*::after{animation-duration:.001s!important;transition-duration:.01s!important}}
+
+/* Layout */
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh .sh-right{display:flex;align-items:center;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}.btn.pri:hover{background:var(--od)}
+.btn.reflect-btn{border-color:rgba(232,129,58,.4);color:var(--or);background:rgba(232,129,58,.06)}.btn.reflect-btn:hover{background:rgba(232,129,58,.15);color:#fff}
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:280px;justify-content:flex-end}
+.pip{width:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}.pip.on{background:var(--or);transform:scaleY(1.8)}
+.split{display:flex;min-height:480px}
+.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:20px;font-weight:700;color:var(--wh);line-height:1.25}.sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:480px}
+.sp-r::-webkit-scrollbar{width:3px}.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.sb{padding:0}
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
+
+/* Prose & callout */
+.prose{font-size:15.5px;color:var(--tm);line-height:1.78}.prose strong{color:var(--td);font-weight:600}.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}.co em{font-style:italic;font-weight:500;color:var(--or)}.co strong{font-weight:600}
+.gloss{border-bottom:1px dotted var(--or);cursor:help;font-weight:600;color:inherit}
+#gloss-tip{position:fixed;background:#1a1620;color:#F5F2ED;font-size:12px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.4);box-shadow:0 8px 28px rgba(0,0,0,.55);max-width:300px;width:max-content;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none;z-index:9999;text-align:left;font-family:inherit}
+#gloss-tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+
+/* Scenario */
+.scenario{margin:6px 0;background:linear-gradient(170deg,#1c1820,#181820);border-radius:10px;padding:16px 20px;color:#F5F2ED;border-left:3px solid var(--or);box-shadow:0 6px 22px rgba(0,0,0,.18)}
+.scenario-tag{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--or);margin-bottom:8px}
+.scenario-text{font-size:15px;line-height:1.65;color:rgba(245,242,237,.85);font-style:italic}.scenario-text em{color:var(--or);font-style:normal;font-weight:600}
+
+/* Quiz + Wager */
+.qw{margin:6px 0}.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}.qo.ok{border-color:var(--gr);background:var(--gl)}.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55}.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block}.qe strong{color:var(--td)}
+.wager{margin:6px 0 10px;background:linear-gradient(135deg,#fff8f2,#fff);border:1px dashed rgba(232,129,58,.4);border-radius:8px;padding:11px 14px;transition:all .25s}
+.wager.locked{opacity:.55;border-style:solid;border-color:var(--bd);background:var(--ow)}
+.wager-lab{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:6px}.wager-lab::before{content:'';width:14px;height:1px;background:var(--or)}
+.wager-row{display:flex;gap:6px;flex-wrap:wrap}
+.wager-btn{flex:1;min-width:90px;background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .12s}
+.wager-btn:hover{border-color:var(--or);transform:translateY(-1px);box-shadow:0 2px 8px rgba(232,129,58,.15)}
+.wager-btn.pk{border-color:var(--or);background:var(--ol)}.wager-btn.pk .wb-mult{background:var(--or);color:#fff}
+.wager-btn:disabled{cursor:not-allowed;opacity:.5}
+.wb-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.wb-mult{display:inline-flex;align-items:center;justify-content:center;background:var(--card);color:var(--td);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;letter-spacing:.3px}
+.wb-name{font-size:13px;font-weight:700;color:var(--td)}
+.wb-sub{font-size:11px;color:var(--mu);line-height:1.3}
+.wager-locked-note{font-size:11px;color:var(--mu);font-style:italic;display:flex;align-items:center;gap:6px}.wager-locked-note b{color:var(--td);font-style:normal;font-weight:600}
+.qe .qe-score{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:13px}
+.qe .qe-score .qs-pts{display:inline-flex;align-items:center;gap:4px;background:var(--gl);color:var(--gr);font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px;letter-spacing:.3px}
+.qe .qe-score .qs-pts.zero{background:var(--rl);color:var(--rd)}
+.qe .qe-score .qs-pts.humility{background:rgba(123,111,174,.12);color:var(--pu)}
+.qe .qe-score .qs-msg{color:var(--tm);font-size:12px}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .2s ease both}
+.slide.on .sp-r>*:nth-child(1){animation-delay:.03s}.slide.on .sp-r>*:nth-child(2){animation-delay:.06s}.slide.on .sp-r>*:nth-child(3){animation-delay:.09s}.slide.on .sp-r>*:nth-child(4){animation-delay:.12s}.slide.on .sp-r>*:nth-child(5){animation-delay:.15s}.slide.on .sp-r>*:nth-child(6){animation-delay:.18s}
+
+/* Reveal Steps */
+.reveal-steps{display:flex;flex-direction:column;gap:2px}
+.reveal-step{display:flex;gap:14px;padding:10px 14px;border-radius:8px;transition:all .25s;opacity:.35;filter:blur(2px);pointer-events:none}
+.reveal-step.active{opacity:1;filter:none;background:var(--ol);pointer-events:auto;padding:12px 14px}
+.reveal-step.done{opacity:1;filter:none;background:var(--ow);pointer-events:auto;padding:12px 14px}
+.reveal-step.locked .reveal-text{display:none}
+.reveal-num{width:28px;height:28px;border-radius:50%;background:var(--bd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--mu);flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.reveal-step.active .reveal-num{background:var(--or);color:#fff}
+.reveal-step.done .reveal-num{background:var(--gr);color:#fff}
+.reveal-title{font-size:14px;font-weight:700;color:var(--td);margin-bottom:3px}.reveal-text{font-size:13px;color:var(--tm);line-height:1.6}
+.reveal-btn{margin-top:12px;background:var(--or);border:none;color:#fff;padding:7px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}.reveal-btn:hover{background:var(--od)}.reveal-btn:disabled{opacity:.4;cursor:default}
+
+/* Compare Toggle */
+.compare{margin:4px 0;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.compare-tabs{display:flex;border-bottom:1px solid var(--bd)}
+.compare-tab{flex:1;padding:10px 14px;background:var(--card);border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--mu);cursor:pointer;transition:all .15s;text-align:center}
+.compare-tab:first-child{border-right:1px solid var(--bd)}
+.compare-tab.active{background:var(--wh);color:var(--td);box-shadow:inset 0 -2px 0 var(--or)}
+.compare-panel{display:none;padding:14px 16px;font-size:13.5px;color:var(--tm);line-height:1.65}
+.compare-panel.active{display:block}
+.compare-panel strong{color:var(--td);font-weight:600}
+
+/* Myth/Reality */
+.mr-body{min-height:480px;display:flex;align-items:center;justify-content:center;padding:40px 48px;position:relative;overflow:hidden;background:#0F0E14}
+.mr-container{position:relative;width:100%;max-width:620px;min-height:320px}
+.mr-myth{text-align:center;transition:all .4s ease;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mr-icon{font-size:48px;margin-bottom:20px;display:block}
+.mr-label{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--rd);margin-bottom:16px}
+.mr-quote{font-size:26px;font-weight:700;line-height:1.3;color:#F5F2ED;margin-bottom:24px;text-wrap:balance}
+.mr-reveal-btn{background:var(--or);border:none;color:#fff;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}.mr-reveal-btn:hover{background:var(--od);transform:translateY(-1px)}
+.mr-reality{text-align:center;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transform:scale(.95);transition:all .5s ease .35s;pointer-events:none}
+.mr-reality-label{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gr);margin-bottom:16px}
+.mr-reality-text{font-size:17px;line-height:1.7;color:rgba(245,242,237,.8)}.mr-reality-text strong{color:#fff;font-weight:700}
+.mr-back{margin-top:20px;background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);padding:6px 16px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit}.mr-back:hover{border-color:var(--or);color:#fff}
+.mr-body.revealed .mr-myth{opacity:0;pointer-events:none;animation:shatter .5s ease forwards}
+.mr-body.revealed .mr-reality{opacity:1;transform:scale(1);pointer-events:auto}
+.mr-body:not(.revealed) .mr-myth{animation:none;opacity:1;transform:none}
+@keyframes shatter{0%{opacity:1;transform:scale(1);filter:none}15%{transform:scale(1.02);filter:brightness(1.3)}30%{opacity:.8;transform:scale(1) skewX(2deg)}50%{opacity:.5;transform:scale(.98) skewX(-3deg) skewY(1deg);filter:blur(1px)}70%{opacity:.2;transform:scale(.95) skewX(5deg);filter:blur(3px)}100%{opacity:0;transform:scale(.85) skewX(8deg);filter:blur(6px)}}
+.mr-cracks{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:10}.mr-body.revealed .mr-cracks{animation:crs .3s ease forwards}@keyframes crs{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
+.mr-crack{position:absolute;background:rgba(232,129,58,.6)}.mc1{width:2px;height:80px;top:30%;left:48%;transform:rotate(15deg)}.mc2{width:2px;height:60px;top:25%;left:52%;transform:rotate(-25deg)}.mc3{width:1.5px;height:100px;top:20%;left:45%;transform:rotate(35deg)}.mc4{width:1.5px;height:50px;top:40%;left:55%;transform:rotate(-10deg)}.mc5{width:1px;height:70px;top:28%;left:50%;transform:rotate(-40deg)}.mc6{width:2px;height:40px;top:50%;left:47%;transform:rotate(50deg)}
+.mr-body::before,.mr-body::after{content:'';position:absolute;width:60px;height:60px;border:2px solid rgba(255,255,255,.06);pointer-events:none;transition:all .5s;z-index:1}.mr-body::before{top:20px;left:20px;border-right:none;border-bottom:none;border-radius:4px 0 0 0}.mr-body::after{bottom:20px;right:20px;border-left:none;border-top:none;border-radius:0 0 4px 0}.mr-body.revealed::before,.mr-body.revealed::after{border-color:rgba(46,173,107,.25)}
+
+/* You-are-here */
+.yah{display:flex;align-items:center;gap:0;width:100%;max-width:560px}
+.yah-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative}
+.yah-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:rgba(255,255,255,.4);border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);font-family:'JetBrains Mono',monospace}
+.yah-step.done .yah-dot{background:rgba(46,173,107,.15);border-color:var(--gr);color:var(--gr)}
+.yah-step.active .yah-dot{background:rgba(232,129,58,.2);border-color:var(--or);color:var(--or);box-shadow:0 0 16px rgba(232,129,58,.25);animation:yp 2s ease-in-out infinite}
+@keyframes yp{0%,100%{box-shadow:0 0 16px rgba(232,129,58,.15)}50%{box-shadow:0 0 24px rgba(232,129,58,.35)}}
+.yah-name{font-size:10px;color:rgba(255,255,255,.35);text-align:center;line-height:1.3;max-width:80px;font-weight:500}
+.yah-step.done .yah-name{color:rgba(255,255,255,.5)}.yah-step.active .yah-name{color:var(--or);font-weight:700}
+.yah-line{flex:0 0 auto;width:40px;height:2px;background:rgba(255,255,255,.08);margin:0 -4px;margin-bottom:20px}
+
+/* Breather */
+.breather{display:flex;flex-direction:column;align-items:center;padding:18px 24px 10px;min-height:480px;gap:12px}
+.breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.breather-caption{text-align:center;padding:4px 0 2px;max-width:640px}.breather-caption p{font-size:14px;line-height:1.6}.breather-caption strong{font-weight:700}
+.bg-warm{background:linear-gradient(170deg,#1e1a15,#1a1a1a,#1a1520)}.bg-warm .breather-caption p{color:rgba(255,255,255,.6)}.bg-warm .breather-caption strong{color:var(--or)}
+
+/* Info dot */
+.idot-wrap{position:relative;margin:4px 0}.idot-trigger{display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none;background:none;padding:0;font-family:inherit}
+.idot{width:22px;height:22px;border-radius:50%;background:var(--or);color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;position:relative;z-index:1;flex-shrink:0;cursor:pointer;border:none;font-family:inherit}
+.idot::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--or);opacity:0;animation:ip 2s ease-in-out infinite}.idot-wrap.opened .idot::before{animation:none}
+@keyframes ip{0%{opacity:0;transform:scale(.8)}50%{opacity:.45;transform:scale(1.2)}100%{opacity:0;transform:scale(1.5)}}
+.idot-label{font-size:13px;color:var(--mu);font-weight:500}.idot-trigger:hover .idot-label{color:var(--td)}
+.idot-pop{display:none;margin-top:8px;padding:14px 16px;background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:10px;font-size:13.5px;color:rgba(245,242,237,.85);line-height:1.7;box-shadow:0 8px 28px rgba(0,0,0,.4)}
+.idot-pop.open{display:block;animation:idf .25s ease forwards;opacity:1}.idot-pop strong{color:#fff;font-weight:600}
+@keyframes idf{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* Reflect modal */
+#reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#reflect-modal.on{display:flex}
+.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:14px;padding:36px 40px 28px;max-width:560px;width:100%;text-align:center;color:#F5F2ED;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+.rm-q{font-size:22px;line-height:1.45;font-weight:300;margin-bottom:14px;color:#F5F2ED}.rm-q em{color:var(--or);font-style:normal;font-weight:600}
+.rm-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin:0 auto 24px;max-width:440px}
+.rm-actions{display:flex;gap:10px;justify-content:center}
+.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;width:28px;height:28px;border-radius:6px}.rm-close:hover{background:rgba(255,255,255,.08);color:#fff}
+
+@media(max-width:700px){.split{flex-direction:column}.sp-l{width:100%;min-height:auto;padding:16px 18px}.sp-r{max-height:none}.fbody{flex-direction:column;padding:32px 24px;gap:24px}.fb-visual{width:180px;height:180px}.fb-tt{font-size:28px}.mr-quote{font-size:20px}.mr-reality-text{font-size:15px}.mr-body{padding:28px 20px}.yah{flex-wrap:wrap;gap:4px}.yah-line{width:20px}}
+</style>
+</head>
+<body>
+<main class="lms-main">
+<div class="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Lens 4</span> · Someone else's code</span><div class="sh-right"><div class="pips" id="pp0"></div></div></div>
+  <div class="sb"><div class="fbody"><div class="fb-content"><div class="fb-tg">Lens 4</div><div class="fb-tt">Someone else's code</div><div class="fb-sb">Supply chain, cryptographic failures, and data integrity. Three risks united by one thing: trust in code, protocols, and components you didn't write.</div></div>
+    <div class="fb-visual"><svg viewBox="0 0 200 200" width="200" height="200">
+      <!-- Dependency tree -->
+      <rect x="80" y="10" width="40" height="24" rx="4" fill="rgba(232,129,58,.2)" stroke="rgba(232,129,58,.5)" stroke-width="1.5"/>
+      <text x="100" y="26" fill="rgba(232,129,58,.8)" font-size="8" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">you</text>
+      <!-- Level 1 -->
+      <line x1="90" y1="34" x2="50" y2="55" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+      <line x1="100" y1="34" x2="100" y2="55" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+      <line x1="110" y1="34" x2="150" y2="55" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+      <rect x="30" y="55" width="40" height="20" rx="3" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+      <rect x="80" y="55" width="40" height="20" rx="3" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+      <rect x="130" y="55" width="40" height="20" rx="3" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+      <!-- Level 2 -->
+      <line x1="50" y1="75" x2="30" y2="95" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+      <line x1="50" y1="75" x2="65" y2="95" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+      <line x1="100" y1="75" x2="100" y2="95" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+      <line x1="150" y1="75" x2="135" y2="95" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+      <line x1="150" y1="75" x2="165" y2="95" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+      <rect x="15" y="95" width="30" height="16" rx="2" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+      <rect x="50" y="95" width="30" height="16" rx="2" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+      <rect x="85" y="95" width="30" height="16" rx="2" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+      <rect x="120" y="95" width="30" height="16" rx="2" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+      <rect x="155" y="95" width="30" height="16" rx="2" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+      <!-- Level 3 — one compromised -->
+      <line x1="135" y1="111" x2="145" y2="130" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <rect x="130" y="130" width="30" height="16" rx="2" fill="rgba(217,69,69,.15)" stroke="rgba(217,69,69,.5)" stroke-width="1.5">
+        <animate attributeName="stroke-opacity" values=".5;1;.5" dur="1.5s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Red pulse up -->
+      <line x1="145" y1="130" x2="135" y2="111" stroke="rgba(217,69,69,.25)" stroke-width="1.5" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="0" to="-6" dur="1s" repeatCount="indefinite"/></line>
+      <line x1="135" y1="95" x2="150" y2="75" stroke="rgba(217,69,69,.15)" stroke-width="1.5" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="0" to="-6" dur="1.2s" repeatCount="indefinite"/></line>
+      <text x="100" y="175" fill="rgba(255,255,255,.2)" font-size="8" text-anchor="middle" font-family="JetBrains Mono" letter-spacing="1.5">TRUST FLOWS UP</text>
+    </svg></div>
+  </div></div>
+  <div class="sf"><span class="shint">01 / 12</span><div class="snav"><button class="btn pri" onclick="go(1)">Start →</button></div></div>
+</div>
+
+<!-- ═══ S1 · YOU ARE HERE ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">Module 3</span> · Your progress</span><div class="sh-right"><div class="pips" id="pp1"></div></div></div>
+  <div class="sb"><div class="breather bg-warm" style="justify-content:center">
+    <div class="breather-visual" style="flex-direction:column;gap:28px">
+      <div class="yah">
+        <div class="yah-step done"><div class="yah-dot">&#10003;</div><div class="yah-name">Risk ≠ vulnerability</div></div>
+        <div class="yah-line" style="background:rgba(46,173,107,.3)"></div>
+        <div class="yah-step done"><div class="yah-dot">&#10003;</div><div class="yah-name">What changed and why</div></div>
+        <div class="yah-line" style="background:rgba(46,173,107,.3)"></div>
+        <div class="yah-step done"><div class="yah-dot">&#10003;</div><div class="yah-name">Architecture against you</div></div>
+        <div class="yah-line" style="background:rgba(46,173,107,.3)"></div>
+        <div class="yah-step active"><div class="yah-dot">4</div><div class="yah-name">Someone else's code</div></div>
+        <div class="yah-line"></div>
+        <div class="yah-step"><div class="yah-dot">5</div><div class="yah-name">We can't predict everything</div></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Lens 3 was about <strong>your architecture</strong> creating risk. This lens is about <strong>everything you didn't build</strong> — dependencies, crypto protocols, data integrity — and why trusting external code is itself a risk.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">02 / 12</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S2 · A03 — Supply chain recap ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Lens 4</span> · A03 — Supply chain</span><div class="sh-right"><div class="pips" id="pp2"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Third-party code</div><div class="sp-s">A03 · Supply Chain Failures</div></div><div class="sp-r">
+    <div class="prose" style="font-size:14px">Lens 2 covered why supply chain rose in the rankings. The short version: we compose more than we write, and we don't audit most of what we import. Here's what you can actually do about it:</div>
+    <div class="co"><strong>Trusted repository</strong> — maintain a curated list of approved dependencies. <strong>SBOM</strong> — know what's in your build. <strong>Integrity checks</strong> — verify at install, verify at runtime.</div>
+    <div class="idot-wrap" id="id-sbom"><button class="idot-trigger" onclick="tgd('id-sbom')"><span class="idot">?</span><span class="idot-label">What is an SBOM?</span></button><div class="idot-pop"><strong>Software Bill of Materials</strong> — a complete inventory of all components, libraries, and dependencies in your software. Think of it as a nutrition label for code. It lists what's inside, what version, and where it came from. Required by some regulations and increasingly expected by enterprise customers.</div></div>
+    <div class="scenario"><div class="scenario-tag">Key principle</div><div class="scenario-text">"The core reason is that we use third-party code, and we don't always know <em>who</em> developed those dependencies and <em>how</em>. And that's a risk."</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">03 / 12</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S3 · QUIZ 1 — npm package scenario ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag">Knowledge check · scenario</span><div class="sh-right"><div class="pips" id="pp3"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="scenario"><div class="scenario-tag">Scenario</div><div class="scenario-text">A developer on your team wants to add an npm package to handle date formatting. The package has <em>200 weekly downloads</em>, no security audit, and <em>one contributor</em>. The code looks clean.</div></div>
+    <div class="qw" id="q1"><div class="qq">What's the right next step?</div>
+      <button class="qo" onclick="pk('q1',0)">A) Add it — the code looks clean and it solves the problem</button>
+      <button class="qo" onclick="pk('q1',1)">B) Check if a well-maintained alternative exists first</button>
+      <button class="qo" onclick="pk('q1',2)">C) Fork it into your own repo so you control the code</button>
+      <button class="qo" onclick="pk('q1',3)">D) Block it — single-contributor packages should never be used</button>
+      <div class="qe" id="q1-e"><strong>B — Check for a well-maintained alternative first.</strong> 200 downloads, one contributor, no audit — these are warning signs, not automatic disqualifiers. But before reaching for a niche package, check if a trusted, well-maintained library already covers the use case. Forking (C) creates a maintenance burden. Blanket-banning single-contributor packages (D) is too rigid — some excellent tools have one maintainer. The issue is making an informed decision, not applying a rule.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">04 / 12 · Quiz</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S4 · A04 — Cryptographic failures intro ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">Lens 4</span> · A04 — Cryptographic failures</span><div class="sh-right"><div class="pips" id="pp4"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Boring crypto</div><div class="sp-s">A04 · Cryptographic Failures</div></div><div class="sp-r">
+    <div class="scenario"><div class="scenario-tag">Key principle</div><div class="scenario-text">"You should not develop crypto protocols. They already exist. You should know how to <em>properly use them</em>. That's it. Do not invent the wheel."</div></div>
+    <div class="prose">Cryptographic failures dropped from #2 to #4 — not because crypto matters less, but because tooling has matured. The core reason this category exists: developers implement protocols themselves instead of using existing, vetted libraries.</div>
+    <div class="prose">Even using existing protocols correctly is hard:</div>
+    <div class="scenario"><div class="scenario-tag">Worth remembering</div><div class="scenario-text">"You can pass a year and a half of university cryptography and <em>still</em> not fully understand what each KMS configuration option means. That's not a personal failure — that's the nature of the field. And that's exactly why we should be very careful and <em>pay attention to each configuration</em>."</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">05 / 12</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S5 · MYTH/REALITY — crypto is not for us ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag"><span class="hl">Myth vs reality</span></span><div class="sh-right"><div class="pips" id="pp5"></div></div></div>
+  <div class="mr-body" id="mr0"><div class="mr-cracks"><div class="mr-crack mc1"></div><div class="mr-crack mc2"></div><div class="mr-crack mc3"></div><div class="mr-crack mc4"></div><div class="mr-crack mc5"></div><div class="mr-crack mc6"></div></div><div class="mr-container"><div class="mr-myth">
+      <span class="mr-icon">🔐</span><div class="mr-label">Common assumption</div>
+      <div class="mr-quote">"Crypto is for crypto engineers, not for us"</div>
+      <button class="mr-reveal-btn" onclick="reveal('mr0')">Think again →</button>
+    </div><div class="mr-reality"><div class="mr-reality-label">Reality</div>
+      <div class="mr-reality-text">You don't write algorithms — but you <strong>configure crypto every day</strong>. Which TLS versions to allow. How to store API keys — plaintext env vars or secrets manager? Whether to enforce certificate pinning. How often to rotate credentials.<br><br>Each wrong answer is a <strong>cryptographic failure</strong> under A04 — even with zero lines of crypto code. The "boring crypto" principle says use existing libraries. Correct — but <strong>using existing crypto correctly</strong> is its own skill.</div>
+      <button class="mr-back" onclick="unreveal('mr0')">← Show myth again</button>
+  </div></div></div>
+  <div class="sf"><span class="shint">06 / 12</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S6 · REVEAL STEPS — Boring Crypto checklist ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">Lens 4</span> · The boring crypto checklist</span><div class="sh-right"><div class="pips" id="pp6"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Five rules</div><div class="sp-s">The Boring Crypto approach</div></div><div class="sp-r">
+    <div class="reveal-steps" id="rv1">
+      <div class="reveal-step active" data-step="0"><div class="reveal-num">1</div><div class="reveal-body"><div class="reveal-title">Use vetted, well-rated libraries</div><div class="reveal-text">Not popular — <strong>vetted</strong>. Look for security audits, active maintenance, and a track record. Popularity alone doesn't mean secure.</div></div></div>
+      <div class="reveal-step locked" data-step="1"><div class="reveal-num">2</div><div class="reveal-body"><div class="reveal-title">Use standard protocol implementations</div><div class="reveal-text">TLS 1.3, AES-256-GCM, Ed25519 — these exist for a reason. The boring choice is almost always the right one.</div></div></div>
+      <div class="reveal-step locked" data-step="2"><div class="reveal-num">3</div><div class="reveal-body"><div class="reveal-title">Minimal custom configuration</div><div class="reveal-text">Every config knob you touch is a chance to weaken the protocol. Use defaults from vetted libraries unless you have a specific, documented reason to change them.</div></div></div>
+      <div class="reveal-step locked" data-step="3"><div class="reveal-num">4</div><div class="reveal-body"><div class="reveal-title">No speed-vs-security trade-offs</div><div class="reveal-text">If someone suggests weakening crypto for performance, the answer is no. Optimize elsewhere. Crypto is the last thing you should compromise on.</div></div></div>
+      <div class="reveal-step locked" data-step="4"><div class="reveal-num">5</div><div class="reveal-body"><div class="reveal-title">Read the Boring Crypto advice list</div><div class="reveal-text">It's intentionally short and easy to remember. One page of guidance that covers most decisions a Security Champion will face.</div></div></div>
+    </div>
+    <button class="reveal-btn" onclick="advanceStep('rv1')">Reveal next rule →</button>
+  </div></div></div>
+  <div class="sf"><span class="shint">07 / 12</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S7 · A08 — Integrity + Compare Toggle ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">Lens 4</span> · A08 — Integrity failures</span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Three states, two moments</div><div class="sp-s">A08 · Software & Data Integrity</div></div><div class="sp-r">
+    <div class="prose" style="font-size:14px">Maintaining integrity is structurally hard. Data exists in three states — <strong>at rest</strong>, <strong>in transit</strong>, and <strong>in process</strong> — and each requires different protections.</div>
+    <div class="compare" id="cmp1">
+      <div class="compare-tabs"><button class="compare-tab active" onclick="switchTab('cmp1',0)">Integrity at install</button><button class="compare-tab" onclick="switchTab('cmp1',1)">Integrity at runtime</button></div>
+      <div class="compare-panel active">You verify the hash of a package when you install it. You check the signature of a container image before deploying. This is <strong>point-in-time verification</strong> — it proves the component was intact <em>at that moment</em>. Most teams do this well.</div>
+      <div class="compare-panel">What about after deployment? If a component is compromised in production — modified binary, injected code, tampered config — <strong>do you detect it?</strong> Runtime integrity checking is harder, more expensive, and most teams skip it. That gap is exactly what A08 measures.</div>
+    </div>
+    <div class="scenario"><div class="scenario-tag">Key principle</div><div class="scenario-text">"Are we able to maintain the integrity of components? Do we check it just during installation? But what about during <em>runtime</em> — if they've been compromised?"</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">08 / 12</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S8 · QUIZ 2 — integrity gap scenario ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag">Knowledge check · scenario</span><div class="sh-right"><div class="pips" id="pp8"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="scenario"><div class="scenario-tag">Scenario</div><div class="scenario-text">Your CI pipeline verifies the hash of every dependency at <em>install time</em>. A month after deployment, one of those dependencies is compromised — a maintainer's credentials were stolen and a backdoor was injected into a patch release. Your running service pulls the update automatically.</div></div>
+    <div class="qw" id="q2"><div class="qq">What was missed?</div>
+      <button class="qo" onclick="pk('q2',0)">A) The hash check at install time was insufficient</button>
+      <button class="qo" onclick="pk('q2',1)">B) The team should have pinned exact versions</button>
+      <button class="qo" onclick="pk('q2',2)">C) Runtime integrity verification was missing</button>
+      <button class="qo" onclick="pk('q2',3)">D) The CI pipeline needed a better scanner</button>
+      <div class="qe" id="q2-e"><strong>C — Runtime integrity verification was missing.</strong> The install-time hash check was correct — for the version that existed at that moment. But without runtime integrity verification, the auto-updated component ran unchecked. Version pinning (B) helps but doesn't solve the fundamental gap: you need to verify components not just when you install them, but while they're running. This is the install vs. runtime distinction at the heart of A08.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">09 / 12 · Quiz</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S9 · BREATHER — Supply chain tree animation ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag"><span class="hl">Lens 4</span> · The picture</span><div class="sh-right"><div class="pips" id="pp9"></div></div></div>
+  <div class="sb"><div class="breather bg-warm" style="padding-top:8px;gap:6px">
+    <div class="breather-visual" style="position:relative;max-width:700px;width:100%">
+      <svg id="tree-svg" viewBox="0 0 700 370" width="700" height="370" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+        <!-- Glow filter -->
+        <defs>
+          <filter id="glow-red"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glow-or"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- ═══ EDGES (drawn first, behind nodes) ═══ -->
+        <!-- Level 0→1 -->
+        <line class="edge" x1="350" y1="42" x2="140" y2="90" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line class="edge" x1="350" y1="42" x2="280" y2="90" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line class="edge" x1="350" y1="42" x2="420" y2="90" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line class="edge" x1="350" y1="42" x2="560" y2="90" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <!-- Level 1→2 -->
+        <line class="edge" x1="140" y1="118" x2="60" y2="170" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <line class="edge" x1="140" y1="118" x2="140" y2="170" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <line class="edge" x1="140" y1="118" x2="220" y2="170" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <line class="edge" x1="420" y1="118" x2="360" y2="170" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <line class="edge" x1="420" y1="118" x2="440" y2="170" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <line class="edge" x1="560" y1="118" x2="520" y2="170" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <line class="edge" x1="560" y1="118" x2="600" y2="170" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <line class="edge" x1="560" y1="118" x2="640" y2="170" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <!-- Level 2→3 -->
+        <line class="edge" x1="60" y1="198" x2="40" y2="248" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+        <line class="edge" x1="60" y1="198" x2="90" y2="248" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+        <line class="edge" x1="220" y1="198" x2="220" y2="248" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+        <line class="edge" x1="600" y1="198" x2="580" y2="248" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+        <line class="edge e-infected" x1="640" y1="198" x2="660" y2="248" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+
+        <!-- ═══ NODES ═══ -->
+        <!-- Root -->
+        <g class="n-root">
+          <rect x="310" y="14" width="80" height="28" rx="6" fill="rgba(232,129,58,.18)" stroke="rgba(232,129,58,.55)" stroke-width="2"/>
+          <text x="350" y="33" fill="rgba(232,129,58,.95)" font-size="11" font-weight="700" text-anchor="middle" font-family="DM Sans">Your code</text>
+        </g>
+
+        <!-- Level 1 — direct deps -->
+        <rect x="100" y="90" width="80" height="28" rx="5" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <text x="140" y="108" fill="rgba(255,255,255,.5)" font-size="9" font-weight="600" text-anchor="middle" font-family="JetBrains Mono">express</text>
+        <rect x="240" y="90" width="80" height="28" rx="5" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <text x="280" y="108" fill="rgba(255,255,255,.5)" font-size="9" font-weight="600" text-anchor="middle" font-family="JetBrains Mono">lodash</text>
+        <rect x="380" y="90" width="80" height="28" rx="5" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <text x="420" y="108" fill="rgba(255,255,255,.5)" font-size="9" font-weight="600" text-anchor="middle" font-family="JetBrains Mono">axios</text>
+        <rect x="520" y="90" width="80" height="28" rx="5" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <text x="560" y="108" fill="rgba(255,255,255,.5)" font-size="9" font-weight="600" text-anchor="middle" font-family="JetBrains Mono">pg</text>
+
+        <!-- Level 2 — transitive -->
+        <rect x="25" y="170" width="70" height="28" rx="4" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)" stroke-width="1"/>
+        <text x="60" y="188" fill="rgba(255,255,255,.35)" font-size="8" text-anchor="middle" font-family="JetBrains Mono">body-parser</text>
+        <rect x="105" y="170" width="70" height="28" rx="4" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)" stroke-width="1"/>
+        <text x="140" y="188" fill="rgba(255,255,255,.35)" font-size="8" text-anchor="middle" font-family="JetBrains Mono">qs</text>
+        <rect x="185" y="170" width="70" height="28" rx="4" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)" stroke-width="1"/>
+        <text x="220" y="188" fill="rgba(255,255,255,.35)" font-size="8" text-anchor="middle" font-family="JetBrains Mono">cookie</text>
+        <rect x="325" y="170" width="70" height="28" rx="4" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)" stroke-width="1"/>
+        <text x="360" y="188" fill="rgba(255,255,255,.35)" font-size="8" text-anchor="middle" font-family="JetBrains Mono">follow-r</text>
+        <rect x="405" y="170" width="70" height="28" rx="4" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)" stroke-width="1"/>
+        <text x="440" y="188" fill="rgba(255,255,255,.35)" font-size="8" text-anchor="middle" font-family="JetBrains Mono">form-data</text>
+        <rect x="485" y="170" width="70" height="28" rx="4" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)" stroke-width="1"/>
+        <text x="520" y="188" fill="rgba(255,255,255,.35)" font-size="8" text-anchor="middle" font-family="JetBrains Mono">pg-pool</text>
+        <rect x="565" y="170" width="70" height="28" rx="4" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)" stroke-width="1"/>
+        <text x="600" y="188" fill="rgba(255,255,255,.35)" font-size="8" text-anchor="middle" font-family="JetBrains Mono">pg-types</text>
+        <rect x="645" y="170" width="50" height="28" rx="4" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)" stroke-width="1"/>
+        <text x="670" y="188" fill="rgba(255,255,255,.35)" font-size="8" text-anchor="middle" font-family="JetBrains Mono">pgpass</text>
+
+        <!-- Level 3 — deep transitive -->
+        <rect x="10" y="248" width="60" height="24" rx="3" fill="rgba(255,255,255,.02)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+        <text x="40" y="264" fill="rgba(255,255,255,.25)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">raw-body</text>
+        <rect x="60" y="248" width="60" height="24" rx="3" fill="rgba(255,255,255,.02)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+        <text x="90" y="264" fill="rgba(255,255,255,.25)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">iconv-lite</text>
+        <rect x="190" y="248" width="60" height="24" rx="3" fill="rgba(255,255,255,.02)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+        <text x="220" y="264" fill="rgba(255,255,255,.25)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">keygrip</text>
+        <rect x="550" y="248" width="60" height="24" rx="3" fill="rgba(255,255,255,.02)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+        <text x="580" y="264" fill="rgba(255,255,255,.25)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">pg-int8</text>
+
+        <!-- THE COMPROMISED NODE -->
+        <g id="comp-node">
+          <rect x="635" y="248" width="60" height="24" rx="3" fill="rgba(217,69,69,.08)" stroke="rgba(217,69,69,.6)" stroke-width="2" filter="url(#glow-red)">
+            <animate attributeName="stroke-opacity" values=".6;1;.6" dur="1.2s" repeatCount="indefinite"/>
+          </rect>
+          <text x="665" y="264" fill="rgba(217,69,69,.95)" font-size="7" font-weight="800" text-anchor="middle" font-family="JetBrains Mono">split2</text>
+          <!-- Pulse ring -->
+          <rect x="630" y="243" width="70" height="34" rx="6" fill="none" stroke="rgba(217,69,69,.15)" stroke-width="1">
+            <animate attributeName="stroke-opacity" values="0;.35;0" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="rx" values="6;10;6" dur="2s" repeatCount="indefinite"/>
+          </rect>
+        </g>
+
+        <!-- INFECTION PROPAGATION — animated red lines going UP -->
+        <g class="infection-path" opacity="0">
+          <!-- L3→L2 -->
+          <line x1="660" y1="248" x2="670" y2="198" stroke="rgba(217,69,69,.5)" stroke-width="2" stroke-dasharray="4 4"><animate attributeName="stroke-dashoffset" from="0" to="-8" dur=".6s" repeatCount="indefinite"/></line>
+          <!-- L2→L1 -->
+          <line x1="670" y1="170" x2="560" y2="118" stroke="rgba(217,69,69,.35)" stroke-width="2" stroke-dasharray="4 4"><animate attributeName="stroke-dashoffset" from="0" to="-8" dur=".8s" repeatCount="indefinite"/></line>
+          <!-- L1→Root -->
+          <line x1="560" y1="90" x2="350" y2="42" stroke="rgba(217,69,69,.2)" stroke-width="2" stroke-dasharray="4 4"><animate attributeName="stroke-dashoffset" from="0" to="-8" dur="1s" repeatCount="indefinite"/></line>
+        </g>
+
+        <!-- Infected overlay on parent nodes (hidden initially) -->
+        <g class="infected-nodes" opacity="0">
+          <rect x="645" y="170" width="50" height="28" rx="4" fill="none" stroke="rgba(217,69,69,.5)" stroke-width="1.5"/>
+          <rect x="520" y="90" width="80" height="28" rx="5" fill="none" stroke="rgba(217,69,69,.35)" stroke-width="1.5"/>
+          <rect x="310" y="14" width="80" height="28" rx="6" fill="none" stroke="rgba(217,69,69,.2)" stroke-width="1.5"/>
+        </g>
+
+        <!-- COUNTER -->
+        <g id="pkg-counter" transform="translate(350,320)">
+          <text x="0" y="0" fill="rgba(255,255,255,.2)" font-size="9" text-anchor="middle" font-family="JetBrains Mono" letter-spacing="2">PACKAGES IN YOUR TREE</text>
+          <text id="pkg-count" x="0" y="22" fill="rgba(232,129,58,.7)" font-size="22" font-weight="800" text-anchor="middle" font-family="JetBrains Mono">0</text>
+          <text id="pkg-risk" x="0" y="40" fill="rgba(217,69,69,.0)" font-size="10" font-weight="700" text-anchor="middle" font-family="DM Sans">← 1 compromised. All at risk.</text>
+        </g>
+
+        <!-- DATA PACKETS moving along edges -->
+        <g class="packets">
+          <circle r="2.5" fill="rgba(232,129,58,.6)"><animateMotion dur="3s" repeatCount="indefinite" path="M350,42 L140,104"/><animate attributeName="opacity" values="0;.8;0" dur="3s" repeatCount="indefinite"/></circle>
+          <circle r="2" fill="rgba(232,129,58,.4)"><animateMotion dur="3.5s" repeatCount="indefinite" path="M350,42 L420,104" begin=".5s"/><animate attributeName="opacity" values="0;.6;0" dur="3.5s" repeatCount="indefinite" begin=".5s"/></circle>
+          <circle r="2" fill="rgba(232,129,58,.4)"><animateMotion dur="4s" repeatCount="indefinite" path="M350,42 L560,104" begin="1s"/><animate attributeName="opacity" values="0;.6;0" dur="4s" repeatCount="indefinite" begin="1s"/></circle>
+          <circle r="2" fill="rgba(255,255,255,.25)"><animateMotion dur="2.5s" repeatCount="indefinite" path="M140,118 L60,184" begin=".3s"/><animate attributeName="opacity" values="0;.5;0" dur="2.5s" repeatCount="indefinite" begin=".3s"/></circle>
+          <circle r="2" fill="rgba(255,255,255,.25)"><animateMotion dur="2.8s" repeatCount="indefinite" path="M560,118 L640,184" begin=".8s"/><animate attributeName="opacity" values="0;.5;0" dur="2.8s" repeatCount="indefinite" begin=".8s"/></circle>
+          <circle r="2" fill="rgba(255,255,255,.2)"><animateMotion dur="2.2s" repeatCount="indefinite" path="M60,198 L40,260" begin="1.5s"/><animate attributeName="opacity" values="0;.4;0" dur="2.2s" repeatCount="indefinite" begin="1.5s"/></circle>
+        </g>
+      </svg>
+    </div>
+    <div class="breather-caption"><p>Every box is someone else's code. One compromised package — three levels deep — and the <strong>infection propagates all the way to your root</strong>.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">10 / 12</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn reflect-btn" onclick="openReflect('deps')">⏸ Reflect</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S10 · SUMMARY + SCORE ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">Lens 4</span> · What we covered</span><div class="sh-right"><div class="pips" id="pp10"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Lens 4 complete</div><div class="sp-s">Someone else's code</div></div><div class="sp-r">
+    <div class="co"><strong>A03 — Supply Chain:</strong> we use third-party code we didn't audit. Mitigate with trusted repos, SBOM, and integrity checks. There is no silver bullet — only constrained trust.</div>
+    <div class="co"><strong>A04 — Cryptographic Failures:</strong> don't write your own crypto. Use vetted libraries with minimal custom configuration. The "Boring Crypto" approach: vetted, standard, minimal, no trade-offs.</div>
+    <div class="co"><strong>A08 — Integrity Failures:</strong> data exists in three states (rest, transit, process). Components need verification at install <em>and</em> at runtime. The gap between the two is where this risk lives.</div>
+    <div class="co" id="final-score" style="text-align:center;font-size:15px;padding:16px 20px"><strong>Your score:</strong> calculating...</div>
+    <div class="prose">Next: <strong>Lens 5</strong> — injection, authentication, logging, and exceptional conditions. Four risks at the limits of what we can anticipate.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">11 / 12</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · CLOSING ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">Lens 4</span> · Done</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
+  <div class="sb"><div class="fbody" style="min-height:320px;justify-content:center">
+    <div class="fb-content" style="text-align:center;max-width:500px;margin:0 auto">
+      <div class="fb-tg">Lens 4 complete</div>
+      <div class="fb-tt" style="font-size:28px;margin:0 auto 18px">Every dependency is a trust decision. Make them deliberately.</div>
+      <div class="fb-sb" style="max-width:420px;margin:0 auto">Three risks. One root: code, protocols, and components you didn't write are running in your product right now. The only defense is constrained, verified trust.</div>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">12 / 12</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn" onclick="doRetake()">↻ Retake</button><button class="btn pri" onclick="go(0)">Finish Lens 4 ✓</button></div></div>
+</div>
+
+</div><!-- end deck -->
+
+<!-- REFLECT MODAL -->
+<div id="reflect-modal" role="dialog" aria-modal="true"><div class="rm-card">
+  <button class="rm-close" onclick="closeReflect()">×</button>
+  <div class="rm-tag">⏸ Pause to reflect</div>
+  <div class="rm-q" id="rm-q"></div>
+  <div class="rm-sub" id="rm-sub"></div>
+  <div class="rm-actions"><button class="btn pri" onclick="closeReflect()">Got it →</button></div>
+</div></div>
+
+<script>
+const T=12;let c=0;
+const DEFAULT_STATE={xp:0,streak:0,answers:{},wagers:{},reflections:[]};
+let state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};
+
+function go(n){if(n<0||n>=T)return;document.getElementById('s'+c).classList.remove('on');c=n;const s=document.getElementById('s'+n);s.classList.add('on');const r=s.querySelector('.sp-r');if(r)r.scrollTop=0;document.querySelectorAll('.pips').forEach(p=>bp(p));window.scrollTo(0,0);if(n===10){const fs=document.getElementById('final-score');if(fs){const tq=Object.keys(ans).length;const aw=Object.keys(state.answers).length;const cr=Object.values(state.answers).filter(a=>a.correct).length;if(aw===0)fs.innerHTML='<strong>You haven\'t answered any quizzes yet.</strong> Go back and try them.';else fs.innerHTML=`<strong>${cr} out of ${tq}</strong> correct · <strong>${state.xp} XP</strong> earned`;}}}
+
+function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}}
+
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'){e.preventDefault();go(c-1)}});
+
+function doRetake(){state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};document.querySelectorAll('.qo').forEach(o=>{o.classList.remove('pk','ok','no')});document.querySelectorAll('.qe').forEach(e=>{e.classList.remove('sh');const s=e.querySelector('.qe-score');if(s)s.remove()});document.querySelectorAll('.wager').forEach(w=>w.remove());document.querySelectorAll('.qw').forEach(buildWagerUI);document.querySelectorAll('.reveal-step').forEach((s,i)=>{s.classList.remove('active','done','locked');if(i===0)s.classList.add('active');else s.classList.add('locked')});document.querySelectorAll('.reveal-btn').forEach(b=>{b.disabled=false;b.textContent='Reveal next rule →'});document.querySelectorAll('.mr-body').forEach(b=>b.classList.remove('revealed'));go(0)}
+
+const ans={q1:1,q2:2};
+const WAGERS=[{key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},{key:'pretty',mult:2,name:'Pretty sure',sub:'×2 if right · 1 if wrong'},{key:'guess',mult:1,name:'Just guessing',sub:'×1 either way'}];
+
+function buildWagerUI(qw){const qq=qw.querySelector('.qq');if(!qq)return;const qid=qw.id;const w=document.createElement('div');w.className='wager';w.dataset.qid=qid;w.innerHTML=`<div class="wager-lab">How confident are you?</div><div class="wager-row">${WAGERS.map(g=>`<button class="wager-btn" data-w="${g.key}" data-m="${g.mult}"><div class="wb-top"><span class="wb-mult">×${g.mult}</span><span class="wb-name">${g.name}</span></div><div class="wb-sub">${g.sub}</div></button>`).join('')}</div>`;qq.parentNode.insertBefore(w,qq.nextSibling);w.querySelectorAll('.wager-btn').forEach(btn=>{btn.onclick=()=>{if(w.classList.contains('locked'))return;w.querySelectorAll('.wager-btn').forEach(b=>b.classList.remove('pk'));btn.classList.add('pk');state.wagers[qid]=parseInt(btn.dataset.m,10)}});if(state.wagers[qid]){const b=w.querySelector(`.wager-btn[data-m="${state.wagers[qid]}"]`);if(b)b.classList.add('pk')}}
+
+function lockWager(qid){const w=document.querySelector(`.wager[data-qid="${qid}"]`);if(!w)return;w.classList.add('locked');w.querySelectorAll('.wager-btn').forEach(b=>b.disabled=true);const mult=state.wagers[qid]||1;const wn=WAGERS.find(g=>g.mult===mult)?.name||'Just guessing';w.innerHTML=`<div class="wager-locked-note">🎯 You wagered <b>${wn}</b> (×${mult})</div>`}
+
+function pk(q,i){const w=document.getElementById(q),o=w.querySelectorAll('.qo');if(o[0].classList.contains('pk'))return;if(!state.wagers[q])state.wagers[q]=1;const mult=state.wagers[q];const k=ans[q];const correct=(i===k);o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});let pts=0,kind='zero',msg='';if(correct){pts=mult*3;state.streak++;kind='';if(mult===3)msg=`Confident and correct. <b>+${pts} XP</b>`;else if(mult===2)msg=`Right call. <b>+${pts} XP</b>`;else msg=`Lucky guess — still counts. <b>+${pts} XP</b>`}else{if(mult===3){pts=0;kind='zero';msg=`Confidence didn\'t pay off. <b>+0 XP</b>`}else{pts=1;kind='humility';msg=`Humility bonus. <b>+1 XP</b>`}state.streak=0}state.xp+=pts;state.answers[q]={picked:i,correct,wager:mult,points:pts};lockWager(q);const e=document.getElementById(q+'-e');e.classList.add('sh');if(!e.querySelector('.qe-score')){const s=document.createElement('div');s.className='qe-score';s.innerHTML=`<span class="qs-pts ${kind}">${pts>0?'+':''}${pts} XP</span><span class="qs-msg">${msg}</span>`;e.appendChild(s)}}
+
+document.querySelectorAll('.qw').forEach(buildWagerUI);
+document.querySelectorAll('.pips').forEach(p=>bp(p));
+
+function advanceStep(gid){const g=document.getElementById(gid);const ss=g.querySelectorAll('.reveal-step');let cur=-1;ss.forEach((s,i)=>{if(s.classList.contains('active'))cur=i});if(cur<0||cur+1>=ss.length)return;ss[cur].classList.remove('active');ss[cur].classList.add('done');ss[cur+1].classList.remove('locked');ss[cur+1].classList.add('active');if(cur+2>=ss.length){const btn=g.parentElement.querySelector('.reveal-btn');if(btn){btn.textContent='All rules revealed ✓';btn.disabled=true}}}
+
+function switchTab(gid,idx){const g=document.getElementById(gid);g.querySelectorAll('.compare-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));g.querySelectorAll('.compare-panel').forEach((p,i)=>p.classList.toggle('active',i===idx))}
+
+function tgd(id){const el=document.getElementById(id),p=el.querySelector('.idot-pop');if(p){p.classList.toggle('open');el.classList.toggle('opened')}}
+
+function reveal(id){document.getElementById(id).classList.add('revealed')}
+function unreveal(id){document.getElementById(id).classList.remove('revealed')}
+
+/* Reflect */
+const REFLECT_PROMPTS={
+  deps:{
+    q:'When was the last time someone on your team <em>audited a new dependency</em> before adding it?',
+    sub:'If the answer is "never" or "I don\'t know" — that\'s the supply chain risk in one sentence. The dependency was added because it solved a problem. Nobody asked who wrote it.'
+  }
+};
+
+function openReflect(key){const p=REFLECT_PROMPTS[key];if(!p)return;document.getElementById('rm-q').innerHTML=p.q;document.getElementById('rm-sub').textContent=p.sub;document.getElementById('reflect-modal').classList.add('on');if(state.reflections&&!state.reflections.includes(key)){state.reflections.push(key);state.xp+=2}}
+function closeReflect(){document.getElementById('reflect-modal').classList.remove('on')}
+document.getElementById('reflect-modal').addEventListener('click',e=>{if(e.target.id==='reflect-modal')closeReflect()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeReflect()});
+
+/* Glossary tooltip */
+(function(){const tip=document.createElement('div');tip.id='gloss-tip';document.body.appendChild(tip);let cur=null;function place(el){tip.textContent=el.getAttribute('data-def')||'';const r=el.getBoundingClientRect();tip.style.left='0';tip.style.top='0';let left=r.left,top=r.top-tip.offsetHeight-10;if(left+tip.offsetWidth>window.innerWidth-8)left=window.innerWidth-tip.offsetWidth-8;if(left<8)left=8;if(top<8)top=r.bottom+10;tip.style.left=left+'px';tip.style.top=top+'px';tip.classList.add('on');cur=el}function hide(){tip.classList.remove('on');cur=null}document.addEventListener('mouseover',e=>{const g=e.target.closest('.gloss');if(g&&g!==cur)place(g)});document.addEventListener('mouseout',e=>{if(e.target.closest('.gloss'))hide()});document.addEventListener('click',e=>{const g=e.target.closest('.gloss');if(g&&window.matchMedia('(hover:none)').matches){if(cur===g)hide();else place(g);e.preventDefault();return}if(!g)hide()});document.addEventListener('scroll',hide,true)})();
+
+/* Supply chain tree animation */
+(function(){
+  let treeAnimated=false;
+  const origGo=go;
+  go=function(n){origGo(n);if(n===9&&!treeAnimated){treeAnimated=true;animateTree()}};
+  function animateTree(){
+    const counter=document.getElementById('pkg-count');
+    const risk=document.getElementById('pkg-risk');
+    const infection=document.querySelector('.infection-path');
+    const infected=document.querySelector('.infected-nodes');
+    if(!counter)return;
+    let count=0;const target=847;const dur=2000;const step=Math.ceil(target/(dur/16));
+    const iv=setInterval(()=>{count=Math.min(count+step,target);counter.textContent=count;if(count>=target){clearInterval(iv);setTimeout(()=>{if(infection)infection.style.transition='opacity .8s';if(infection)infection.style.opacity='1';if(infected)infected.style.transition='opacity 1.2s ease .4s';if(infected)infected.style.opacity='1';if(risk){risk.style.transition='fill .6s ease .8s';risk.setAttribute('fill','rgba(217,69,69,.85)')}},400)}},16);
+  }
+})();
+</script>
+</main>
+</body>
+</html>

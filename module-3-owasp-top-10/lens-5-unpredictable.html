@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWASP Top 10 · Lens 5 — We can't predict everything</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:si .35s cubic-bezier(.2,.6,.2,1) both}
+@keyframes si{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.slide:not(.on) *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.slide.on{animation:none}*,*::before,*::after{animation-duration:.001s!important;transition-duration:.01s!important}}
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}.sh .sh-right{display:flex;align-items:center;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}.btn.pri:hover{background:var(--od)}
+.btn.reflect-btn{border-color:rgba(232,129,58,.4);color:var(--or);background:rgba(232,129,58,.06)}.btn.reflect-btn:hover{background:rgba(232,129,58,.15);color:#fff}
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:280px;justify-content:flex-end}
+.pip{width:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}.pip.on{background:var(--or);transform:scaleY(1.8)}
+.split{display:flex;min-height:480px}.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:20px;font-weight:700;color:var(--wh);line-height:1.25}.sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:480px}.sp-r::-webkit-scrollbar{width:3px}.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.sb{padding:0}.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
+.prose{font-size:15.5px;color:var(--tm);line-height:1.78}.prose strong{color:var(--td);font-weight:600}.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}.co em{font-style:italic;font-weight:500;color:var(--or)}.co strong{font-weight:600}
+.gloss{border-bottom:1px dotted var(--or);cursor:help;font-weight:600;color:inherit}
+#gloss-tip{position:fixed;background:#1a1620;color:#F5F2ED;font-size:12px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.4);box-shadow:0 8px 28px rgba(0,0,0,.55);max-width:300px;width:max-content;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none;z-index:9999;text-align:left;font-family:inherit}
+#gloss-tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+.scenario{margin:6px 0;background:linear-gradient(170deg,#1c1820,#181820);border-radius:10px;padding:16px 20px;color:#F5F2ED;border-left:3px solid var(--or);box-shadow:0 6px 22px rgba(0,0,0,.18)}
+.scenario-tag{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--or);margin-bottom:8px}
+.scenario-text{font-size:15px;line-height:1.65;color:rgba(245,242,237,.85);font-style:italic}.scenario-text em{color:var(--or);font-style:normal;font-weight:600}
+.qw{margin:6px 0}.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}.qo.ok{border-color:var(--gr);background:var(--gl)}.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55}.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block}.qe strong{color:var(--td)}
+.wager{margin:6px 0 10px;background:linear-gradient(135deg,#fff8f2,#fff);border:1px dashed rgba(232,129,58,.4);border-radius:8px;padding:11px 14px;transition:all .25s}.wager.locked{opacity:.55;border-style:solid;border-color:var(--bd);background:var(--ow)}
+.wager-lab{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:6px}.wager-lab::before{content:'';width:14px;height:1px;background:var(--or)}
+.wager-row{display:flex;gap:6px;flex-wrap:wrap}.wager-btn{flex:1;min-width:90px;background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .12s}
+.wager-btn:hover{border-color:var(--or);transform:translateY(-1px);box-shadow:0 2px 8px rgba(232,129,58,.15)}.wager-btn.pk{border-color:var(--or);background:var(--ol)}.wager-btn.pk .wb-mult{background:var(--or);color:#fff}.wager-btn:disabled{cursor:not-allowed;opacity:.5}
+.wb-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}.wb-mult{display:inline-flex;align-items:center;justify-content:center;background:var(--card);color:var(--td);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;letter-spacing:.3px}.wb-name{font-size:13px;font-weight:700;color:var(--td)}.wb-sub{font-size:11px;color:var(--mu);line-height:1.3}
+.wager-locked-note{font-size:11px;color:var(--mu);font-style:italic;display:flex;align-items:center;gap:6px}.wager-locked-note b{color:var(--td);font-style:normal;font-weight:600}
+.qe .qe-score{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:13px}
+.qe .qe-score .qs-pts{display:inline-flex;align-items:center;gap:4px;background:var(--gl);color:var(--gr);font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px;letter-spacing:.3px}
+.qe .qe-score .qs-pts.zero{background:var(--rl);color:var(--rd)}.qe .qe-score .qs-pts.humility{background:rgba(123,111,174,.12);color:var(--pu)}.qe .qe-score .qs-msg{color:var(--tm);font-size:12px}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .2s ease both}.slide.on .sp-r>*:nth-child(1){animation-delay:.03s}.slide.on .sp-r>*:nth-child(2){animation-delay:.06s}.slide.on .sp-r>*:nth-child(3){animation-delay:.09s}.slide.on .sp-r>*:nth-child(4){animation-delay:.12s}.slide.on .sp-r>*:nth-child(5){animation-delay:.15s}.slide.on .sp-r>*:nth-child(6){animation-delay:.18s}
+
+/* Terminal */
+.term{background:#0a0c10;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;font-family:'JetBrains Mono',monospace}
+.term-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)}
+.term-dot{width:10px;height:10px;border-radius:50%}.term-dot:nth-child(1){background:#ff5f57}.term-dot:nth-child(2){background:#febc2e}.term-dot:nth-child(3){background:#28c840}
+.term-title{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1px;margin-left:8px;font-weight:600;text-transform:uppercase}
+.term-body{padding:16px 18px;min-height:120px;max-height:220px;overflow-y:auto;scrollbar-width:thin}
+.term-line{font-size:12px;line-height:1.7;color:rgba(255,255,255,.55);white-space:pre-wrap;word-break:break-all;opacity:0;transform:translateY(3px);animation:ta .2s ease forwards}
+.term-line.cmd{color:rgba(255,255,255,.85)}.term-line.cmd::before{content:'$ ';color:var(--gr)}
+.term-line.atk{color:var(--rd)}.term-line.atk::before{content:'⚠ ';color:var(--rd)}
+.term-line.ok{color:var(--gr)}.term-line.ok::before{content:'✓ ';color:var(--gr)}
+.term-line.info{color:#E5A832}.term-line.info::before{content:'→ ';color:#E5A832}
+.term-line.blank{height:8px}
+@keyframes ta{to{opacity:1;transform:translateY(0)}}
+.term-play{background:var(--or);border:none;color:#fff;padding:7px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;margin-top:10px}.term-play:hover{background:var(--od)}.term-play:disabled{opacity:.4;cursor:default}
+
+/* Code Diff */
+.cdiff{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;margin:6px 0}
+.cdiff-col{padding:0}.cdiff-head{padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06)}
+.cdiff-bad .cdiff-head{background:rgba(217,69,69,.1);color:var(--rd)}.cdiff-good .cdiff-head{background:rgba(46,173,107,.08);color:var(--gr)}.cdiff-bad{border-right:1px solid rgba(255,255,255,.06)}
+.cdiff-code{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.8;color:rgba(255,255,255,.6);white-space:pre;overflow-x:auto;background:#0a0c10}
+.cdiff-code .hl-bad{background:rgba(217,69,69,.15);color:rgba(255,255,255,.85);padding:1px 3px;border-radius:2px}
+.cdiff-code .hl-good{background:rgba(46,173,107,.12);color:rgba(255,255,255,.85);padding:1px 3px;border-radius:2px}
+.cdiff-fix{grid-column:1/-1;padding:10px 16px;background:rgba(46,173,107,.06);border-top:1px solid rgba(46,173,107,.2);display:flex;align-items:flex-start;gap:8px;font-size:12px;color:rgba(255,255,255,.7);line-height:1.5}.cdiff-fix strong{color:var(--gr);font-weight:700}
+@media(max-width:560px){.cdiff{grid-template-columns:1fr}.cdiff-bad{border-right:none;border-bottom:1px solid rgba(255,255,255,.06)}}
+
+/* Myth/Reality */
+.mr-body{min-height:480px;display:flex;align-items:center;justify-content:center;padding:40px 48px;position:relative;overflow:hidden;background:#0F0E14}
+.mr-container{position:relative;width:100%;max-width:620px;min-height:320px}
+.mr-myth{text-align:center;transition:all .4s ease;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mr-icon{font-size:48px;margin-bottom:20px;display:block}.mr-label{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--rd);margin-bottom:16px}
+.mr-quote{font-size:26px;font-weight:700;line-height:1.3;color:#F5F2ED;margin-bottom:24px;text-wrap:balance}
+.mr-reveal-btn{background:var(--or);border:none;color:#fff;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}.mr-reveal-btn:hover{background:var(--od);transform:translateY(-1px)}
+.mr-reality{text-align:center;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transform:scale(.95);transition:all .5s ease .35s;pointer-events:none}
+.mr-reality-label{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gr);margin-bottom:16px}
+.mr-reality-text{font-size:17px;line-height:1.7;color:rgba(245,242,237,.8)}.mr-reality-text strong{color:#fff;font-weight:700}
+.mr-back{margin-top:20px;background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);padding:6px 16px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit}.mr-back:hover{border-color:var(--or);color:#fff}
+.mr-body.revealed .mr-myth{opacity:0;pointer-events:none;animation:shatter .5s ease forwards}.mr-body.revealed .mr-reality{opacity:1;transform:scale(1);pointer-events:auto}.mr-body:not(.revealed) .mr-myth{animation:none;opacity:1;transform:none}
+@keyframes shatter{0%{opacity:1;transform:scale(1)}15%{transform:scale(1.02);filter:brightness(1.3)}50%{opacity:.5;transform:scale(.98) skewX(-3deg);filter:blur(1px)}100%{opacity:0;transform:scale(.85) skewX(8deg);filter:blur(6px)}}
+.mr-cracks{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:10}.mr-body.revealed .mr-cracks{animation:crs .3s ease forwards}@keyframes crs{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
+.mr-crack{position:absolute;background:rgba(232,129,58,.6)}.mc1{width:2px;height:80px;top:30%;left:48%;transform:rotate(15deg)}.mc2{width:2px;height:60px;top:25%;left:52%;transform:rotate(-25deg)}.mc3{width:1.5px;height:100px;top:20%;left:45%;transform:rotate(35deg)}.mc4{width:1.5px;height:50px;top:40%;left:55%;transform:rotate(-10deg)}.mc5{width:1px;height:70px;top:28%;left:50%;transform:rotate(-40deg)}.mc6{width:2px;height:40px;top:50%;left:47%;transform:rotate(50deg)}
+.mr-body::before,.mr-body::after{content:'';position:absolute;width:60px;height:60px;border:2px solid rgba(255,255,255,.06);pointer-events:none;transition:all .5s;z-index:1}.mr-body::before{top:20px;left:20px;border-right:none;border-bottom:none;border-radius:4px 0 0 0}.mr-body::after{bottom:20px;right:20px;border-left:none;border-top:none;border-radius:0 0 4px 0}.mr-body.revealed::before,.mr-body.revealed::after{border-color:rgba(46,173,107,.25)}
+
+/* You-are-here */
+.yah{display:flex;align-items:center;gap:0;width:100%;max-width:560px}.yah-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative}
+.yah-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:rgba(255,255,255,.4);border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);font-family:'JetBrains Mono',monospace}
+.yah-step.done .yah-dot{background:rgba(46,173,107,.15);border-color:var(--gr);color:var(--gr)}
+.yah-step.active .yah-dot{background:rgba(232,129,58,.2);border-color:var(--or);color:var(--or);box-shadow:0 0 16px rgba(232,129,58,.25);animation:yp 2s ease-in-out infinite}
+@keyframes yp{0%,100%{box-shadow:0 0 16px rgba(232,129,58,.15)}50%{box-shadow:0 0 24px rgba(232,129,58,.35)}}
+.yah-name{font-size:10px;color:rgba(255,255,255,.35);text-align:center;line-height:1.3;max-width:80px;font-weight:500}.yah-step.done .yah-name{color:rgba(255,255,255,.5)}.yah-step.active .yah-name{color:var(--or);font-weight:700}
+.yah-line{flex:0 0 auto;width:40px;height:2px;background:rgba(255,255,255,.08);margin:0 -4px;margin-bottom:20px}
+
+/* Breather */
+.breather{display:flex;flex-direction:column;align-items:center;padding:18px 24px 10px;min-height:480px;gap:12px}.breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.breather-caption{text-align:center;padding:4px 0 2px;max-width:640px}.breather-caption p{font-size:14px;line-height:1.6}.breather-caption strong{font-weight:700}
+.bg-warm{background:linear-gradient(170deg,#1e1a15,#1a1a1a,#1a1520)}.bg-warm .breather-caption p{color:rgba(255,255,255,.6)}.bg-warm .breather-caption strong{color:var(--or)}
+
+/* Info dot */
+.idot-wrap{position:relative;margin:4px 0}.idot-trigger{display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none;background:none;padding:0;font-family:inherit}
+.idot{width:22px;height:22px;border-radius:50%;background:var(--or);color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;position:relative;z-index:1;flex-shrink:0;cursor:pointer;border:none;font-family:inherit}
+.idot::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--or);opacity:0;animation:ip 2s ease-in-out infinite}.idot-wrap.opened .idot::before{animation:none}
+@keyframes ip{0%{opacity:0;transform:scale(.8)}50%{opacity:.45;transform:scale(1.2)}100%{opacity:0;transform:scale(1.5)}}
+.idot-label{font-size:13px;color:var(--mu);font-weight:500}.idot-trigger:hover .idot-label{color:var(--td)}
+.idot-pop{display:none;margin-top:8px;padding:14px 16px;background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:10px;font-size:13.5px;color:rgba(245,242,237,.85);line-height:1.7;box-shadow:0 8px 28px rgba(0,0,0,.4)}.idot-pop.open{display:block;animation:idf .25s ease forwards;opacity:1}.idot-pop strong{color:#fff;font-weight:600}
+@keyframes idf{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* Reflect modal */
+#reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}#reflect-modal.on{display:flex}
+.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:14px;padding:36px 40px 28px;max-width:560px;width:100%;text-align:center;color:#F5F2ED;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+.rm-q{font-size:22px;line-height:1.45;font-weight:300;margin-bottom:14px;color:#F5F2ED}.rm-q em{color:var(--or);font-style:normal;font-weight:600}
+.rm-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin:0 auto 24px;max-width:440px}
+.rm-actions{display:flex;gap:10px;justify-content:center}.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;width:28px;height:28px;border-radius:6px}.rm-close:hover{background:rgba(255,255,255,.08);color:#fff}
+
+@media(max-width:700px){.split{flex-direction:column}.sp-l{width:100%;min-height:auto;padding:16px 18px}.sp-r{max-height:none}.fbody{flex-direction:column;padding:32px 24px;gap:24px}.fb-visual{width:180px;height:180px}.fb-tt{font-size:28px}.mr-quote{font-size:20px}.mr-reality-text{font-size:15px}.mr-body{padding:28px 20px}.yah{flex-wrap:wrap;gap:4px}.yah-line{width:20px}.cdiff{grid-template-columns:1fr}.cdiff-bad{border-right:none;border-bottom:1px solid rgba(255,255,255,.06)}}
+</style>
+</head>
+<body>
+<main class="lms-main">
+<div class="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Lens 5</span> · We can't predict everything</span><div class="sh-right"><div class="pips" id="pp0"></div></div></div>
+  <div class="sb"><div class="fbody"><div class="fb-content"><div class="fb-tg">Lens 5</div><div class="fb-tt">We can't predict everything</div><div class="fb-sb">Injection, authentication, logging, and exceptional conditions. Four risks at the limits of our attention and resources.</div></div>
+    <div class="fb-visual"><svg viewBox="0 0 200 200" width="200" height="200">
+      <!-- Spotlight beam -->
+      <defs><radialGradient id="spot" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(232,129,58,.3)"/><stop offset="100%" stop-color="rgba(232,129,58,0)"/></radialGradient></defs>
+      <circle cx="100" cy="100" r="60" fill="url(#spot)">
+        <animateTransform attributeName="transform" type="translate" values="0,0;20,-15;-15,20;10,-10;0,0" dur="8s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Grid of components -->
+      <g font-family="JetBrains Mono" font-size="7" text-anchor="middle">
+        <rect x="25" y="30" width="36" height="22" rx="3" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="43" y="44" fill="rgba(255,255,255,.2)">auth</text>
+        <rect x="70" y="30" width="36" height="22" rx="3" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="88" y="44" fill="rgba(255,255,255,.2)">api</text>
+        <rect x="115" y="30" width="36" height="22" rx="3" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="133" y="44" fill="rgba(255,255,255,.2)">db</text>
+        <rect x="25" y="65" width="36" height="22" rx="3" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="43" y="79" fill="rgba(255,255,255,.2)">logs</text>
+        <rect x="70" y="65" width="36" height="22" rx="3" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="88" y="79" fill="rgba(255,255,255,.2)">queue</text>
+        <rect x="115" y="65" width="36" height="22" rx="3" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="133" y="79" fill="rgba(255,255,255,.2)">cache</text>
+        <rect x="25" y="100" width="36" height="22" rx="3" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="43" y="114" fill="rgba(255,255,255,.2)">cdn</text>
+        <rect x="70" y="100" width="36" height="22" rx="3" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="88" y="114" fill="rgba(255,255,255,.2)">cron</text>
+        <rect x="115" y="100" width="36" height="22" rx="3" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="133" y="114" fill="rgba(255,255,255,.2)">store</text>
+      </g>
+      <text x="100" y="155" fill="rgba(255,255,255,.15)" font-size="8" text-anchor="middle" font-family="JetBrains Mono" letter-spacing="2">YOU CAN'T WATCH</text>
+      <text x="100" y="168" fill="rgba(255,255,255,.15)" font-size="8" text-anchor="middle" font-family="JetBrains Mono" letter-spacing="2">EVERYTHING</text>
+    </svg></div>
+  </div></div>
+  <div class="sf"><span class="shint">01 / 14</span><div class="snav"><button class="btn pri" onclick="go(1)">Start →</button></div></div>
+</div>
+
+<!-- ═══ S1 · YOU ARE HERE ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">Module 3</span> · Your progress</span><div class="sh-right"><div class="pips" id="pp1"></div></div></div>
+  <div class="sb"><div class="breather bg-warm" style="justify-content:center">
+    <div class="breather-visual" style="flex-direction:column;gap:28px">
+      <div class="yah">
+        <div class="yah-step done"><div class="yah-dot">&#10003;</div><div class="yah-name">Risk ≠ vulnerability</div></div>
+        <div class="yah-line" style="background:rgba(46,173,107,.3)"></div>
+        <div class="yah-step done"><div class="yah-dot">&#10003;</div><div class="yah-name">What changed and why</div></div>
+        <div class="yah-line" style="background:rgba(46,173,107,.3)"></div>
+        <div class="yah-step done"><div class="yah-dot">&#10003;</div><div class="yah-name">Architecture against you</div></div>
+        <div class="yah-line" style="background:rgba(46,173,107,.3)"></div>
+        <div class="yah-step done"><div class="yah-dot">&#10003;</div><div class="yah-name">Someone else's code</div></div>
+        <div class="yah-line" style="background:rgba(46,173,107,.3)"></div>
+        <div class="yah-step active"><div class="yah-dot">5</div><div class="yah-name">We can't predict everything</div></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Four lenses down. This last one covers four risks that share an uncomfortable truth: <strong>we are structurally unable to anticipate everything</strong>. Not because we're lazy — because the systems outgrew our capacity to watch them.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">02 / 14</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S2 · A05 — Injection intro ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Lens 5</span> · A05 — Injection</span><div class="sh-right"><div class="pips" id="pp2"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">One mechanism, many victims</div><div class="sp-s">A05 · Injection</div></div><div class="sp-r">
+    <div class="prose">The mechanism is always the same: <span class="gloss" data-def="User-supplied data — any input that comes from outside the system's trust boundary. Form fields, URL parameters, headers, file uploads, API payloads. All of it is untrusted by default.">user-supplied data</span> that isn't validated, escaped, or sanitized gets concatenated into something the system executes.</div>
+    <div class="co"><strong>User input</strong> → no validation → <strong>execution context</strong> = injection. SQL queries, OS commands, templates — different victims, identical shape.</div>
+    <div class="prose">Injection dropped from #3 to #5 — partly because modern frameworks sanitize by default. But the category now covers <strong>all</strong> injection types: SQL, OS command, server-side template, LDAP, XML. Same pattern, wider scope.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">03 / 14</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S3 · TERMINAL — SQL injection demo ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag"><span class="hl">Lens 5</span> · See it happen</span><div class="sh-right"><div class="pips" id="pp3"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">SQL injection</div><div class="sp-s">The classic, still alive</div></div><div class="sp-r" style="background:#0d0f14;padding:22px 20px">
+    <div class="term" id="term1"><div class="term-bar"><div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div><span class="term-title">sql injection</span></div><div class="term-body" id="term1-body"></div></div>
+    <button class="term-play" id="term1-play" onclick="playTerm('term1')">▶ Run attack</button>
+    <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:14px;line-height:1.5">The input wasn't sanitized. The <code style="color:var(--rd)">' OR 1=1 --</code> turned a WHERE clause into "return everything." Every user record — dumped.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">04 / 14</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S4 · CODE DIFF — injection fix ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">Lens 5</span> · The decisive fix</span><div class="sh-right"><div class="pips" id="pp4"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Parameterized queries</div><div class="sp-s">String concat → parameters</div></div><div class="sp-r" style="background:#0d0f14;padding:22px 20px">
+    <div class="cdiff">
+      <div class="cdiff-col cdiff-bad"><div class="cdiff-head">✗ String concatenation</div><div class="cdiff-code">query = <span class="hl-bad">"SELECT * FROM users
+  WHERE id = '" + userId + "'"</span>
+
+// userId = "1' OR 1=1 --"
+// → dumps entire table</div></div>
+      <div class="cdiff-col cdiff-good"><div class="cdiff-head">✓ Parameterized query</div><div class="cdiff-code">query = <span class="hl-good">"SELECT * FROM users
+  WHERE id = $1"</span>
+params = [userId]
+
+// userId treated as data
+// never as SQL code</div></div>
+      <div class="cdiff-fix"><strong>The decisive fix:</strong> Parameterized queries separate <em>code</em> from <em>data</em>. The database engine knows the parameter is a value, not part of the query structure. No amount of creative input can escape the parameter boundary.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">05 / 14</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S5 · QUIZ 1 — which is NOT injection ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag">Knowledge check</span><div class="sh-right"><div class="pips" id="pp5"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q1"><div class="qq">Which of these attacks is NOT an injection?</div>
+      <button class="qo" onclick="pk('q1',0)">A) SQL injection</button>
+      <button class="qo" onclick="pk('q1',1)">B) Cross-site scripting (XSS)</button>
+      <button class="qo" onclick="pk('q1',2)">C) IDOR — Insecure Direct Object Reference</button>
+      <button class="qo" onclick="pk('q1',3)">D) Server-side template injection</button>
+      <div class="qe" id="q1-e"><strong>C — IDOR is not an injection.</strong> IDOR is an access control failure (A01) — the attacker changes a reference (like a user ID in a URL) to access someone else's data. No code is injected. SQL injection, XSS, and template injection all follow the same pattern: user input executed as code. IDOR is about authorization, not execution.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">06 / 14 · Quiz</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S6 · A07 — Authentication failures ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">Lens 5</span> · A07 — Authentication failures</span><div class="sh-right"><div class="pips" id="pp6"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Password rules ≠ strong passwords</div><div class="sp-s">A07 · Authentication Failures</div></div><div class="sp-r">
+    <div class="scenario"><div class="scenario-tag">Scenario</div><div class="scenario-text">A password meets <em>every</em> requirement: uppercase, lowercase, special characters, numbers, minimum length. It passes all validation. Is it strong?</div></div>
+    <div class="prose">Not necessarily. The password could already be on a <strong>leaked list</strong>. It could be vulnerable to daisy-chaining attacks. Meeting every rule says nothing definitive about strength.</div>
+    <div class="co">Two practical defenses: <strong>password dictionary check</strong> — compare against a database of known-compromised passwords (some libraries ship this directly). And <strong>encourage password managers</strong> — the only realistic way to get unique, high-entropy passwords for every service.</div>
+    <div class="idot-wrap" id="id-auth"><button class="idot-trigger" onclick="tgd('id-auth')"><span class="idot">?</span><span class="idot-label">What else falls under A07?</span></button><div class="idot-pop">Brute-forcing without rate limiting, transmitting passwords without proper protection (HTTPS alone isn't enough — hash on the front end), exposing session identifiers in URLs. The compensating controls available are limited, and that's why this category persists.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">07 / 14</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S7 · MYTH/REALITY — password rules ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">Myth vs reality</span></span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
+  <div class="mr-body" id="mr0"><div class="mr-cracks"><div class="mr-crack mc1"></div><div class="mr-crack mc2"></div><div class="mr-crack mc3"></div><div class="mr-crack mc4"></div><div class="mr-crack mc5"></div><div class="mr-crack mc6"></div></div><div class="mr-container"><div class="mr-myth">
+      <span class="mr-icon">🔒</span><div class="mr-label">Common assumption</div>
+      <div class="mr-quote">"Strong password rules = strong passwords"</div>
+      <button class="mr-reveal-btn" onclick="reveal('mr0')">Think again →</button>
+    </div><div class="mr-reality"><div class="mr-reality-label">Reality</div>
+      <div class="mr-reality-text">A password that passes every rule — uppercase, lowercase, numbers, special characters, minimum length — can still be on a <strong>leaked password list</strong>. Password rules check <em>format</em>, not <em>uniqueness</em>. The real defense: <strong>dictionary checks</strong> against known-compromised passwords + <strong>password managers</strong> for generation. Rules create a false sense of security. Verification against real-world leaks is what actually reduces risk.</div>
+      <button class="mr-back" onclick="unreveal('mr0')">← Show myth again</button>
+  </div></div></div>
+  <div class="sf"><span class="shint">08 / 14</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S8 · QUIZ 2 — Tr0ub4dor&3 ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag">Knowledge check</span><div class="sh-right"><div class="pips" id="pp8"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="scenario"><div class="scenario-tag">Scenario</div><div class="scenario-text">The password <code style="color:var(--or);background:rgba(232,129,58,.15);padding:2px 6px;border-radius:3px;font-style:normal">Tr0ub4dor&3</code> — uppercase, lowercase, numbers, special characters. Meets all rules.</div></div>
+    <div class="qw" id="q2"><div class="qq">Is this password secure?</div>
+      <button class="qo" onclick="pk('q2',0)">A) Yes — it meets all complexity requirements</button>
+      <button class="qo" onclick="pk('q2',1)">B) No — it's a well-known example and likely in leak databases</button>
+      <button class="qo" onclick="pk('q2',2)">C) It depends on the hashing algorithm used</button>
+      <button class="qo" onclick="pk('q2',3)">D) Yes — the special character makes it resistant to brute force</button>
+      <div class="qe" id="q2-e"><strong>B — It's a well-known example and likely in leak databases.</strong> Tr0ub4dor&3 is famous from the XKCD password strength comic. It appears in password dictionaries, research papers, and security presentations worldwide. Complexity requirements don't protect against passwords that are already known. A password manager generating a random 20+ character string is more secure than any human-memorable pattern, regardless of how many rules it satisfies.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">09 / 14 · Quiz</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S9 · A09 — Logging ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag"><span class="hl">Lens 5</span> · A09 — Logging & monitoring</span><div class="sh-right"><div class="pips" id="pp9"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Signal vs. noise</div><div class="sp-s">A09 · Logging & Monitoring Failures</div></div><div class="sp-r">
+    <div class="prose" style="font-size:14px">This risk has two roots. First: <strong>separating signal from noise</strong>. You <em>can</em> log everything — but it's too expensive and kills performance. Deciding <em>what</em> to log for each component is itself a bulk of work.</div>
+    <div class="co">There are billion-dollar companies — just for storing telemetry and providing analysis. That's how big the signal-vs-noise problem is.</div>
+    <div class="prose" style="font-size:14px">Second: the <strong>number of sources</strong>. Traffic, container orchestrators, databases, operating systems, application logs — each with different mechanisms for what to log, where to store it, how to gather it.</div>
+    <div class="scenario"><div class="scenario-tag">What actually happens</div><div class="scenario-text">"We'll just gather NetFlow, or metadata, or logs from the application — and skip the databases, orchestrators, etc." That shortcut is exactly how <em>coverage gaps</em> form.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">10 / 14</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S10 · A10 — Exceptional conditions ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">Lens 5</span> · A10 — Exceptional conditions</span><div class="sh-right"><div class="pips" id="pp10"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The structural limit</div><div class="sp-s">A10 · Mishandling of Exceptional Conditions</div></div><div class="sp-r">
+    <div class="scenario"><div class="scenario-tag">Key principle</div><div class="scenario-text">"Everything is more simple. We are <em>not able</em> to take into consideration everything. Our tools became more and more complex — providing more functions, more data objects, more capacities. It's absolutely obvious that it's difficult to predict all potential behavior."</div></div>
+    <div class="prose">This is the newest risk on the list. The root cause isn't that developers forget edge cases — it's a <strong>structural limit</strong> on what we can anticipate. Tools grow because clients demand more and competition forces it. The unpredicted-behavior surface grows with the tools.</div>
+    <div class="co">This trend is here to stay. More features = more exceptions = more unpredicted behavior. We are limited in resources, time, and our capacities. <em>That's why this risk was raised.</em></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">11 / 14</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · BREATHER — Attention budget animation ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">Lens 5</span> · The picture</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
+  <div class="sb"><div class="breather bg-warm" style="padding-top:8px;gap:6px">
+    <div class="breather-visual" style="position:relative;max-width:600px;width:100%">
+      <svg id="attn-svg" viewBox="0 0 600 340" width="600" height="340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+        <defs>
+          <radialGradient id="spotlight" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(232,129,58,.35)"/><stop offset="70%" stop-color="rgba(232,129,58,.08)"/><stop offset="100%" stop-color="rgba(232,129,58,0)"/></radialGradient>
+        </defs>
+        <!-- 10 system blocks -->
+        <g id="attn-blocks" font-family="JetBrains Mono" font-size="9" text-anchor="middle">
+          <g class="attn-block" data-i="0"><rect x="30" y="30" width="100" height="55" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="80" y="53" fill="rgba(255,255,255,.3)" font-weight="600">API Gateway</text><text x="80" y="68" fill="rgba(255,255,255,.15)" font-size="7">42 endpoints</text></g>
+          <g class="attn-block" data-i="1"><rect x="150" y="30" width="100" height="55" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="200" y="53" fill="rgba(255,255,255,.3)" font-weight="600">Auth Service</text><text x="200" y="68" fill="rgba(255,255,255,.15)" font-size="7">OAuth + JWT</text></g>
+          <g class="attn-block" data-i="2"><rect x="270" y="30" width="100" height="55" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="320" y="53" fill="rgba(255,255,255,.3)" font-weight="600">User DB</text><text x="320" y="68" fill="rgba(255,255,255,.15)" font-size="7">PostgreSQL</text></g>
+          <g class="attn-block" data-i="3"><rect x="390" y="30" width="100" height="55" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="440" y="53" fill="rgba(255,255,255,.3)" font-weight="600">Cache</text><text x="440" y="68" fill="rgba(255,255,255,.15)" font-size="7">Redis cluster</text></g>
+          <g class="attn-block" data-i="4"><rect x="30" y="110" width="100" height="55" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="80" y="133" fill="rgba(255,255,255,.3)" font-weight="600">Queue</text><text x="80" y="148" fill="rgba(255,255,255,.15)" font-size="7">RabbitMQ</text></g>
+          <g class="attn-block" data-i="5"><rect x="150" y="110" width="100" height="55" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="200" y="133" fill="rgba(255,255,255,.3)" font-weight="600">Payments</text><text x="200" y="148" fill="rgba(255,255,255,.15)" font-size="7">Stripe + webhook</text></g>
+          <g class="attn-block" data-i="6"><rect x="270" y="110" width="100" height="55" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="320" y="133" fill="rgba(255,255,255,.3)" font-weight="600">File Storage</text><text x="320" y="148" fill="rgba(255,255,255,.15)" font-size="7">S3 + CDN</text></g>
+          <g class="attn-block" data-i="7"><rect x="390" y="110" width="100" height="55" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="440" y="133" fill="rgba(255,255,255,.3)" font-weight="600">Scheduler</text><text x="440" y="148" fill="rgba(255,255,255,.15)" font-size="7">cron + workers</text></g>
+          <g class="attn-block" data-i="8"><rect x="110" y="190" width="100" height="55" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="160" y="213" fill="rgba(255,255,255,.3)" font-weight="600">Monitoring</text><text x="160" y="228" fill="rgba(255,255,255,.15)" font-size="7">Datadog</text></g>
+          <g class="attn-block" data-i="9"><rect x="310" y="190" width="100" height="55" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="360" y="213" fill="rgba(255,255,255,.3)" font-weight="600">Notifications</text><text x="360" y="228" fill="rgba(255,255,255,.15)" font-size="7">email + push</text></g>
+        </g>
+        <!-- Spotlight circle — will be moved by JS -->
+        <circle id="attn-spot" cx="80" cy="57" r="65" fill="url(#spotlight)" opacity="0"/>
+        <!-- Counter -->
+        <text x="300" y="290" fill="rgba(255,255,255,.2)" font-size="9" text-anchor="middle" font-family="JetBrains Mono" letter-spacing="2">COMPONENTS VISIBLE RIGHT NOW</text>
+        <text id="attn-count" x="300" y="316" fill="rgba(232,129,58,.6)" font-size="28" font-weight="800" text-anchor="middle" font-family="JetBrains Mono">—</text>
+      </svg>
+    </div>
+    <div class="breather-caption"><p>Your attention is a spotlight. It can only illuminate <strong>one or two components</strong> at a time. The rest sit in the dark. <strong>You can't watch everything. That's the point.</strong></p></div>
+  </div></div>
+  <div class="sf"><span class="shint">12 / 14</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn reflect-btn" onclick="openReflect('logs')">⏸ Reflect</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S12 · SUMMARY + SCORE ═══ -->
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag"><span class="hl">Lens 5</span> · What we covered</span><div class="sh-right"><div class="pips" id="pp12"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Lens 5 complete</div><div class="sp-s">We can't predict everything</div></div><div class="sp-r">
+    <div class="co"><strong>A05 — Injection:</strong> one mechanism (user input → no validation → execution), many victims (SQL, OS, templates). Parameterized queries are the decisive fix.</div>
+    <div class="co"><strong>A07 — Authentication Failures:</strong> password rules check format, not uniqueness. Dictionary checks + password managers are the real defense. HTTPS alone isn't enough.</div>
+    <div class="co"><strong>A09 — Logging & Monitoring:</strong> two roots — signal vs. noise, and the number of sources. Teams shortcut, gaps form, incidents go undetected.</div>
+    <div class="co"><strong>A10 — Exceptional Conditions:</strong> a structural limit, not laziness. Tools grow, complexity grows, the unpredicted surface grows with them.</div>
+    <div class="co" id="final-score" style="text-align:center;font-size:15px;padding:16px 20px"><strong>Your score:</strong> calculating...</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">13 / 14</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S13 · CLOSING ═══ -->
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag"><span class="hl">Lens 5</span> · Done</span><div class="sh-right"><div class="pips" id="pp13"></div></div></div>
+  <div class="sb"><div class="fbody" style="min-height:320px;justify-content:center">
+    <div class="fb-content" style="text-align:center;max-width:520px;margin:0 auto">
+      <div class="fb-tg">All 5 lenses complete</div>
+      <div class="fb-tt" style="font-size:28px;margin:0 auto 18px">You can't watch everything. But you can decide what to watch first.</div>
+      <div class="fb-sb" style="max-width:440px;margin:0 auto">That's the full OWASP Top 10 — not as a checklist, but as five ways of seeing where risk lives in your system. Next up: putting it all together.</div>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">14 / 14</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn" onclick="doRetake()">↻ Retake</button><button class="btn pri" onclick="go(0)">Finish Lens 5 ✓</button></div></div>
+</div>
+
+</div><!-- end deck -->
+
+<!-- REFLECT MODAL -->
+<div id="reflect-modal" role="dialog" aria-modal="true"><div class="rm-card">
+  <button class="rm-close" onclick="closeReflect()">×</button>
+  <div class="rm-tag">⏸ Pause to reflect</div>
+  <div class="rm-q" id="rm-q"></div>
+  <div class="rm-sub" id="rm-sub"></div>
+  <div class="rm-actions"><button class="btn pri" onclick="closeReflect()">Got it →</button></div>
+</div></div>
+
+<script>
+const T=14;let c=0;
+const DEFAULT_STATE={xp:0,streak:0,answers:{},wagers:{},reflections:[]};
+let state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};
+
+function go(n){if(n<0||n>=T)return;document.getElementById('s'+c).classList.remove('on');c=n;const s=document.getElementById('s'+n);s.classList.add('on');const r=s.querySelector('.sp-r');if(r)r.scrollTop=0;document.querySelectorAll('.pips').forEach(p=>bp(p));window.scrollTo(0,0);if(n===12){const fs=document.getElementById('final-score');if(fs){const tq=Object.keys(ans).length;const aw=Object.keys(state.answers).length;const cr=Object.values(state.answers).filter(a=>a.correct).length;if(aw===0)fs.innerHTML='<strong>You haven\'t answered any quizzes yet.</strong> Go back and try them.';else fs.innerHTML=`<strong>${cr} out of ${tq}</strong> correct · <strong>${state.xp} XP</strong> earned`;}}if(n===11&&!attnStarted){attnStarted=true;startAttn()}}
+
+function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}}
+
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'){e.preventDefault();go(c-1)}});
+
+function doRetake(){state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};attnStarted=false;document.querySelectorAll('.qo').forEach(o=>{o.classList.remove('pk','ok','no')});document.querySelectorAll('.qe').forEach(e=>{e.classList.remove('sh');const s=e.querySelector('.qe-score');if(s)s.remove()});document.querySelectorAll('.wager').forEach(w=>w.remove());document.querySelectorAll('.qw').forEach(buildWagerUI);document.querySelectorAll('.mr-body').forEach(b=>b.classList.remove('revealed'));go(0)}
+
+const ans={q1:2,q2:1};
+const WAGERS=[{key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},{key:'pretty',mult:2,name:'Pretty sure',sub:'×2 if right · 1 if wrong'},{key:'guess',mult:1,name:'Just guessing',sub:'×1 either way'}];
+
+function buildWagerUI(qw){const qq=qw.querySelector('.qq');if(!qq)return;const qid=qw.id;const w=document.createElement('div');w.className='wager';w.dataset.qid=qid;w.innerHTML=`<div class="wager-lab">How confident are you?</div><div class="wager-row">${WAGERS.map(g=>`<button class="wager-btn" data-w="${g.key}" data-m="${g.mult}"><div class="wb-top"><span class="wb-mult">×${g.mult}</span><span class="wb-name">${g.name}</span></div><div class="wb-sub">${g.sub}</div></button>`).join('')}</div>`;qq.parentNode.insertBefore(w,qq.nextSibling);w.querySelectorAll('.wager-btn').forEach(btn=>{btn.onclick=()=>{if(w.classList.contains('locked'))return;w.querySelectorAll('.wager-btn').forEach(b=>b.classList.remove('pk'));btn.classList.add('pk');state.wagers[qid]=parseInt(btn.dataset.m,10)}})}
+
+function lockWager(qid){const w=document.querySelector(`.wager[data-qid="${qid}"]`);if(!w)return;w.classList.add('locked');w.querySelectorAll('.wager-btn').forEach(b=>b.disabled=true);const mult=state.wagers[qid]||1;const wn=WAGERS.find(g=>g.mult===mult)?.name||'Just guessing';w.innerHTML=`<div class="wager-locked-note">🎯 You wagered <b>${wn}</b> (×${mult})</div>`}
+
+function pk(q,i){const w=document.getElementById(q),o=w.querySelectorAll('.qo');if(o[0].classList.contains('pk'))return;if(!state.wagers[q])state.wagers[q]=1;const mult=state.wagers[q];const k=ans[q];const correct=(i===k);o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});let pts=0,kind='zero',msg='';if(correct){pts=mult*3;state.streak++;kind='';if(mult===3)msg=`Confident and correct. <b>+${pts} XP</b>`;else if(mult===2)msg=`Right call. <b>+${pts} XP</b>`;else msg=`Lucky guess — still counts. <b>+${pts} XP</b>`}else{if(mult===3){pts=0;kind='zero';msg=`Confidence didn\'t pay off. <b>+0 XP</b>`}else{pts=1;kind='humility';msg=`Humility bonus. <b>+1 XP</b>`}state.streak=0}state.xp+=pts;state.answers[q]={picked:i,correct,wager:mult,points:pts};lockWager(q);const e=document.getElementById(q+'-e');e.classList.add('sh');if(!e.querySelector('.qe-score')){const s=document.createElement('div');s.className='qe-score';s.innerHTML=`<span class="qs-pts ${kind}">${pts>0?'+':''}${pts} XP</span><span class="qs-msg">${msg}</span>`;e.appendChild(s)}}
+
+document.querySelectorAll('.qw').forEach(buildWagerUI);
+document.querySelectorAll('.pips').forEach(p=>bp(p));
+
+function tgd(id){const el=document.getElementById(id),p=el.querySelector('.idot-pop');if(p){p.classList.toggle('open');el.classList.toggle('opened')}}
+function reveal(id){document.getElementById(id).classList.add('revealed')}
+function unreveal(id){document.getElementById(id).classList.remove('revealed')}
+
+/* Terminal */
+const TERM_DATA={term1:[
+  {type:'cmd',text:"curl 'https://app.com/api/users?id=1' OR 1=1 --'"},
+  {type:'blank'},
+  {type:'info',text:'Sending request with injected SQL...'},
+  {type:'blank'},
+  {type:'atk',text:'SQL injection successful — WHERE clause bypassed'},
+  {type:'blank'},
+  {type:'',text:'{"users": ['},
+  {type:'',text:'  {"id":1, "name":"alice", "email":"alice@co.com"},'},
+  {type:'',text:'  {"id":2, "name":"bob", "email":"bob@co.com"},'},
+  {type:'',text:'  {"id":3, "name":"charlie", "email":"c@co.com"},'},
+  {type:'atk',text:'  ... 12,847 more records'},
+  {type:'',text:']}'},
+  {type:'blank'},
+  {type:'atk',text:'Entire users table dumped. 12,850 records exposed.'}
+]};
+function playTerm(id){const body=document.getElementById(id+'-body');const btn=document.getElementById(id+'-play');const lines=TERM_DATA[id];if(!lines)return;body.innerHTML='';btn.disabled=true;lines.forEach((l,i)=>{setTimeout(()=>{const d=document.createElement('div');d.className='term-line'+(l.type?' '+l.type:'');if(l.type==='blank')d.innerHTML='&nbsp;';else d.textContent=l.text;body.appendChild(d);body.scrollTop=body.scrollHeight},i*280)});setTimeout(()=>{btn.disabled=false},lines.length*280+200)}
+
+/* Attention budget animation */
+let attnStarted=false;
+function startAttn(){
+  const spot=document.getElementById('attn-spot');
+  const counter=document.getElementById('attn-count');
+  const blocks=document.querySelectorAll('.attn-block');
+  if(!spot||!blocks.length)return;
+  spot.style.opacity='1';spot.style.transition='cx .8s ease, cy .8s ease';
+  const positions=[
+    {cx:80,cy:57},{cx:200,cy:57},{cx:320,cy:57},{cx:440,cy:57},
+    {cx:80,cy:137},{cx:200,cy:137},{cx:320,cy:137},{cx:440,cy:137},
+    {cx:160,cy:217},{cx:360,cy:217}
+  ];
+  let cur=0;
+  function step(){
+    const p=positions[cur];
+    spot.setAttribute('cx',p.cx);spot.setAttribute('cy',p.cy);
+    blocks.forEach((b,i)=>{
+      const r=b.querySelector('rect');const texts=b.querySelectorAll('text');
+      const dist=Math.hypot(positions[i].cx-p.cx,positions[i].cy-p.cy);
+      const lit=dist<120;
+      r.style.transition='all .6s';
+      if(lit){r.setAttribute('stroke','rgba(232,129,58,.5)');r.setAttribute('fill','rgba(232,129,58,.06)');texts.forEach(t=>{t.style.transition='fill .6s';t.setAttribute('fill',t.getAttribute('font-weight')==='600'?'rgba(232,129,58,.85)':'rgba(255,255,255,.4)')})}
+      else{r.setAttribute('stroke','rgba(255,255,255,.06)');r.setAttribute('fill','rgba(255,255,255,.02)');texts.forEach(t=>{t.style.transition='fill .6s';t.setAttribute('fill','rgba(255,255,255,.12)')})}
+    });
+    const litCount=blocks.length- [...blocks].filter((b,i)=>{const d=Math.hypot(positions[i].cx-p.cx,positions[i].cy-p.cy);return d>=120}).length;
+    counter.textContent=litCount+' / '+blocks.length;
+    cur=(cur+1)%positions.length;
+  }
+  step();setInterval(step,2000);
+}
+
+/* Reflect */
+const REFLECT_PROMPTS={
+  logs:{
+    q:'Which components in your system are <em>not covered</em> by logging right now?',
+    sub:'If you don\'t know — that is A09. The components you can\'t name are the ones where incidents go undetected.'
+  }
+};
+function openReflect(key){const p=REFLECT_PROMPTS[key];if(!p)return;document.getElementById('rm-q').innerHTML=p.q;document.getElementById('rm-sub').textContent=p.sub;document.getElementById('reflect-modal').classList.add('on');if(state.reflections&&!state.reflections.includes(key)){state.reflections.push(key);state.xp+=2}}
+function closeReflect(){document.getElementById('reflect-modal').classList.remove('on')}
+document.getElementById('reflect-modal').addEventListener('click',e=>{if(e.target.id==='reflect-modal')closeReflect()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeReflect()});
+
+/* Glossary tooltip */
+(function(){const tip=document.createElement('div');tip.id='gloss-tip';document.body.appendChild(tip);let cur=null;function place(el){tip.textContent=el.getAttribute('data-def')||'';const r=el.getBoundingClientRect();tip.style.left='0';tip.style.top='0';let left=r.left,top=r.top-tip.offsetHeight-10;if(left+tip.offsetWidth>window.innerWidth-8)left=window.innerWidth-tip.offsetWidth-8;if(left<8)left=8;if(top<8)top=r.bottom+10;tip.style.left=left+'px';tip.style.top=top+'px';tip.classList.add('on');cur=el}function hide(){tip.classList.remove('on');cur=null}document.addEventListener('mouseover',e=>{const g=e.target.closest('.gloss');if(g&&g!==cur)place(g)});document.addEventListener('mouseout',e=>{if(e.target.closest('.gloss'))hide()});document.addEventListener('click',e=>{const g=e.target.closest('.gloss');if(g&&window.matchMedia('(hover:none)').matches){if(cur===g)hide();else place(g);e.preventDefault();return}if(!g)hide()});document.addEventListener('scroll',hide,true)})();
+</script>
+</main>
+</body>
+</html>

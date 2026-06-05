@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secret Management · Cloud Solutions · Security Champions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:slide-in .35s cubic-bezier(.2,.6,.2,1) both}
+@keyframes slide-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.slide:not(.on) *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.slide.on{animation:none}*,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
+
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh .sh-right{display:flex;align-items:center;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}
+.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}
+.btn.pri:hover{background:var(--od)}
+.btn.reflect-btn{border-color:rgba(232,129,58,.4);color:var(--or);background:rgba(232,129,58,.06)}
+.btn.reflect-btn:hover{background:rgba(232,129,58,.15);color:#fff}
+
+/* Reflect modal */
+#reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px;animation:rm-fade .25s ease}
+#reflect-modal.on{display:flex}
+.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.3);border-radius:14px;padding:32px 36px 26px;max-width:520px;width:100%;color:#F5F2ED;box-shadow:0 30px 80px rgba(0,0,0,.6);position:relative}
+.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:22px;cursor:pointer;padding:4px 8px;line-height:1;transition:color .15s}
+.rm-close:hover{color:#fff}
+.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:14px}
+.rm-q{font-size:18px;line-height:1.5;font-weight:300;margin-bottom:10px;color:#F5F2ED}
+.rm-q em{color:var(--or);font-style:italic}
+.rm-q code{background:rgba(255,255,255,.08);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:14px}
+.rm-sub{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:22px}
+.rm-actions{display:flex;gap:10px;justify-content:flex-end}
+
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:280px;justify-content:flex-end}
+.pip{width:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}
+.pip.on{background:var(--or);transform:scaleY(1.8)}
+
+/* Score chip */
+.scorechip{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:4px 10px 4px 6px;margin-left:10px;font-family:inherit;cursor:default;transition:all .2s}
+.scorechip.bump{animation:sc-bump .5s ease}
+@keyframes sc-bump{0%{transform:scale(1)}30%{transform:scale(1.12);background:rgba(232,129,58,.18);border-color:rgba(232,129,58,.4)}100%{transform:scale(1)}}
+.scorechip .sc-rank{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--or);font-size:10px;font-weight:800;color:#1A1A1A;letter-spacing:.5px}
+.scorechip .sc-xp{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px}
+.scorechip .sc-xp b{color:var(--or)}
+.scorechip .sc-streak{font-size:10px;color:rgba(255,255,255,.5);font-weight:600;display:flex;align-items:center;gap:2px;border-left:1px solid rgba(255,255,255,.1);padding-left:8px}
+.scorechip .sc-streak.live{color:#FFB36B}
+.scorechip .sc-streak.live .sc-flame{filter:drop-shadow(0 0 4px rgba(255,150,80,.6));animation:flame-flick .8s ease-in-out infinite}
+@keyframes flame-flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.1) rotate(2deg)}}
+@media(max-width:560px){.scorechip .sc-streak{display:none}.scorechip{margin-left:6px;padding:3px 8px 3px 4px}}
+
+/* Wager */
+.wager{margin:6px 0 10px;background:linear-gradient(135deg,#fff8f2,#fff);border:1px dashed rgba(232,129,58,.4);border-radius:8px;padding:11px 14px;transition:all .25s}
+.wager.locked{opacity:.55;border-style:solid;border-color:var(--bd);background:var(--ow)}
+.wager-lab{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.wager-lab::before{content:'';width:14px;height:1px;background:var(--or)}
+.wager-row{display:flex;gap:6px;flex-wrap:wrap}
+.wager-btn{flex:1;min-width:90px;background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .12s}
+.wager-btn:hover{border-color:var(--or);transform:translateY(-1px);box-shadow:0 2px 8px rgba(232,129,58,.15)}
+.wager-btn.pk{border-color:var(--or);background:var(--ol)}
+.wager-btn.pk .wb-mult{background:var(--or);color:#fff}
+.wager-btn:disabled{cursor:not-allowed;opacity:.5}
+.wb-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.wb-mult{display:inline-flex;align-items:center;justify-content:center;background:var(--card);color:var(--td);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;letter-spacing:.3px}
+.wb-name{font-size:13px;font-weight:700;color:var(--td)}
+.wb-sub{font-size:11px;color:var(--mu);line-height:1.3}
+.wager-locked-note{font-size:11px;color:var(--mu);font-style:italic;display:flex;align-items:center;gap:6px}
+.wager-locked-note b{color:var(--td);font-style:normal;font-weight:600}
+.qe .qe-score{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:13px}
+.qe .qe-score .qs-pts{display:inline-flex;align-items:center;gap:4px;background:var(--gl);color:var(--gr);font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px;letter-spacing:.3px}
+.qe .qe-score .qs-pts.zero{background:var(--rl);color:var(--rd)}
+.qe .qe-score .qs-pts.humility{background:rgba(123,111,174,.12);color:var(--pu)}
+.qe .qe-score .qs-msg{color:var(--tm);font-size:12px}
+
+.sb{padding:0}
+
+/* Split */
+.split{display:flex;min-height:480px}
+.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:20px;font-weight:700;color:var(--wh);line-height:1.25}
+.sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:480px}
+.sp-r::-webkit-scrollbar{width:3px}
+.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+
+/* Full-bleed */
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}
+.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
+
+/* Prose */
+.prose{font-size:15.5px;color:var(--tm);line-height:1.78}
+.prose strong{color:var(--td);font-weight:600}
+.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.prose em{font-style:italic}
+
+/* Callout */
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}
+.co em{font-style:italic;font-weight:500;color:var(--or)}
+.co strong{font-weight:600}
+
+/* Numbered callout */
+.numlist{padding:14px 18px;background:var(--ol);border-left:3px solid var(--or);border-radius:0 7px 7px 0;font-size:14px;line-height:1.7;color:var(--td)}
+.numlist b{font-weight:700}
+
+/* Expand */
+.xp{margin:4px 0}
+.xh{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card);border:none;border-radius:6px;padding:12px 16px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--td);text-align:left;transition:background .1s}
+.xh:hover{background:#e5e5e5}
+.xa{font-size:13px;color:var(--mu);transition:transform .18s;margin-left:8px}.xa.op{transform:rotate(90deg);color:var(--or)}
+.xb{display:none;padding:14px 16px;background:var(--ow);border-radius:0 0 6px 6px;font-size:14px;color:var(--tm);line-height:1.7}
+.xb.op{display:block}.xb strong{color:var(--td);font-weight:600}
+
+/* Quiz */
+.qw{margin:6px 0}
+.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}
+.qo.ok{border-color:var(--gr);background:var(--gl)}
+.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55}
+.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block}.qe strong{color:var(--td)}
+
+/* Glossary */
+.gloss{border-bottom:1px dotted var(--or);cursor:help;font-weight:600;color:inherit}
+#gloss-tip{position:fixed;background:#1a1620;color:#F5F2ED;font-size:12px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.4);box-shadow:0 8px 28px rgba(0,0,0,.55);max-width:300px;width:max-content;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none;z-index:9999;text-align:left;font-family:inherit}
+#gloss-tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+#gloss-tip::after{content:'';position:absolute;left:14px;top:100%;width:0;height:0;border:6px solid transparent;border-top-color:rgba(232,129,58,.5)}
+#gloss-tip.below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:rgba(232,129,58,.5)}
+
+/* Fade-in for sp-r children */
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .2s ease both}
+.slide.on .sp-r>*:nth-child(1){animation-delay:.03s}
+.slide.on .sp-r>*:nth-child(2){animation-delay:.06s}
+.slide.on .sp-r>*:nth-child(3){animation-delay:.09s}
+.slide.on .sp-r>*:nth-child(4){animation-delay:.12s}
+.slide.on .sp-r>*:nth-child(5){animation-delay:.15s}
+.slide.on .sp-r>*:nth-child(6){animation-delay:.18s}
+.slide.on .sp-r>*:nth-child(7){animation-delay:.21s}
+
+/* Breather */
+.breather{display:flex;flex-direction:column;align-items:center;padding:18px 24px 10px;min-height:480px;gap:12px}
+.breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.breather-caption{text-align:center;padding:6px 0 2px;max-width:660px}
+.breather-caption p{font-size:15.5px;line-height:1.65}
+.breather-caption strong{font-weight:700}
+.breather-notice{font-size:12px;color:rgba(255,255,255,.4);letter-spacing:.4px;text-align:center;margin-top:8px;font-style:italic}
+.breather-notice b{color:rgba(255,255,255,.65);font-style:normal;font-weight:600}
+.breather-hint{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.5px;text-align:center;margin-top:4px}
+.breather-hint b{color:rgba(232,129,58,.5);font-weight:600}
+
+/* Clickable detail panel on breather visuals */
+[data-detail]{cursor:pointer;position:relative}
+[data-detail]::after{content:'tap for details';position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:.5px;color:rgba(255,255,255,.2);text-transform:uppercase;opacity:0;transition:opacity .2s;pointer-events:none}
+[data-detail]:hover::after{opacity:1}
+.detail-panel{display:none;width:100%;max-width:660px;margin:6px auto 0;padding:11px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(232,129,58,.25);border-radius:7px;font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.6;animation:detail-open .25s ease}
+.detail-panel.on{display:block}
+.detail-panel strong{color:var(--or);font-weight:600}
+.detail-panel .detail-close{float:right;background:none;border:none;color:rgba(255,255,255,.3);font-size:14px;cursor:pointer;padding:0 4px;line-height:1}
+.detail-panel .detail-close:hover{color:var(--or)}
+@keyframes detail-open{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.bg-navy{background:linear-gradient(170deg,#111828,#161B22,#111828)}
+.bg-navy .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-navy .breather-caption strong{color:var(--or)}
+.bg-earth{background:linear-gradient(170deg,#1a1815,#1a1a1a,#18151a)}
+.bg-earth .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-earth .breather-caption strong{color:var(--or)}
+.bg-warm{background:linear-gradient(170deg,#1e1a15,#1a1a1a,#1a1520)}
+.bg-warm .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-warm .breather-caption strong{color:var(--or)}
+
+/* ═══ BREATHER CUSTOM COMPONENTS ═══ */
+
+/* Recap combo (S1) */
+.recap-grid{display:flex;flex-direction:column;gap:18px;max-width:640px;width:100%}
+.recap-row{display:flex;gap:14px;align-items:center}
+.recap-mini{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:14px;text-align:center;opacity:0;animation:recap-in .4s ease forwards}
+.recap-mini:nth-child(1){animation-delay:.2s}.recap-mini:nth-child(2){animation-delay:.45s}
+@keyframes recap-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.recap-mini-label{font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:8px}
+.recap-mini-bar{display:flex;height:28px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.recap-mini-bar .seg{flex:1;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.3px;border-right:1px solid rgba(255,255,255,.04)}
+.recap-mini-bar .seg:last-child{border-right:none}
+.recap-stages{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.recap-stage{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:rgba(255,255,255,.4);font-family:'JetBrains Mono',monospace}
+.recap-stage.warn{border-color:var(--or);color:var(--or);background:rgba(232,129,58,.1)}
+.recap-vs{display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;opacity:0;animation:recap-in .4s ease forwards;animation-delay:.7s}
+.recap-vs-item{font-size:12px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.3px}
+.recap-vs-divider{font-size:11px;color:var(--or);font-weight:800}
+
+/* Architecture diagram (S4, S13) */
+.arch-diagram{position:relative;width:100%;max-width:660px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.arch-center{display:flex;flex-direction:column;align-items:center;gap:5px;padding:16px 24px;background:rgba(232,129,58,.1);border:1.5px solid rgba(232,129,58,.5);border-radius:10px;position:relative;z-index:2;opacity:0;animation:arch-in .4s ease forwards;animation-delay:.15s}
+@keyframes arch-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.arch-center-icon{font-size:28px}
+.arch-center-name{font-size:14px;font-weight:800;color:var(--or);letter-spacing:.5px}
+.arch-consumers{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;width:100%}
+.arch-consumer{flex:1;min-width:120px;max-width:160px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;text-align:center;transition:all .3s;opacity:0;animation:arch-in .35s ease forwards}
+.arch-consumer:nth-child(1){animation-delay:.4s}.arch-consumer:nth-child(2){animation-delay:.55s}.arch-consumer:nth-child(3){animation-delay:.7s}
+.arch-consumer:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.2);transform:translateY(-3px)}
+.arch-consumer-icon{font-size:22px}
+.arch-consumer-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.3px}
+.arch-consumer-sub{font-size:10px;color:rgba(255,255,255,.4);line-height:1.3}
+.arch-boundary{width:100%;border:1px dashed rgba(255,255,255,.15);border-radius:10px;padding:12px 16px;position:relative}
+.arch-boundary-label{position:absolute;top:-8px;left:14px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(255,255,255,.35);text-transform:uppercase;background:linear-gradient(170deg,#1a1815,#1a1a1a);padding:0 6px}
+.arch-outside{display:flex;justify-content:center;opacity:0;animation:arch-in .35s ease forwards;animation-delay:.9s}
+.arch-arrow{font-size:15px;color:rgba(255,255,255,.2);text-align:center;padding:3px 0}
+
+/* Sequence diagram (S7, S18, S19) */
+.seq-diagram{width:100%;max-width:660px;display:flex;flex-direction:column;gap:5px}
+.seq-cols{display:flex;gap:0;margin-bottom:8px}
+.seq-col{flex:1;text-align:center;font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(255,255,255,.45);text-transform:uppercase;padding:7px 4px;border-bottom:1px solid rgba(255,255,255,.08)}
+.seq-step{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);transition:all .3s;opacity:0;animation:seq-in .35s ease forwards}
+@keyframes seq-in{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.seq-step:nth-child(2){animation-delay:.12s}.seq-step:nth-child(3){animation-delay:.24s}.seq-step:nth-child(4){animation-delay:.36s}
+.seq-step:nth-child(5){animation-delay:.48s}.seq-step:nth-child(6){animation-delay:.6s}.seq-step:nth-child(7){animation-delay:.72s}
+.seq-step:nth-child(8){animation-delay:.84s}.seq-step:nth-child(9){animation-delay:.96s}.seq-step:nth-child(10){animation-delay:1.08s}.seq-step:nth-child(11){animation-delay:1.2s}
+.seq-step:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12)}
+.seq-num{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.seq-text{font-size:12px;color:rgba(255,255,255,.55);line-height:1.4;flex:1}
+.seq-text b{color:#fff;font-weight:600}
+.seq-tag{font-size:9px;font-weight:800;letter-spacing:.8px;padding:3px 7px;border-radius:3px;flex-shrink:0;text-transform:uppercase}
+.seq-log{background:rgba(46,173,107,.12);color:#7AD9A6;border:1px solid rgba(46,173,107,.3)}
+.seq-enc{background:rgba(217,69,69,.12);color:#ff8888;border:1px solid rgba(217,69,69,.3)}
+.seq-auth{background:rgba(74,143,212,.12);color:#8AB8E8;border:1px solid rgba(74,143,212,.3)}
+.seq-key{background:rgba(232,129,58,.12);color:#FFB36B;border:1px solid rgba(232,129,58,.3)}
+
+/* Flowchart / decision tree (S9, S24) */
+.flow-tree{display:flex;flex-direction:column;gap:7px;max-width:620px;width:100%}
+.flow-q{display:flex;align-items:center;gap:10px;padding:9px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:7px;font-size:12.5px;color:rgba(255,255,255,.65);font-weight:600;opacity:0;animation:flow-in .35s ease forwards}
+@keyframes flow-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.flow-q:nth-of-type(1){animation-delay:.15s}.flow-q:nth-of-type(2){animation-delay:.5s}.flow-q:nth-of-type(3){animation-delay:.85s}.flow-q:nth-of-type(4){animation-delay:1.2s}
+.flow-q:nth-of-type(5){animation-delay:1.55s}.flow-q:nth-of-type(6){animation-delay:1.9s}
+.flow-q::before{content:'?';width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:rgba(255,255,255,.4);flex-shrink:0}
+.flow-ans{display:flex;align-items:center;gap:10px;padding:6px 12px 6px 46px;font-size:11px;font-weight:700;letter-spacing:.3px;opacity:0;animation:flow-in .3s ease forwards}
+.flow-arrow{color:rgba(255,255,255,.2);font-size:11px;flex-shrink:0}
+.flow-result{padding:6px 12px;border-radius:5px;font-size:11px;font-weight:800;letter-spacing:.5px}
+.flow-result.aws-ps{background:rgba(232,129,58,.12);color:#FFB36B;border:1px solid rgba(232,129,58,.3)}
+.flow-result.aws-sm{background:rgba(46,173,107,.12);color:#7AD9A6;border:1px solid rgba(46,173,107,.3)}
+.flow-result.aws-kms{background:rgba(74,143,212,.12);color:#8AB8E8;border:1px solid rgba(74,143,212,.3)}
+.flow-result.vault{background:rgba(123,111,174,.12);color:#B0A4D4;border:1px solid rgba(123,111,174,.3)}
+.flow-result.k8s{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.12)}
+.flow-result.azure{background:rgba(74,143,212,.08);color:#8AB8E8;border:1px solid rgba(74,143,212,.25)}
+
+/* MSI flow (S11) */
+.msi-flow{display:flex;flex-direction:column;gap:14px;max-width:600px;width:100%}
+.msi-step{display:flex;align-items:center;gap:14px;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;transition:all .3s;opacity:0;animation:msi-in .4s ease forwards}
+.msi-step:nth-child(1){animation-delay:.2s}.msi-step:nth-child(2){animation-delay:.5s}.msi-step:nth-child(3){animation-delay:.8s}
+@keyframes msi-in{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+.msi-step:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15)}
+.msi-num{width:32px;height:32px;border-radius:50%;background:rgba(232,129,58,.15);border:1.5px solid rgba(232,129,58,.5);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--or);font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.msi-nodes{display:flex;align-items:center;gap:10px;flex:1}
+.msi-node{padding:5px 12px;border-radius:5px;font-size:11.5px;font-weight:700;letter-spacing:.3px;white-space:nowrap}
+.msi-node.vm{background:rgba(74,143,212,.12);color:#8AB8E8;border:1px solid rgba(74,143,212,.3)}
+.msi-node.ext{background:rgba(232,129,58,.12);color:#FFB36B;border:1px solid rgba(232,129,58,.3)}
+.msi-node.aad{background:rgba(123,111,174,.12);color:#B0A4D4;border:1px solid rgba(123,111,174,.3)}
+.msi-node.svc{background:rgba(46,173,107,.12);color:#7AD9A6;border:1px solid rgba(46,173,107,.3)}
+.msi-arrow{color:rgba(255,255,255,.25);font-size:14px;flex-shrink:0}
+.msi-desc{font-size:10px;color:rgba(255,255,255,.4);flex-shrink:0;max-width:130px;line-height:1.3}
+.msi-footer{padding:10px 16px;background:rgba(74,143,212,.06);border:1px solid rgba(74,143,212,.2);border-radius:6px;font-size:11px;color:rgba(255,255,255,.5);text-align:center;font-weight:600;letter-spacing:.5px;opacity:0;animation:msi-in .4s ease forwards;animation-delay:1.1s}
+
+/* K8s architecture (S13) */
+.k8s-arch{display:flex;gap:16px;max-width:680px;width:100%;align-items:stretch}
+.k8s-box{flex:1;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:7px;opacity:0;animation:k8s-in .4s ease forwards}
+.k8s-box:nth-child(1){animation-delay:.2s}.k8s-box:nth-child(3){animation-delay:.5s}
+@keyframes k8s-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.k8s-box-label{font-size:10.5px;font-weight:800;letter-spacing:1.5px;color:rgba(255,255,255,.45);text-transform:uppercase;text-align:center;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.06)}
+.k8s-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:5px;font-size:11px;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.3px}
+.k8s-item.danger{border-color:rgba(217,69,69,.4);color:#ff8888;background:rgba(217,69,69,.06);animation:k8s-pulse 3s ease-in-out infinite}
+@keyframes k8s-pulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 12px rgba(217,69,69,.2)}}
+.k8s-item .ki-icon{font-size:14px;flex-shrink:0}
+.k8s-conn{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:36px;font-size:18px;color:rgba(255,255,255,.15);opacity:0;animation:k8s-in .3s ease forwards;animation-delay:.35s}
+
+/* Score results grid */
+.res-grid{display:flex;flex-direction:column;gap:12px;width:100%;max-width:600px;margin:0 auto}
+.res-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px}
+.res-q{flex:1;font-size:13px;color:rgba(255,255,255,.7);font-weight:500}
+.res-badge{font-size:11px;font-weight:800;padding:3px 10px;border-radius:12px;letter-spacing:.3px}
+.res-badge.correct{background:rgba(46,173,107,.15);color:#7AD9A6;border:1px solid rgba(46,173,107,.3)}
+.res-badge.wrong{background:rgba(217,69,69,.15);color:#ff8888;border:1px solid rgba(217,69,69,.3)}
+.res-badge.skip{background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.1)}
+.res-summary{text-align:center;padding:16px;margin-top:8px}
+.res-xp{font-size:36px;font-weight:300;color:#fff;letter-spacing:-.02em}
+.res-xp b{color:var(--or);font-weight:700}
+.res-rank{font-size:12px;color:rgba(255,255,255,.5);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-top:4px}
+
+/* Best practice */
+.bp-tag{font-size:10px;font-weight:800;letter-spacing:3px;color:var(--or);text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.bp-tag::before{content:'★';font-size:12px}
+
+/* Retake modal */
+#retake-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#retake-modal.on{display:flex;animation:rm-fade .25s ease}
+@keyframes rm-fade{from{opacity:0}to{opacity:1}}
+.retake-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(217,69,69,.35);border-radius:14px;padding:32px 36px 26px;max-width:480px;width:100%;text-align:center;color:#F5F2ED;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.retake-tag{font-size:10px;letter-spacing:4px;color:#ff8888;font-weight:700;text-transform:uppercase;margin-bottom:14px}
+.retake-q{font-size:20px;line-height:1.4;font-weight:300;margin-bottom:10px;color:#F5F2ED}
+.retake-sub{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:22px}
+.retake-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn.retake-confirm{background:#ff5555;border-color:#ff5555;color:#fff;font-weight:600}
+.btn.retake-confirm:hover{background:#e04545}
+
+/* Toast */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#1c1820;color:#F5F2ED;font-size:13px;padding:10px 18px;border-radius:8px;border:1px solid rgba(232,129,58,.35);box-shadow:0 8px 28px rgba(0,0,0,.4);opacity:0;transition:all .25s;z-index:9999;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:rgba(217,69,69,.5);color:#ff8888}
+
+@media(max-width:560px){
+  .split{flex-direction:column}
+  .sp-l{width:100%;padding:16px 18px}
+  .sp-l::after{display:none}
+  .sp-r{max-height:none}
+  .fbody{flex-direction:column;padding:32px 24px;gap:24px}
+  .fb-visual{width:160px;height:160px}
+  .fb-tt{font-size:28px}
+  .k8s-arch{flex-direction:column}
+  .arch-consumers{flex-direction:column;align-items:center}
+  .arch-consumer{max-width:none;min-width:0}
+}
+</style>
+</head>
+<body>
+<main class="lms-main">
+<div class="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Module 6b</span> · Secret Management</span><div class="pips" id="pp0"></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Security Champions · Module 6b</div>
+      <div class="fb-tt">Secret Management — Cloud Solutions</div>
+      <div class="fb-sb">AWS, Azure, Kubernetes, and HashiCorp Vault. Part 2 of 2.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <rect x="25" y="40" width="150" height="120" rx="8" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1.5"/>
+        <rect x="35" y="58" width="38" height="28" rx="4" fill="rgba(232,129,58,.15)" stroke="rgba(232,129,58,.4)" stroke-width="1"><animate attributeName="opacity" values=".5;1;.5" dur="4s" begin="0s" repeatCount="indefinite"/></rect>
+        <text x="54" y="76" fill="rgba(255,255,255,.6)" font-size="8" text-anchor="middle" font-weight="700">AWS</text>
+        <rect x="80" y="58" width="38" height="28" rx="4" fill="rgba(74,143,212,.15)" stroke="rgba(74,143,212,.4)" stroke-width="1"><animate attributeName="opacity" values=".5;1;.5" dur="4s" begin="1s" repeatCount="indefinite"/></rect>
+        <text x="99" y="76" fill="rgba(255,255,255,.6)" font-size="8" text-anchor="middle" font-weight="700">Azure</text>
+        <rect x="125" y="58" width="38" height="28" rx="4" fill="rgba(46,173,107,.15)" stroke="rgba(46,173,107,.4)" stroke-width="1"><animate attributeName="opacity" values=".5;1;.5" dur="4s" begin="2s" repeatCount="indefinite"/></rect>
+        <text x="144" y="76" fill="rgba(255,255,255,.6)" font-size="8" text-anchor="middle" font-weight="700">K8s</text>
+        <rect x="60" y="100" width="80" height="28" rx="4" fill="rgba(123,111,174,.15)" stroke="rgba(123,111,174,.4)" stroke-width="1"><animate attributeName="opacity" values=".5;1;.5" dur="4s" begin="3s" repeatCount="indefinite"/></rect>
+        <text x="100" y="118" fill="rgba(255,255,255,.6)" font-size="8" text-anchor="middle" font-weight="700">Vault</text>
+        <line x1="54" y1="86" x2="80" y2="100" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line x1="99" y1="86" x2="100" y2="100" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line x1="144" y1="86" x2="120" y2="100" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">Cover</span><div class="snav"><button class="btn pri" onclick="go(1)">Begin →</button></div></div>
+</div>
+
+<!-- ═══ S1 · Recap breather ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Part 1 recap</span><div class="pips" id="pp1"></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">PART 1 RECAP</div>
+    <div class="breather-visual">
+      <div class="recap-grid">
+        <div class="recap-row">
+          <div class="recap-mini" style="flex:1.2">
+            <div class="recap-mini-label">Secret lifecycle</div>
+            <div class="recap-stages">
+              <div class="recap-stage">01</div><div class="recap-stage">02</div><div class="recap-stage">03</div><div class="recap-stage">04</div><div class="recap-stage warn">05</div><div class="recap-stage warn">06</div>
+            </div>
+          </div>
+          <div class="recap-mini" style="flex:1.8">
+            <div class="recap-mini-label">Maturity spectrum</div>
+            <div class="recap-mini-bar">
+              <div class="seg" style="background:rgba(217,69,69,.15)">.env</div>
+              <div class="seg" style="background:rgba(217,69,69,.08)">Git</div>
+              <div class="seg" style="background:rgba(232,129,58,.08)">crypt</div>
+              <div class="seg" style="background:rgba(46,173,107,.06)">Store</div>
+              <div class="seg" style="background:rgba(46,173,107,.1)">Mgr</div>
+              <div class="seg" style="background:rgba(74,143,212,.1)">Vault</div>
+            </div>
+          </div>
+        </div>
+        <div class="recap-vs">
+          <span class="recap-vs-item">VCS approach (git-crypt, SOPS)</span>
+          <span class="recap-vs-divider">vs</span>
+          <span class="recap-vs-item">Orchestrator approach (stores, vaults)</span>
+        </div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Part 1 covered what secrets are, their lifecycle, and two approaches. Part 2: <strong>specific cloud solutions and how to choose</strong>.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">01 / 28 · Recap</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S2 · AWS: three options ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · AWS</span><div class="pips" id="pp2"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Three tools, one purpose</div></div><div class="sp-r">
+    <div class="prose">AWS provides three services for managing secrets, each at a different level of complexity:</div>
+    <div class="prose"><strong>Parameter Store</strong> — the simplest option. Key-value storage with built-in encryption.</div>
+    <div class="prose"><strong>Secrets Manager</strong> — purpose-built for secrets. Adds rotation, programmatic access, and tighter integration.</div>
+    <div class="prose"><strong><span class="gloss" data-def="Key Management Service — AWS's HSM-backed service for creating, managing, and auditing encryption keys. Supports automatic key rotation, custom key policies, and envelope encryption.">KMS</span> (Key Management Service)</strong> — enterprise-grade. HSM-backed, full key lifecycle management.</div>
+    <div class="co">Three solutions for the same fundamental purpose is a design choice by AWS — but it creates a trap for teams that don't think ahead. <strong>Choose based on where you'll be in six months</strong>, not where you are today.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">03 / 28 · AWS</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S3 · AWS Parameter Store ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · AWS</span><div class="pips" id="pp3"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The simple option</div></div><div class="sp-r">
+    <div class="prose">Parameter Store provides encrypted key-value storage integrated with <span class="gloss" data-def="Identity and Access Management — AWS's system for controlling who can do what. Policies attach to users, groups, or roles and define allowed actions on specific resources.">IAM</span> for access control and CloudTrail for audit logging.</div>
+    <div class="prose">Secrets are organized by namespace paths (e.g., <code>/production/payment-service/db-password</code>), and IAM policies can grant access at the path level — one team gets access to <code>/production/payment-service/*</code> while another gets <code>/production/user-service/*</code>.</div>
+    <div class="xp" id="x3a">
+      <button class="xh" aria-expanded="false" aria-controls="x3a-p" onclick="tg('x3a')"><span class="xt">Pros</span><span class="xa">›</span></button>
+      <div class="xb" id="x3a-p">Scalable, serverless, path-based permissions, integrates with CloudWatch and Lambda for event-driven workflows. No "secret zero" problem — services authenticate via IAM roles.</div>
+    </div>
+    <div class="xp" id="x3b">
+      <button class="xh" aria-expanded="false" aria-controls="x3b-p" onclick="tg('x3b')"><span class="xt">Cons</span><span class="xa">›</span></button>
+      <div class="xb" id="x3b-p">10,000 parameter limit per account, 4KB maximum per secret value, no built-in rotation mechanism.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">04 / 28 · Parameter Store</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S4 · Breather: Parameter Store arch ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Architecture</span><div class="pips" id="pp4"></div></div>
+  <div class="sb"><div class="breather bg-earth">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">AWS PARAMETER STORE</div>
+    <div class="breather-visual">
+      <div class="arch-diagram">
+        <div class="arch-boundary">
+          <div class="arch-boundary-label">AWS boundary</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0">
+            <div class="arch-center"><span class="arch-center-icon">🔐</span><span class="arch-center-name">Parameter Store</span></div>
+            <div class="arch-arrow">↕</div>
+            <div class="arch-consumers">
+              <div class="arch-consumer" data-detail="aws-ecs" onclick="toggleDetail('aws-ecs')"><span class="arch-consumer-icon">📦</span><span class="arch-consumer-name">ECS</span><span class="arch-consumer-sub">read via IAM role</span></div>
+              <div class="arch-consumer" data-detail="aws-ec2" onclick="toggleDetail('aws-ec2')"><span class="arch-consumer-icon">🖥</span><span class="arch-consumer-name">EC2</span><span class="arch-consumer-sub">read via aws-sdk</span></div>
+              <div class="arch-consumer" data-detail="aws-lambda" onclick="toggleDetail('aws-lambda')"><span class="arch-consumer-icon">⚡</span><span class="arch-consumer-name">Lambda</span><span class="arch-consumer-sub">read via IAM role</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="arch-arrow">⬇ access keys required</div>
+        <div class="arch-outside">
+          <div class="arch-consumer" data-detail="aws-local" onclick="toggleDetail('aws-local')"><span class="arch-consumer-icon">💻</span><span class="arch-consumer-name">Local machine</span><span class="arch-consumer-sub">outside AWS boundary</span></div>
+        </div>
+        <div class="detail-panel" id="aws-ecs"><button class="detail-close" onclick="event.stopPropagation();closeDetail('aws-ecs')">×</button><strong>ECS task roles</strong> are the cleanest pattern. The container inherits IAM permissions from its task definition — no credentials in environment variables or config files. Parameter Store access is just an IAM policy attachment.</div>
+        <div class="detail-panel" id="aws-ec2"><button class="detail-close" onclick="event.stopPropagation();closeDetail('aws-ec2')">×</button><strong>EC2 instance profiles</strong> provide IAM role credentials automatically, but many teams bypass them with hardcoded access keys in code. If your EC2 code uses <code>aws configure</code> with long-lived keys, that's the gap to close first.</div>
+        <div class="detail-panel" id="aws-lambda"><button class="detail-close" onclick="event.stopPropagation();closeDetail('aws-lambda')">×</button><strong>Lambda execution roles</strong> are automatically scoped. The risk isn't authentication — it's that Lambda functions often cache secret values. If you don't set a TTL on cached secrets, a rotated credential can stay in use beyond its intended lifetime.</div>
+        <div class="detail-panel" id="aws-local"><button class="detail-close" onclick="event.stopPropagation();closeDetail('aws-local')">×</button><strong>The weakest link.</strong> Developer laptops with <code>~/.aws/credentials</code> holding long-lived access keys. Use AWS SSO with temporary credentials instead. If a laptop is compromised, short-lived tokens limit the blast radius.</div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Inside AWS, services authenticate via <strong>IAM roles</strong> — no additional credentials needed. Outside AWS, access keys are required.</p>
+    <div class="breather-hint">Click a service for <b>how it authenticates</b></div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn reflect-btn" onclick="openReflect('paramstore')">⏸ Reflect</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S5 · AWS Secrets Manager ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · AWS</span><div class="pips" id="pp5"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The recommended option</div></div><div class="sp-r">
+    <div class="prose">Secrets Manager was created because KMS was too complex for most developer needs. It provides encryption by default, programmatic secret retrieval, and built-in rotation for <span class="gloss" data-def="Relational Database Service — AWS's managed database offering supporting MySQL, PostgreSQL, SQL Server, Oracle, and Aurora. Secrets Manager can automatically rotate RDS credentials via Lambda.">RDS</span> database credentials via Lambda functions.</div>
+    <div class="prose">It uses KMS under the hood for encryption — you can choose the default service key or specify your own customer-managed key.</div>
+    <div class="xp" id="x5a">
+      <button class="xh" aria-expanded="false" aria-controls="x5a-p" onclick="tg('x5a')"><span class="xt">Pros</span><span class="xa">›</span></button>
+      <div class="xb" id="x5a-p">Runtime secret retrieval (no secrets in config files), automated RDS rotation, powerful IAM integration, simpler than running a high-availability Vault cluster.</div>
+    </div>
+    <div class="xp" id="x5b">
+      <button class="xh" aria-expanded="false" aria-controls="x5b-p" onclick="tg('x5b')"><span class="xt">Cons</span><span class="xa">›</span></button>
+      <div class="xb" id="x5b-p">AWS lock-in, per-request pricing can add up at scale, CloudTrail logs management events but data access audit is limited.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">06 / 28 · Secrets Manager</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S6 · AWS KMS ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · AWS</span><div class="pips" id="pp6"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The enterprise option</div></div><div class="sp-r">
+    <div class="prose">KMS provides HSM-backed key management with full control over key types, rotation policies, and certificate management. It uses <strong>envelope encryption</strong>: you generate a <span class="gloss" data-def="Data Encryption Key — the key that actually encrypts your data. In envelope encryption, the DEK is itself encrypted by a master key (KEK). The plaintext DEK is used briefly, then discarded.">data encryption key (DEK)</span>, encrypt your data with the DEK, then encrypt the DEK with a KMS master key. The plaintext DEK is immediately discarded.</div>
+    <div class="prose">This means your encrypted data and the encrypted DEK can be stored together. To decrypt, you first ask KMS to decrypt the DEK (which requires IAM permissions and <span class="gloss" data-def="Security Token Service — AWS service that provides temporary, limited-privilege credentials for IAM users or federated users.">STS</span> token validation), then use the decrypted DEK locally.</div>
+    <div class="co">KMS is powerful but complex. Use it when you need HSM-backed keys, certificate management, or compliance requirements that mandate hardware key storage. For most teams, <strong>Secrets Manager is sufficient</strong>.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">07 / 28 · KMS</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S7 · Breather: KMS sequence ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Envelope encryption</span><div class="pips" id="pp7"></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">ENVELOPE ENCRYPTION WITH KMS</div>
+    <div class="breather-visual">
+      <div class="seq-diagram">
+        <div class="seq-cols"><div class="seq-col">Operator</div><div class="seq-col">AWS KMS</div><div class="seq-col">Server</div><div class="seq-col">Client</div></div>
+        <div class="seq-step"><div class="seq-num">1</div><div class="seq-text"><b>Operator</b> generates DEK, encrypts secrets</div><span class="seq-tag seq-key">ENCRYPT</span></div>
+        <div class="seq-step"><div class="seq-num">2</div><div class="seq-text"><b>Operator</b> creates KMS Master Key</div><span class="seq-tag seq-key">SETUP</span></div>
+        <div class="seq-step"><div class="seq-num">3</div><div class="seq-text"><b>Operator</b> encrypts DEK with Master Key</div><span class="seq-tag seq-enc">WRAP</span></div>
+        <div class="seq-step"><div class="seq-num">4</div><div class="seq-text"><b>KMS</b> returns encrypted DEK</div><span class="seq-tag seq-enc">WRAPPED</span></div>
+        <div class="seq-step"><div class="seq-num">5</div><div class="seq-text"><b>Operator</b> discards plaintext DEK</div><span class="seq-tag seq-enc">DESTROY</span></div>
+        <div class="seq-step"><div class="seq-num">6</div><div class="seq-text">Encrypted secrets + encrypted DEK → <b>Server</b></div><span class="seq-tag seq-enc">STORE</span></div>
+        <div class="seq-step"><div class="seq-num">7</div><div class="seq-text"><b>Client</b> requests encrypted bundle from Server</div><span class="seq-tag seq-auth">FETCH</span></div>
+        <div class="seq-step"><div class="seq-num">8</div><div class="seq-text"><b>Client</b> asks KMS to decrypt DEK (STS + IAM)</div><span class="seq-tag seq-auth">AUTH</span></div>
+        <div class="seq-step"><div class="seq-num">9</div><div class="seq-text"><b>KMS</b> returns decrypted DEK</div><span class="seq-tag seq-key">UNWRAP</span></div>
+        <div class="seq-step"><div class="seq-num">10</div><div class="seq-text"><b>Client</b> decrypts secrets locally with DEK</div><span class="seq-tag seq-key">DECRYPT</span></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>The master key <strong>never leaves KMS</strong>. The data key exists in plaintext only during active use — then it's discarded.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn reflect-btn" onclick="openReflect('envelope')">⏸ Reflect</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S8 · AWS recommendation ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · AWS</span><div class="pips" id="pp8"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Which one to choose</div></div><div class="sp-r">
+    <div class="prose"><strong>Use Parameter Store</strong> when you need simple key-value storage, your secrets fit within the 4KB/10K limits, and you don't need automatic rotation.</div>
+    <div class="prose"><strong>Use Secrets Manager</strong> when you work with databases (especially RDS, where rotation is built in), need programmatic retrieval at runtime, or want a managed solution without operating your own infrastructure.</div>
+    <div class="prose"><strong>Use KMS</strong> when compliance requires HSM-backed keys, you need certificate management, or you require envelope encryption for large datasets.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">09 / 28 · AWS recommendation</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S9 · Breather: AWS decision tree ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Decision tree</span><div class="pips" id="pp9"></div></div>
+  <div class="sb"><div class="breather bg-earth">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">AWS SECRET MANAGEMENT DECISION TREE</div>
+    <div class="breather-visual">
+      <div class="flow-tree">
+        <div class="flow-q">Simple key-value, under 10K params?</div>
+        <div class="flow-ans"><span class="flow-arrow">→ YES →</span> <span class="flow-result aws-ps">Parameter Store</span></div>
+        <div class="flow-q">Need DB rotation (RDS)?</div>
+        <div class="flow-ans"><span class="flow-arrow">→ YES →</span> <span class="flow-result aws-sm">Secrets Manager</span></div>
+        <div class="flow-q">Need HSM, certs, compliance?</div>
+        <div class="flow-ans"><span class="flow-arrow">→ YES →</span> <span class="flow-result aws-kms">KMS</span></div>
+        <div class="flow-q">Multi-cloud environment?</div>
+        <div class="flow-ans"><span class="flow-arrow">→ YES →</span> <span class="flow-result vault">HashiCorp Vault</span></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Think six months ahead. <strong>Migrating between AWS secret services costs time.</strong></p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn reflect-btn" onclick="openReflect('awsdecision')">⏸ Reflect</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S10 · Azure Key Vault ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Azure & Kubernetes</span><div class="pips" id="pp10"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Azure's combined solution</div></div><div class="sp-r">
+    <div class="prose">Azure Key Vault is a single service that combines functionality equivalent to Parameter Store, Secrets Manager, and KMS. It stores keys, secrets, and certificates in one component, scoped to a specific resource group and region.</div>
+    <div class="prose">It offers both software-backed and hardware-backed (HSM) key options, with integration across Azure Functions, App Services, service principals, and <span class="gloss" data-def="Managed Service Identity — Azure's mechanism for giving Azure resources an identity in Azure AD without storing credentials in code. Azure injects and rotates the credentials automatically.">managed identities</span>.</div>
+    <div class="xp" id="x10a">
+      <button class="xh" aria-expanded="false" aria-controls="x10a-p" onclick="tg('x10a')"><span class="xt">The region compliance risk</span><span class="xa">›</span></button>
+      <div class="xb" id="x10a-p">Key Vault is component-based — it lives in a specific region. If your Key Vault is in US East but your resources are in UK South, you may have a compliance violation. <strong>Data residency requirements apply to the key storage location</strong>, not just the resources using the keys.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">11 / 28 · Azure</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · Breather: Azure MSI flow ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Managed identity</span><div class="pips" id="pp11"></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">AZURE MANAGED SERVICE IDENTITY</div>
+    <div class="breather-visual">
+      <div class="msi-flow">
+        <div class="msi-step">
+          <div class="msi-num">①</div>
+          <div class="msi-nodes">
+            <span class="msi-node vm">Your Code (VM)</span>
+            <span class="msi-arrow">→</span>
+            <span class="msi-node ext">MSI Extension</span>
+          </div>
+          <div class="msi-desc">calls localhost/oauth2/token</div>
+        </div>
+        <div class="msi-step">
+          <div class="msi-num">②</div>
+          <div class="msi-nodes">
+            <span class="msi-node ext">MSI Extension</span>
+            <span class="msi-arrow">→</span>
+            <span class="msi-node aad">Azure AD</span>
+          </div>
+          <div class="msi-desc">authenticates with AAD</div>
+        </div>
+        <div class="msi-step">
+          <div class="msi-num">③</div>
+          <div class="msi-nodes">
+            <span class="msi-node vm">Your Code</span>
+            <span class="msi-arrow">→</span>
+            <span class="msi-node svc">Key Vault / ARM</span>
+          </div>
+          <div class="msi-desc">uses token to access</div>
+        </div>
+        <div class="msi-footer">Azure injects and rotates credentials automatically</div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Managed Service Identity eliminates the <strong>"secret zero" problem</strong>. Azure injects and rotates credentials without your code managing any secrets directly.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn reflect-btn" onclick="openReflect('msi')">⏸ Reflect</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S12 · Kubernetes secrets ═══ -->
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Kubernetes</span><div class="pips" id="pp12"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The container world</div></div><div class="sp-r">
+    <div class="prose">Kubernetes stores secrets in <span class="gloss" data-def="A distributed key-value store used by Kubernetes as its backing store for all cluster data — including secrets, config maps, and service state.">etcd</span> and makes them available to pods as mounted volumes or environment variables. The flow: admin creates a secret via kubectl → API Server stores it in etcd → when a pod is scheduled, the secret is provisioned to the node → mounted into the pod.</div>
+    <div class="xp" id="x12a">
+      <button class="xh" aria-expanded="false" aria-controls="x12a-p" onclick="tg('x12a')"><span class="xt">Key gotchas</span><span class="xa">›</span></button>
+      <div class="xb" id="x12a-p">Secrets are namespace-scoped (only accessible within the same namespace). They use <strong>tmpfs</strong> (deleted when the pod terminates). Maximum size is 1MB. Mounting a secret as a volume masks the directory's existing contents.</div>
+    </div>
+    <div class="co">The most critical fact about Kubernetes secrets: they are <strong>base64-encoded by default, not encrypted</strong>. Base64 is an encoding format, not a security mechanism. Anyone with etcd access can read every secret in plaintext.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">13 / 28 · K8s secrets</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S13 · Breather: K8s architecture ═══ -->
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · K8s architecture</span><div class="pips" id="pp13"></div></div>
+  <div class="sb"><div class="breather bg-earth">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">KUBERNETES SECRET FLOW</div>
+    <div class="breather-visual">
+      <div class="k8s-arch">
+        <div class="k8s-box">
+          <div class="k8s-box-label">Master</div>
+          <div class="k8s-item" data-detail="k8s-api" onclick="toggleDetail('k8s-api')"><span class="ki-icon">⌨️</span> kubectl → API Server</div>
+          <div class="k8s-item"><span class="ki-icon">🔄</span> Scheduler</div>
+          <div class="k8s-item"><span class="ki-icon">📋</span> Replication Controllers</div>
+          <div class="k8s-item danger" data-detail="k8s-etcd" onclick="toggleDetail('k8s-etcd')"><span class="ki-icon">💾</span> etcd — all secrets stored here</div>
+        </div>
+        <div class="k8s-conn">⇄</div>
+        <div class="k8s-box">
+          <div class="k8s-box-label">Worker Nodes</div>
+          <div class="k8s-item" data-detail="k8s-kubelet" onclick="toggleDetail('k8s-kubelet')"><span class="ki-icon">🔧</span> kubelet</div>
+          <div class="k8s-item"><span class="ki-icon">🐳</span> Container Engine</div>
+          <div class="k8s-item"><span class="ki-icon">📦</span> Pod 1</div>
+          <div class="k8s-item"><span class="ki-icon">📦</span> Pod 2</div>
+          <div class="k8s-item"><span class="ki-icon">📦</span> Pod N</div>
+        </div>
+      </div>
+      <div class="detail-panel" id="k8s-api"><button class="detail-close" onclick="event.stopPropagation();closeDetail('k8s-api')">×</button><strong>Without RBAC, any authenticated user can read all secrets.</strong> Default K8s installs allow broad access. Implement namespace-scoped Roles and ClusterRoles that restrict <code>get</code>/<code>list</code> on secrets to specific service accounts.</div>
+      <div class="detail-panel" id="k8s-etcd"><button class="detail-close" onclick="event.stopPropagation();closeDetail('k8s-etcd')">×</button><strong>The single biggest risk in a K8s cluster.</strong> etcd stores all secrets as base64 — readable by anyone with direct access. A compromised etcd backup exposes every secret. Enable <code>EncryptionConfiguration</code> for encryption at rest and restrict network access to the API Server only.</div>
+      <div class="detail-panel" id="k8s-kubelet"><button class="detail-close" onclick="event.stopPropagation();closeDetail('k8s-kubelet')">×</button><strong>Root access on a worker node = secret access.</strong> An attacker with root can impersonate the kubelet and request secrets for any pod scheduled on that node. Disable anonymous authentication and require TLS client certificates for kubelet communication.</div>
+    </div>
+    <div class="breather-caption"><p>All secret operations go through the <strong>API Server</strong> and are stored in <strong>etcd</strong>. Securing both is essential.</p>
+    <div class="breather-notice"><b>Red item</b> = single point of secret exposure</div>
+    <div class="breather-hint">Click highlighted items for <b>attack vectors</b></div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn reflect-btn" onclick="openReflect('k8sarch')">⏸ Reflect</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S14 · K8s security considerations ═══ -->
+<div class="slide" id="s14">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Kubernetes</span><div class="pips" id="pp14"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What to lock down</div></div><div class="sp-r">
+    <div class="prose"><strong>API Server</strong> — by default, any user who can access it can read all secrets across all namespaces. Implement <span class="gloss" data-def="Role-Based Access Control — Kubernetes authorization mechanism that restricts access based on roles. ClusterRoles apply cluster-wide; Roles apply within a namespace.">RBAC</span> to restrict secret access per namespace and per role.</div>
+    <div class="prose"><strong>etcd</strong> — write access to etcd is equivalent to root access on the entire cluster. Enable encryption at rest. Restrict network access to etcd to the API Server only.</div>
+    <div class="prose"><strong>Worker nodes</strong> — root access on a node allows reading secrets by impersonating the kubelet. Disable anonymous authentication on kubelet. Use TLS for all communication.</div>
+    <div class="xp" id="x14a">
+      <button class="xh" aria-expanded="false" aria-controls="x14a-p" onclick="tg('x14a')"><span class="xt">The migration path</span><span class="xa">›</span></button>
+      <div class="xb" id="x14a-p">For teams outgrowing K8s native secrets: use the <strong>External Secrets Operator</strong> to sync secrets from an external store (Vault, AWS Secrets Manager) into Kubernetes secrets. Your pods consume them the same way, but the source of truth moves to a more capable system.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">15 / 28 · K8s security</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S15 · Quiz: Kubernetes secrets ═══ -->
+<div class="slide" id="s15">
+  <div class="sh"><span class="stag">Knowledge check</span><div class="pips" id="pp15"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q1"><div class="qq">Your Kubernetes secrets are stored in etcd without encryption at rest. A developer with kubectl access can read secrets across all namespaces. What should you fix first?</div>
+      <button class="qo" onclick="pk('q1',0)">A) Add encryption at rest for etcd</button>
+      <button class="qo" onclick="pk('q1',1)">B) Implement RBAC to restrict secret access</button>
+      <button class="qo" onclick="pk('q1',2)">C) Both — RBAC limits API access, encryption protects the data store if etcd is compromised</button>
+      <button class="qo" onclick="pk('q1',3)">D) Migrate to Vault immediately</button>
+      <div class="qe" id="q1-e"><strong>C — Both controls address different attack vectors.</strong> RBAC without encryption means a compromised etcd backup exposes everything. Encryption without RBAC means every developer can still read all secrets through kubectl. Vault migration (D) is a longer-term solution, but the immediate fix is applying both RBAC and etcd encryption.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">16 / 28 · Quiz</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn pri" onclick="go(16)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S16 · K8s recommendation ═══ -->
+<div class="slide" id="s16">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Kubernetes</span><div class="pips" id="pp16"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">When K8s secrets are enough</div></div><div class="sp-r">
+    <div class="prose"><strong>Use Kubernetes native secrets</strong> when your secrets don't change often, are used exclusively within the cluster, and your team has implemented RBAC and etcd encryption.</div>
+    <div class="prose"><strong>Move to an external store</strong> (Vault with K8s auth method, or External Secrets Operator with cloud secret managers) when secrets need to be shared across clusters, across cloud providers, or when you need rotation, fine-grained audit trails, or compliance-grade access controls.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">17 / 28 · K8s recommendation</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S17 · HashiCorp Vault ═══ -->
+<div class="slide" id="s17">
+  <div class="sh"><span class="stag"><span class="hl">Act 6</span> · Vault</span><div class="pips" id="pp17"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The platform-agnostic option</div></div><div class="sp-r">
+    <div class="prose">HashiCorp Vault is a dedicated secret management platform that works across AWS, Azure, GCP, and on-premises infrastructure. It can use cloud Key Vaults as storage backends while providing a unified API and policy layer on top.</div>
+    <div class="prose">At scale, it's often cheaper than cloud-native Secrets Manager because you pay for infrastructure rather than per-request. It supports backup and replication across regions and clouds using <span class="gloss" data-def="Consul — HashiCorp's service mesh and distributed key-value store, used as Vault's coordination and storage backend for high-availability deployments.">Consul</span> as the coordination layer.</div>
+    <div class="xp" id="x17a">
+      <button class="xh" aria-expanded="false" aria-controls="x17a-p" onclick="tg('x17a')"><span class="xt">When to choose Vault</span><span class="xa">›</span></button>
+      <div class="xb" id="x17a-p">Multi-cloud environments, cloud migration plans, need for cross-platform secret management, requirement for detailed audit trails, or organizations that want to avoid vendor lock-in for their secret infrastructure.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">18 / 28 · Vault</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S18 · Breather: Vault access flow ═══ -->
+<div class="slide" id="s18">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Vault flow</span><div class="pips" id="pp18"></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">HASHICORP VAULT — ACCESS FLOW</div>
+    <div class="breather-visual">
+      <div class="seq-diagram">
+        <div class="seq-cols"><div class="seq-col">Operator</div><div class="seq-col">HashiCorp Vault</div><div class="seq-col">Client Node</div></div>
+        <div class="seq-step"><div class="seq-num">1</div><div class="seq-text"><b>Operator</b> starts with plaintext secrets</div><span class="seq-tag seq-key">SEED</span></div>
+        <div class="seq-step"><div class="seq-num">2</div><div class="seq-text"><b>Operator</b> seeds policies (read/write per path)</div><span class="seq-tag seq-auth">POLICY</span></div>
+        <div class="seq-step"><div class="seq-num">3</div><div class="seq-text"><b>Operator</b> associates auth roles with policies</div><span class="seq-tag seq-auth">ROLE</span></div>
+        <div class="seq-step"><div class="seq-num">4</div><div class="seq-text"><b>Operator</b> seeds secrets by path into <b>Vault</b></div><span class="seq-tag seq-key">STORE</span></div>
+        <div class="seq-step"><div class="seq-num">5</div><div class="seq-text"><b>Client</b> requests authentication from <b>Vault</b></div><span class="seq-tag seq-auth">AUTH</span></div>
+        <div class="seq-step"><div class="seq-num">6</div><div class="seq-text"><b>Vault</b> logs request → returns access token</div><span class="seq-tag seq-log">📝 LOGGED</span></div>
+        <div class="seq-step"><div class="seq-num">7</div><div class="seq-text"><b>Client</b> requests secret by path with token</div><span class="seq-tag seq-auth">FETCH</span></div>
+        <div class="seq-step"><div class="seq-num">8</div><div class="seq-text"><b>Vault</b> logs request → returns secret if ACL permits</div><span class="seq-tag seq-log">📝 LOGGED</span></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Every access is logged. Every secret is policy-controlled. This is what a <strong>complete audit trail</strong> looks like.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(17)">← Back</button><button class="btn reflect-btn" onclick="openReflect('vaultflow')">⏸ Reflect</button><button class="btn pri" onclick="go(19)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S19 · Breather: K8s + Vault integration ═══ -->
+<div class="slide" id="s19">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · K8s + Vault</span><div class="pips" id="pp19"></div></div>
+  <div class="sb"><div class="breather bg-earth">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">KUBERNETES-VAULT INTEGRATION</div>
+    <div class="breather-visual">
+      <div class="seq-diagram">
+        <div class="seq-cols"><div class="seq-col">Controller</div><div class="seq-col">Init Container</div><div class="seq-col">App Container</div></div>
+        <div class="seq-step"><div class="seq-num">1</div><div class="seq-text"><b>Controller</b> watches API server for pods with <code style="font-size:9px;background:rgba(255,255,255,.08);padding:1px 4px;border-radius:2px;color:#FFB36B">vault-approle</code> annotation</div><span class="seq-tag seq-auth">WATCH</span></div>
+        <div class="seq-step"><div class="seq-num">2</div><div class="seq-text"><b>Controller</b> creates a secret_id using the role from pod annotation</div><span class="seq-tag seq-key">CREATE</span></div>
+        <div class="seq-step"><div class="seq-num">3</div><div class="seq-text"><b>Controller</b> pushes wrapped secret_id to <b>Init Container</b> over HTTPS</div><span class="seq-tag seq-enc">PUSH</span></div>
+        <div class="seq-step"><div class="seq-num">4</div><div class="seq-text"><b>Init Container</b> unwraps the secret_id</div><span class="seq-tag seq-key">UNWRAP</span></div>
+        <div class="seq-step"><div class="seq-num">5</div><div class="seq-text"><b>Init Container</b> retrieves auth token using role_id + secret_id from Vault</div><span class="seq-tag seq-auth">AUTH</span></div>
+        <div class="seq-step"><div class="seq-num">6</div><div class="seq-text"><b>Init Container</b> writes auth token to shared volume</div><span class="seq-tag seq-key">WRITE</span></div>
+        <div class="seq-step"><div class="seq-num">7</div><div class="seq-text"><b>App Container</b> reads auth token from the volume</div><span class="seq-tag seq-log">USE</span></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>The init container pattern ensures secrets <strong>never appear as environment variables</strong>. They're injected via volume at pod startup and are ephemeral.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(18)">← Back</button><button class="btn reflect-btn" onclick="openReflect('k8svault')">⏸ Reflect</button><button class="btn pri" onclick="go(20)">Next →</button></div></div>
+</div>
+
+<div class="slide" id="s20"><div class="sh"><span class="stag">Knowledge check</span><div class="pips" id="pp20"></div></div><div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r"><div class="qw" id="q2"><div class="qq">Your team runs services on both AWS and Azure. You need to store API keys, rotate database credentials monthly, and provide audit trails for compliance. Which solution fits best?</div><button class="qo" onclick="pk('q2',0)">A) AWS Parameter Store</button><button class="qo" onclick="pk('q2',1)">B) Azure Key Vault</button><button class="qo" onclick="pk('q2',2)">C) Git-encrypted variables with SOPS</button><button class="qo" onclick="pk('q2',3)">D) HashiCorp Vault</button><div class="qe" id="q2-e"><strong>D — HashiCorp Vault.</strong> The multi-cloud requirement eliminates single-cloud solutions (A, B). Git-based approaches (C) don't support rotation or audit trails. Vault operates across both clouds, supports rotation, provides comprehensive audit logging, and avoids vendor lock-in.</div></div></div></div></div><div class="sf"><span class="shint">21 / 28 · Quiz</span><div class="snav"><button class="btn" onclick="go(19)">← Back</button><button class="btn pri" onclick="go(21)">Next →</button></div></div></div>
+
+<!-- ═══ S21 · Anti-patterns ═══ -->
+<div class="slide" id="s21">
+  <div class="sh"><span class="stag"><span class="hl">Act 7</span> · Practice</span><div class="pips" id="pp21"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What not to do</div></div><div class="sp-r">
+    <div class="xp" id="x21a">
+      <button class="xh" aria-expanded="false" aria-controls="x21a-p" onclick="tg('x21a')"><span class="xt">Hardcoded credentials</span><span class="xa">›</span></button>
+      <div class="xb" id="x21a-p">In source code, config files, container images. The path of least resistance that becomes a long-term liability. Use parameter stores or vaults from day one.</div>
+    </div>
+    <div class="xp" id="x21b">
+      <button class="xh" aria-expanded="false" aria-controls="x21b-p" onclick="tg('x21b')"><span class="xt">Secrets in environment variables</span><span class="xa">›</span></button>
+      <div class="xb" id="x21b-p">Visible to any process, logged by crash reporters, exposed in Kubernetes pod specs. Use mounted volumes or runtime retrieval instead.</div>
+    </div>
+    <div class="xp" id="x21c">
+      <button class="xh" aria-expanded="false" aria-controls="x21c-p" onclick="tg('x21c')"><span class="xt">Long-lived keys without rotation</span><span class="xa">›</span></button>
+      <div class="xb" id="x21c-p">API keys created years ago and never rotated. When compromised, the exposure window is unlimited. Schedule rotation for all long-lived credentials.</div>
+    </div>
+    <div class="xp" id="x21d">
+      <button class="xh" aria-expanded="false" aria-controls="x21d-p" onclick="tg('x21d')"><span class="xt">Shared service accounts</span><span class="xa">›</span></button>
+      <div class="xb" id="x21d-p">Multiple people or services using the same credentials. When something goes wrong, you can't determine who did it. One credential per identity, always.</div>
+    </div>
+    <div class="xp" id="x21e">
+      <button class="xh" aria-expanded="false" aria-controls="x21e-p" onclick="tg('x21e')"><span class="xt">"We'll rotate later"</span><span class="xa">›</span></button>
+      <div class="xb" id="x21e-p">The most common and most dangerous anti-pattern. You won't. Schedule it now or accept that it won't happen.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">22 / 28 · Anti-patterns</span><div class="snav"><button class="btn" onclick="go(20)">← Back</button><button class="btn pri" onclick="go(22)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S22 · Best Practice: secret health checklist ═══ -->
+<div class="slide" id="s22">
+  <div class="sh"><span class="stag">★ Best practice</span><div class="pips" id="pp22"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Secret health check</div></div><div class="sp-r">
+    <div class="bp-tag">Best practice</div>
+    <div class="prose" style="margin-bottom:6px">Running a periodic secret health check using a standardized checklist. Use this quarterly to assess your secret management posture:</div>
+    <div class="xp" id="x22a">
+      <button class="xh" aria-expanded="false" aria-controls="x22a-p" onclick="tg('x22a')"><span class="xt">☐ Encryption</span><span class="xa">›</span></button>
+      <div class="xb" id="x22a-p">All secrets encrypted at rest and in transit. No plaintext storage anywhere.</div>
+    </div>
+    <div class="xp" id="x22b">
+      <button class="xh" aria-expanded="false" aria-controls="x22b-p" onclick="tg('x22b')"><span class="xt">☐ Access control</span><span class="xa">›</span></button>
+      <div class="xb" id="x22b-p">Role-based access. No shared master keys. Principle of least privilege applied.</div>
+    </div>
+    <div class="xp" id="x22c">
+      <button class="xh" aria-expanded="false" aria-controls="x22c-p" onclick="tg('x22c')"><span class="xt">☐ Rotation</span><span class="xa">›</span></button>
+      <div class="xb" id="x22c-p">Scheduled rotation for all long-lived credentials. Personnel changes trigger immediate rotation.</div>
+    </div>
+    <div class="xp" id="x22d">
+      <button class="xh" aria-expanded="false" aria-controls="x22d-p" onclick="tg('x22d')"><span class="xt">☐ Audit trail</span><span class="xa">›</span></button>
+      <div class="xb" id="x22d-p">The system can answer "who accessed which secret, when" for any date in the past 90 days.</div>
+    </div>
+    <div class="xp" id="x22e">
+      <button class="xh" aria-expanded="false" aria-controls="x22e-p" onclick="tg('x22e')"><span class="xt">☐ No secrets in code</span><span class="xa">›</span></button>
+      <div class="xb" id="x22e-p">Source code, environment variables, CI/CD logs, and container images are free of credentials.</div>
+    </div>
+    <div class="xp" id="x22f">
+      <button class="xh" aria-expanded="false" aria-controls="x22f-p" onclick="tg('x22f')"><span class="xt">☐ Disaster recovery</span><span class="xa">›</span></button>
+      <div class="xb" id="x22f-p">Secret storage backup exists and has been tested. You know how long full restoration takes.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">23 / 28 · Best practice</span><div class="snav"><button class="btn" onclick="go(21)">← Back</button><button class="btn pri" onclick="go(23)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S23 · Assignment ═══ -->
+<div class="slide" id="s23">
+  <div class="sh"><span class="stag"><span class="hl">Practice</span></span><div class="pips" id="pp23"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Your assignment</div></div><div class="sp-r">
+    <div class="xp" id="x23a">
+      <button class="xh" aria-expanded="false" aria-controls="x23a-p" onclick="tg('x23a')"><span class="xt">1. Map your secrets</span><span class="xa">›</span></button>
+      <div class="xb" id="x23a-p">List every location where secrets are stored in your project today. All of them — git variables, parameter stores, env files, hardcoded values.</div>
+    </div>
+    <div class="xp" id="x23b">
+      <button class="xh" aria-expanded="false" aria-controls="x23b-p" onclick="tg('x23b')"><span class="xt">2. Trace access</span><span class="xa">›</span></button>
+      <div class="xb" id="x23b-p">Pick one secret. Can you determine who accessed it last week? If not, that's your first gap.</div>
+    </div>
+    <div class="xp" id="x23c">
+      <button class="xh" aria-expanded="false" aria-controls="x23c-p" onclick="tg('x23c')"><span class="xt">3. Check rotation</span><span class="xa">›</span></button>
+      <div class="xb" id="x23c-p">When was the last time any credential in your project was rotated? If you can't answer, that's your second gap.</div>
+    </div>
+    <div class="xp" id="x23d">
+      <button class="xh" aria-expanded="false" aria-controls="x23d-p" onclick="tg('x23d')"><span class="xt">4. Run the checklist</span><span class="xa">›</span></button>
+      <div class="xb" id="x23d-p">Use the health check from the previous slide. How many items pass?</div>
+    </div>
+    <div class="xp" id="x23e">
+      <button class="xh" aria-expanded="false" aria-controls="x23e-p" onclick="tg('x23e')"><span class="xt">5. Fix one thing</span><span class="xa">›</span></button>
+      <div class="xb" id="x23e-p">Identify the single highest-risk anti-pattern in your project and address it this sprint.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">24 / 28 · Assignment</span><div class="snav"><button class="btn" onclick="go(22)">← Back</button><button class="btn pri" onclick="go(24)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S24 · Breather: Decision map ═══ -->
+<div class="slide" id="s24">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Decision map</span><div class="pips" id="pp24"></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:4px">CHOOSING YOUR SOLUTION</div>
+    <div class="breather-visual">
+      <div class="flow-tree">
+        <div class="flow-q">Single cloud — AWS?</div>
+        <div class="flow-ans"><span class="flow-arrow">→ simple →</span> <span class="flow-result aws-ps" data-detail="dm-ps" onclick="toggleDetail('dm-ps')">Parameter Store</span></div>
+        <div class="flow-ans"><span class="flow-arrow">→ rotation →</span> <span class="flow-result aws-sm" data-detail="dm-sm" onclick="toggleDetail('dm-sm')">Secrets Manager</span></div>
+        <div class="flow-ans"><span class="flow-arrow">→ HSM/certs →</span> <span class="flow-result aws-kms" data-detail="dm-kms" onclick="toggleDetail('dm-kms')">KMS</span></div>
+        <div class="flow-q">Single cloud — Azure?</div>
+        <div class="flow-ans"><span class="flow-arrow">→</span> <span class="flow-result azure" data-detail="dm-azure" onclick="toggleDetail('dm-azure')">Azure Key Vault</span></div>
+        <div class="flow-q">Kubernetes only?</div>
+        <div class="flow-ans"><span class="flow-arrow">→ simple →</span> <span class="flow-result k8s" data-detail="dm-k8s" onclick="toggleDetail('dm-k8s')">K8s Secrets + RBAC + etcd enc</span></div>
+        <div class="flow-ans"><span class="flow-arrow">→ need more →</span> <span class="flow-result vault" data-detail="dm-eso" onclick="toggleDetail('dm-eso')">External Secrets Operator</span></div>
+        <div class="flow-q">Multi-cloud or migrating?</div>
+        <div class="flow-ans"><span class="flow-arrow">→</span> <span class="flow-result vault" data-detail="dm-vault" onclick="toggleDetail('dm-vault')">HashiCorp Vault</span></div>
+      </div>
+      <div class="detail-panel" id="dm-ps"><button class="detail-close" onclick="event.stopPropagation();closeDetail('dm-ps')">×</button><strong>Best for:</strong> simple configs, feature flags, non-rotating secrets under 4KB. <strong>Trade-off:</strong> no rotation, limited size. Migrate to Secrets Manager when you outgrow it.</div>
+      <div class="detail-panel" id="dm-sm"><button class="detail-close" onclick="event.stopPropagation();closeDetail('dm-sm')">×</button><strong>Best for:</strong> database credentials, API keys needing rotation, most AWS-native teams. <strong>Trade-off:</strong> per-request pricing, AWS lock-in. The recommended starting point for most.</div>
+      <div class="detail-panel" id="dm-kms"><button class="detail-close" onclick="event.stopPropagation();closeDetail('dm-kms')">×</button><strong>Best for:</strong> compliance (PCI DSS, HIPAA), certificate management, encrypting large datasets. <strong>Trade-off:</strong> operational complexity. Don't use unless compliance requires it.</div>
+      <div class="detail-panel" id="dm-azure"><button class="detail-close" onclick="event.stopPropagation();closeDetail('dm-azure')">×</button><strong>Best for:</strong> Azure-native teams needing keys + secrets + certs in one place. <strong>Trade-off:</strong> region-scoped (compliance risk), Azure lock-in. MSI integration is its strongest feature.</div>
+      <div class="detail-panel" id="dm-k8s"><button class="detail-close" onclick="event.stopPropagation();closeDetail('dm-k8s')">×</button><strong>Best for:</strong> internal-only secrets, small clusters, teams with RBAC + etcd encryption in place. <strong>Trade-off:</strong> base64 not encryption, no audit trail, no rotation. The floor, not the ceiling.</div>
+      <div class="detail-panel" id="dm-eso"><button class="detail-close" onclick="event.stopPropagation();closeDetail('dm-eso')">×</button><strong>Best for:</strong> teams already on K8s but needing external secret sources. <strong>Trade-off:</strong> adds complexity but keeps pods consuming secrets the same way. Bridges K8s native to cloud-managed.</div>
+      <div class="detail-panel" id="dm-vault"><button class="detail-close" onclick="event.stopPropagation();closeDetail('dm-vault')">×</button><strong>Best for:</strong> multi-cloud, cross-platform, or teams planning cloud migration. <strong>Trade-off:</strong> operational overhead to run Vault itself. Cheaper at scale than per-request cloud pricing.</div>
+    </div>
+    <div class="breather-caption"><p>Start where you are. Know where you're going. The <strong>best solution is the one your team will actually use</strong>.</p>
+    <div class="breather-hint">Click any solution for <b>trade-offs</b></div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(23)">← Back</button><button class="btn reflect-btn" onclick="openReflect('decisionmap')">⏸ Reflect</button><button class="btn pri" onclick="go(25)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S25 · Summary ═══ -->
+<div class="slide" id="s25">
+  <div class="sh"><span class="stag"><span class="hl">Summary</span></span><div class="pips" id="pp25"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What you covered</div></div><div class="sp-r">
+    <div class="numlist">
+      <b>1. AWS provides three options</b> at increasing complexity — Parameter Store for simple needs, Secrets Manager for most teams, KMS for enterprise/compliance.<br><br>
+      <b>2. Azure Key Vault</b> combines all three functions. Managed Service Identity eliminates the "secret zero" problem.<br><br>
+      <b>3. Kubernetes secrets are base64-encoded,</b> not encrypted. RBAC and etcd encryption are both required for adequate security.<br><br>
+      <b>4. HashiCorp Vault</b> is the platform-agnostic answer for multi-cloud environments, providing unified policy management and audit trails.<br><br>
+      <b>5. Choose based on where you'll be</b> in six months. Start with the simplest adequate solution and plan the migration path.
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">26 / 28 · Summary</span><div class="snav"><button class="btn" onclick="go(24)">← Back</button><button class="btn pri" onclick="go(26)">Next →</button></div></div>
+</div>
+
+<div class="slide" id="s26"><div class="sh"><span class="stag"><span class="hl">Module 6b</span> · Your results</span><div class="pips" id="pp26"></div></div><div class="sb"><div class="breather bg-navy" style="justify-content:center;gap:14px;padding:28px 24px 16px"><div style="font-size:10px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase">YOUR RESULTS</div><div class="res-grid" id="results-grid"></div><div class="res-summary" id="results-summary"></div><div style="display:flex;gap:10px;justify-content:center;margin-top:6px"><button class="btn" onclick="openRetake()" style="border-color:rgba(217,69,69,.4);color:#ff8888">↻ Retake module</button><button class="btn pri" onclick="go(27)">Continue →</button></div></div></div><div class="sf"><span class="shint">27 / 28 · Results</span><div class="snav"><button class="btn" onclick="go(25)">← Back</button><button class="btn pri" onclick="go(27)">Next →</button></div></div></div>
+
+<div class="slide" id="s27"><div class="sh"><span class="stag"><span class="hl">Next</span></span><div class="pips" id="pp27"></div></div><div class="sb"><div class="fbody"><div class="fb-content"><div class="fb-tg">Next</div><div class="fb-tt">Security Configuration & Access Control</div><div class="fb-sb">Why configurations go wrong, how to establish baselines, and how to enforce access control policies.</div></div></div></div><div class="sf"><span class="shint">28 / 28 · Bridge</span><div class="snav"><button class="btn" onclick="go(26)">← Back</button><button class="btn" onclick="openRetake()" style="border-color:rgba(217,69,69,.4);color:#ff8888">↻ Retake</button></div></div></div>
+
+</div><!-- end .deck -->
+
+<!-- Reflect modal -->
+<div id="reflect-modal" role="dialog" aria-modal="true" aria-labelledby="rm-q">
+  <div class="rm-card">
+    <button class="rm-close" aria-label="Close" onclick="closeReflect()">×</button>
+    <div class="rm-tag">⏸  Pause to reflect</div>
+    <div class="rm-q" id="rm-q"></div>
+    <div class="rm-sub" id="rm-sub"></div>
+    <div class="rm-actions"><button class="btn pri" onclick="closeReflect()">Got it →</button></div>
+  </div>
+</div>
+
+<!-- Retake modal -->
+<div id="retake-modal" role="dialog" aria-modal="true">
+  <div class="retake-card">
+    <div class="retake-tag">↻ Retake the module</div>
+    <div class="retake-q">Reset all progress and start over?</div>
+    <div class="retake-sub">This will clear your XP, quiz answers, and wagers. The module returns to the cover slide.</div>
+    <div class="retake-actions">
+      <button class="btn" onclick="closeRetake()">Cancel</button>
+      <button class="btn retake-confirm" onclick="doRetake()">Yes, reset everything</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const T=28;let c=0;
+
+const STORAGE_KEY='sc_m6b_sm_v1';
+const RANKS=[
+  {min:0,name:'RECRUIT'},
+  {min:8,name:'APPRENTICE'},
+  {min:18,name:'CHAMPION'},
+  {min:32,name:'CAPTAIN'},
+  {min:50,name:'LEGEND'}
+];
+const DEFAULT_STATE={xp:0,streak:0,bestStreak:0,answers:{},wagers:{},reflections:[]};
+let state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};
+
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const s=JSON.parse(raw);state={...DEFAULT_STATE,...s,answers:s.answers||{},wagers:s.wagers||{},reflections:s.reflections||[]}}}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+function rankFor(xp){let r=RANKS[0];for(const x of RANKS){if(xp>=x.min)r=x}return r}
+
+function renderChips(){
+  const r=rankFor(state.xp);
+  document.querySelectorAll('.scorechip').forEach(chip=>{
+    chip.querySelector('.sc-rank').textContent=r.name[0];
+    chip.querySelector('.sc-rank').title=r.name;
+    chip.querySelector('.sc-xp').innerHTML=`<b>${state.xp}</b> XP`;
+    const sk=chip.querySelector('.sc-streak');
+    if(state.streak>=2){sk.classList.add('live');sk.innerHTML=`<span class="sc-flame">🔥</span> ${state.streak}`}
+    else{sk.classList.remove('live');sk.innerHTML=`<span style="opacity:.5">·</span> ${r.name}`}
+  });
+}
+function bumpChips(){document.querySelectorAll('.scorechip').forEach(c=>{c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')})}
+
+function go(n){
+  if(n<0||n>=T)return;
+  document.getElementById('s'+c).classList.remove('on');
+  c=n;
+  const slide=document.getElementById('s'+n);
+  slide.classList.add('on');
+  const r=slide.querySelector('.sp-r');if(r)r.scrollTop=0;
+  document.querySelectorAll('.pips').forEach(p=>bp(p));
+  window.scrollTo(0,0);
+  if(n===26)populateResults();
+}
+function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(c-1)}});
+function tg(id){const el=document.getElementById(id),b=el.querySelector('.xb'),a=el.querySelector('.xa'),btn=el.querySelector('.xh');const isOpen=b.classList.toggle('op');if(a)a.classList.toggle('op');if(btn)btn.setAttribute('aria-expanded',isOpen?'true':'false')}
+
+const ans={q1:2,q2:3};
+const QUIZ_LABELS={q1:'Kubernetes etcd + RBAC',q2:'Multi-cloud solution selection'};
+
+const WAGERS=[
+  {key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},
+  {key:'pretty',mult:2,name:'Pretty sure',sub:'×2 if right · 1 if wrong'},
+  {key:'guess',mult:1,name:'Just guessing',sub:'×1 either way'}
+];
+function buildWagerUI(qw){
+  const qq=qw.querySelector('.qq');if(!qq)return;
+  const qid=qw.id;
+  const w=document.createElement('div');
+  w.className='wager';w.dataset.qid=qid;
+  w.innerHTML=`<div class="wager-lab">How confident are you?</div>
+    <div class="wager-row">${WAGERS.map(g=>`<button class="wager-btn" data-w="${g.key}" data-m="${g.mult}"><div class="wb-top"><span class="wb-mult">×${g.mult}</span><span class="wb-name">${g.name}</span></div><div class="wb-sub">${g.sub}</div></button>`).join('')}</div>`;
+  qq.parentNode.insertBefore(w,qq.nextSibling);
+  w.querySelectorAll('.wager-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      if(w.classList.contains('locked'))return;
+      w.querySelectorAll('.wager-btn').forEach(b=>b.classList.remove('pk'));
+      btn.classList.add('pk');
+      state.wagers[qid]=parseInt(btn.dataset.m,10);
+      saveState();
+    };
+  });
+  if(state.wagers[qid]){
+    const b=w.querySelector(`.wager-btn[data-m="${state.wagers[qid]}"]`);
+    if(b)b.classList.add('pk');
+  }
+}
+function lockWager(qid){
+  const w=document.querySelector(`.wager[data-qid="${qid}"]`);
+  if(!w)return;
+  w.classList.add('locked');
+  w.querySelectorAll('.wager-btn').forEach(b=>b.disabled=true);
+  const mult=state.wagers[qid]||1;
+  const wname=WAGERS.find(g=>g.mult===mult)?.name||'Just guessing';
+  w.innerHTML=`<div class="wager-locked-note">🎯 You wagered <b>${wname}</b> (×${mult})</div>`;
+}
+
+function pk(q,i){
+  const w=document.getElementById(q),o=w.querySelectorAll('.qo');
+  if(o[0].classList.contains('pk'))return;
+  if(!state.wagers[q])state.wagers[q]=1;
+  const mult=state.wagers[q];
+  const k=ans[q];
+  const correct=(i===k);
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});
+  let pts=0,kind='zero',msg='';
+  if(correct){
+    pts=mult*3;
+    state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak;
+    kind='';
+    if(mult===3)msg=`Confident and correct. <b>+${pts} XP</b>${state.streak>=2?` · 🔥 ${state.streak} streak`:''}`;
+    else if(mult===2)msg=`Right call. <b>+${pts} XP</b>`;
+    else msg=`Lucky guess — still counts. <b>+${pts} XP</b>`;
+  }else{
+    if(mult===3){pts=0;kind='zero';msg=`Confidence didn't pay off here. <b>+0 XP</b> · streak reset.`}
+    else if(mult===2){pts=1;kind='humility';msg=`Humility bonus — knowing you might be wrong is half the skill. <b>+1 XP</b>`}
+    else{pts=1;kind='humility';msg=`Honest guess — keep going. <b>+1 XP</b>`}
+    state.streak=0;
+  }
+  state.xp+=pts;
+  state.answers[q]={picked:i,correct,wager:mult,points:pts};
+  saveState();renderChips();bumpChips();lockWager(q);
+  const e=document.getElementById(q+'-e');
+  e.classList.add('sh');
+  if(!e.querySelector('.qe-score')){
+    const s=document.createElement('div');s.className='qe-score';
+    s.innerHTML=`<span class="qs-pts ${kind}">${pts>0?'+':''}${pts} XP</span><span class="qs-msg">${msg}</span>`;
+    e.appendChild(s);
+  }
+}
+
+function populateResults(){
+  const grid=document.getElementById('results-grid');
+  const summary=document.getElementById('results-summary');
+  if(!grid||!summary)return;
+  grid.innerHTML='';
+  const correct=Object.values(state.answers).filter(a=>a.correct).length;
+  const total=Object.keys(QUIZ_LABELS).length;
+  Object.keys(QUIZ_LABELS).forEach(q=>{
+    const a=state.answers[q];
+    const row=document.createElement('div');row.className='res-row';
+    if(a){
+      row.innerHTML=`<div class="res-q">${QUIZ_LABELS[q]}</div><span class="res-badge ${a.correct?'correct':'wrong'}">${a.correct?'✓ Correct':'✗ Wrong'} · +${a.points} XP</span>`;
+    }else{
+      row.innerHTML=`<div class="res-q">${QUIZ_LABELS[q]}</div><span class="res-badge skip">— Skipped</span>`;
+    }
+    grid.appendChild(row);
+  });
+  const r=rankFor(state.xp);
+  const badges=[];
+  if(correct===total)badges.push('✓ Perfect score');
+  if(state.bestStreak>=2)badges.push('🔥 '+state.bestStreak+'-streak');
+  const sureRight=Object.values(state.answers).filter(a=>a.correct&&a.wager===3).length;
+  if(sureRight>=1)badges.push('🎯 Confident ×'+sureRight);
+  const humility=Object.values(state.answers).filter(a=>!a.correct&&a.wager<3).length;
+  if(humility>=1)badges.push('🪞 Humility ×'+humility);
+  if(state.reflections.length>=3)badges.push('💭 Deep thinker');
+  summary.innerHTML=`
+    <div style="display:flex;gap:0;border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden;margin-bottom:14px;max-width:480px;margin-left:auto;margin-right:auto">
+      <div style="flex:1;padding:12px 8px;text-align:center;border-right:1px solid rgba(255,255,255,.08)"><div style="font-size:28px;font-weight:800;color:var(--or)">${state.xp}</div><div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:3px">XP</div></div>
+      <div style="flex:1;padding:12px 8px;text-align:center;border-right:1px solid rgba(255,255,255,.08)"><div style="font-size:28px;font-weight:800;color:#fff">${correct}/${total}</div><div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:3px">Quizzes</div></div>
+      <div style="flex:1;padding:12px 8px;text-align:center;border-right:1px solid rgba(255,255,255,.08)"><div style="font-size:28px;font-weight:800;color:#fff">${state.bestStreak}</div><div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:3px">Streak</div></div>
+      <div style="flex:1;padding:12px 8px;text-align:center"><div style="font-size:28px;font-weight:800;color:#fff">${state.reflections.length}</div><div style="font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:3px">Reflects</div></div>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,.5);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:8px">${r.name}</div>
+    ${badges.length?`<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">${badges.map(b=>`<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(232,129,58,.12);color:#FFB36B;font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;letter-spacing:.2px">${b}</span>`).join('')}</div>`:''}
+  `;
+}
+
+function injectChips(){
+  document.querySelectorAll('.sh').forEach(sh=>{
+    const stag=sh.querySelector('.stag');
+    const pips=sh.querySelector('.pips');
+    if(!stag||!pips)return;
+    const right=document.createElement('div');right.className='sh-right';
+    pips.parentNode.insertBefore(right,pips);right.appendChild(pips);
+    const chip=document.createElement('div');chip.className='scorechip';chip.title='Your XP and streak';
+    chip.innerHTML=`<span class="sc-rank">R</span><span class="sc-xp"><b>0</b> XP</span><span class="sc-streak"><span style="opacity:.5">·</span> RECRUIT</span>`;
+    right.insertBefore(chip,pips);
+  });
+}
+
+loadState();
+injectChips();
+document.querySelectorAll('.qw').forEach(buildWagerUI);
+Object.keys(state.answers).forEach(q=>{
+  const a=state.answers[q];
+  const qw=document.getElementById(q);if(!qw)return;
+  const o=qw.querySelectorAll('.qo'),k=ans[q];
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===a.picked&&j!==k)x.classList.add('no')});
+  const e=document.getElementById(q+'-e');if(e){e.classList.add('sh');if(!e.querySelector('.qe-score')){const s=document.createElement('div');s.className='qe-score';s.innerHTML=`<span class="qs-pts ${a.points===0?'zero':(a.correct?'':'humility')}">+${a.points} XP</span><span class="qs-msg">Already answered. ${a.correct?'Correct.':'Try the retake to improve.'}</span>`;e.appendChild(s)}}
+  lockWager(q);
+});
+renderChips();
+document.querySelectorAll('.pips').forEach(p=>bp(p));
+
+/* Retake */
+const REFLECT_PROMPTS={
+  paramstore:{q:'Look at the <em>Parameter Store architecture</em>. Which of your services currently authenticate via IAM roles — and which still use access keys?',sub:'Every service using access keys outside AWS is a secret that needs managing. IAM roles eliminate that burden inside the cloud boundary.'},
+  envelope:{q:'Envelope encryption adds complexity. Is there a dataset in your project where <em>the extra protection</em> is worth the operational cost?',sub:'If your answer is "we don\'t handle data that sensitive," Secrets Manager is likely enough. If you hesitated, KMS might be the right call.'},
+  awsdecision:{q:'Using the decision tree: which AWS service does your <em>current project</em> actually need? Are you using a more complex option than required?',sub:'Over-engineering secret management creates its own risks. Complexity you don\'t need becomes complexity you can\'t maintain.'},
+  msi:{q:'Does your team use <em>Managed Service Identity</em> (or equivalent) today? If not, what\'s the "secret zero" your services use to authenticate?',sub:'Every service that stores its own credentials to access secrets is a chicken-and-egg problem. MSI and IAM roles solve it at the platform level.'},
+  k8sarch:{q:'Look at the <em>red item</em> — etcd stores all secrets. Do you know whether your cluster has encryption at rest enabled for etcd?',sub:'If you can\'t answer that immediately, the answer is almost certainly "no." That\'s worth checking this week.'},
+  vaultflow:{q:'Every step in the Vault flow says <em>"Logged."</em> Can your current secret management solution answer "who accessed which secret at 3pm last Tuesday"?',sub:'If audit trails matter for your compliance requirements but your current solution can\'t provide them, that gap defines your migration priority.'},
+  k8svault:{q:'The init container pattern keeps secrets out of environment variables. Are any of your pods currently <em>receiving secrets via env vars</em>?',sub:'Environment variables are visible to any process in the pod and often appear in crash dumps. Volume mounts are the safer path.'},
+  decisionmap:{q:'Looking at the full decision map — where does your team sit today, and where will you need to be <em>when the next project launches</em>?',sub:'The best time to plan a migration is before you need it. The second best time is now.'}
+};
+function openReflect(key){
+  const p=REFLECT_PROMPTS[key];if(!p)return;
+  document.getElementById('rm-q').innerHTML=p.q;
+  document.getElementById('rm-sub').textContent=p.sub;
+  document.getElementById('reflect-modal').classList.add('on');
+  if(state.reflections&&!state.reflections.includes(key)){
+    state.reflections.push(key);
+    state.xp+=2;saveState();renderChips();bumpChips();
+  }
+}
+function closeReflect(){document.getElementById('reflect-modal').classList.remove('on')}
+document.getElementById('reflect-modal').addEventListener('click',e=>{if(e.target.id==='reflect-modal')closeReflect()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('reflect-modal').classList.contains('on'))closeReflect()});
+
+/* Retake */
+function openRetake(){document.getElementById('retake-modal').classList.add('on')}
+function closeRetake(){document.getElementById('retake-modal').classList.remove('on')}
+function doRetake(){
+  try{localStorage.removeItem(STORAGE_KEY)}catch(e){}
+  window.location.reload();
+}
+document.getElementById('retake-modal').addEventListener('click',e=>{if(e.target.id==='retake-modal')closeRetake()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('retake-modal').classList.contains('on'))closeRetake()});
+
+/* Toast */
+let toastTimer=null;
+function showToast(msg,kind){
+  const t=document.getElementById('toast');if(!t)return;
+  t.textContent=msg;
+  t.classList.remove('err','on');
+  if(kind==='err')t.classList.add('err');
+  void t.offsetWidth;
+  t.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('on'),2400);
+}
+
+/* Glossary */
+(function(){
+  const tip=document.createElement('div');tip.id='gloss-tip';document.body.appendChild(tip);
+  let cur=null;
+  function place(el){
+    const def=el.getAttribute('data-def')||'';
+    tip.textContent=def;
+    const r=el.getBoundingClientRect();
+    tip.classList.remove('below');
+    tip.style.left='0px';tip.style.top='0px';
+    const tw=tip.offsetWidth,th=tip.offsetHeight;
+    let left=r.left;
+    if(left+tw>window.innerWidth-8)left=window.innerWidth-tw-8;
+    if(left<8)left=8;
+    let top=r.top-th-10;
+    if(top<8){top=r.bottom+10;tip.classList.add('below')}
+    tip.style.left=left+'px';tip.style.top=top+'px';
+    tip.classList.add('on');cur=el;
+  }
+  function hide(){tip.classList.remove('on');cur=null}
+  document.addEventListener('mouseover',e=>{const g=e.target.closest('.gloss');if(g&&g!==cur)place(g)});
+  document.addEventListener('mouseout',e=>{const g=e.target.closest('.gloss');if(g&&!e.relatedTarget?.closest?.('.gloss'))hide()});
+  document.addEventListener('click',e=>{const g=e.target.closest('.gloss');if(g&&window.matchMedia('(hover:none)').matches){if(cur===g)hide();else place(g);e.preventDefault();return}if(!g)hide()});
+  document.addEventListener('scroll',hide,true);
+  window.addEventListener('resize',hide);
+})();
+
+/* Clickable breather details */
+function toggleDetail(id){
+  const el=document.getElementById(id);if(!el)return;
+  const wasOpen=el.classList.contains('on');
+  document.querySelectorAll('.detail-panel.on').forEach(p=>p.classList.remove('on'));
+  if(!wasOpen)el.classList.add('on');
+}
+function closeDetail(id){
+  const el=document.getElementById(id);if(el)el.classList.remove('on');
+}
+</script>
+</main>
+</body>
+</html>

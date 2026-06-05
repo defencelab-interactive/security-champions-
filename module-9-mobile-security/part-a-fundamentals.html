@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Application Security · Security Champions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:slide-in .4s cubic-bezier(.2,.6,.2,1) both}
+@keyframes slide-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.slide:not(.on) *{animation-play-state:paused!important}
+
+@media(prefers-reduced-motion:reduce){
+  .slide.on{animation:none}
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.01s!important}
+}
+
+/* ═══ Header & footer ═══ */
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh .sh-right{display:flex;align-items:center;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}
+.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}
+.btn.pri:hover{background:var(--od)}
+.btn.reflect-btn{border-color:rgba(232,129,58,.4);color:var(--or);background:rgba(232,129,58,.06)}
+.btn.reflect-btn:hover{background:rgba(232,129,58,.15);color:#fff}
+
+/* ═══ Pips ═══ */
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:280px;justify-content:flex-end}
+.pip{width:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}
+.pip.on{background:var(--or);transform:scaleY(1.8)}
+
+/* ═══ Score chip ═══ */
+.scorechip{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:4px 10px 4px 6px;margin-left:10px;font-family:inherit;cursor:default;transition:all .2s}
+.scorechip.bump{animation:sc-bump .5s ease}
+@keyframes sc-bump{0%{transform:scale(1)}30%{transform:scale(1.12);background:rgba(232,129,58,.18);border-color:rgba(232,129,58,.4)}100%{transform:scale(1)}}
+.scorechip .sc-rank{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--or);font-size:10px;font-weight:800;color:#1A1A1A;letter-spacing:.5px}
+.scorechip .sc-xp{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px}
+.scorechip .sc-xp b{color:var(--or)}
+.scorechip .sc-streak{font-size:10px;color:rgba(255,255,255,.5);font-weight:600;display:flex;align-items:center;gap:2px;border-left:1px solid rgba(255,255,255,.1);padding-left:8px}
+.scorechip .sc-streak.live{color:#FFB36B}
+.scorechip .sc-streak.live .sc-flame{filter:drop-shadow(0 0 4px rgba(255,150,80,.6));animation:flame-flick .8s ease-in-out infinite}
+@keyframes flame-flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.1) rotate(2deg)}}
+@media(max-width:560px){.scorechip .sc-streak{display:none}.scorechip{margin-left:6px;padding:3px 8px 3px 4px}}
+
+/* ═══ Split layout ═══ */
+.split{display:flex;min-height:480px}
+.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:20px;font-weight:700;color:var(--wh);line-height:1.25}
+.sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:480px}
+.sp-r::-webkit-scrollbar{width:3px}
+.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+
+/* ═══ Full-bleed dark ═══ */
+.sb{padding:0}
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}
+.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
+
+/* ═══ Cover particles ═══ */
+.cover-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.cover-particle{position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(232,129,58,.3);animation:cp-float linear infinite}
+@keyframes cp-float{0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-420px) scale(0);opacity:0}}
+
+/* ═══ Prose ═══ */
+.prose{font-size:15.5px;color:var(--tm);line-height:1.78}
+.prose strong{color:var(--td);font-weight:600}
+.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.prose em{font-style:italic}
+
+/* ═══ Callout ═══ */
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}
+.co em{font-style:italic;font-weight:500;color:var(--or)}
+.co strong{font-weight:600}
+
+/* ═══ Numbered callout ═══ */
+.numlist{padding:14px 18px;background:var(--ol);border-left:3px solid var(--or);border-radius:0 7px 7px 0;font-size:14px;line-height:1.7;color:var(--td)}
+.numlist b{font-weight:700}
+
+/* ═══ Glossary ═══ */
+.gloss{border-bottom:1px dotted var(--or);cursor:help;font-weight:600;color:inherit}
+#gloss-tip{position:fixed;background:#1a1620;color:#F5F2ED;font-size:12px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.4);box-shadow:0 8px 28px rgba(0,0,0,.55);max-width:300px;width:max-content;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none;z-index:9999;text-align:left;font-family:inherit}
+#gloss-tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+#gloss-tip::after{content:'';position:absolute;left:14px;top:100%;width:0;height:0;border:6px solid transparent;border-top-color:rgba(232,129,58,.5)}
+#gloss-tip.below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:rgba(232,129,58,.5)}
+
+/* ═══ Expand / accordion ═══ */
+.xp{margin:4px 0}
+.xh{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card);border:none;border-radius:6px;padding:12px 16px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--td);text-align:left;transition:background .1s}
+.xh:hover{background:#e5e5e5}
+.xa{font-size:13px;color:var(--mu);transition:transform .18s;margin-left:8px}.xa.op{transform:rotate(90deg);color:var(--or)}
+.xb{display:none;padding:14px 16px;background:var(--ow);border-radius:0 0 6px 6px;font-size:14px;color:var(--tm);line-height:1.7}
+.xb.op{display:block;animation:xb-open .25s ease both}
+@keyframes xb-open{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.xb strong{color:var(--td);font-weight:600}
+.xb code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* ═══ Quiz ═══ */
+.qw{margin:6px 0}
+.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}
+.qo.ok{border-color:var(--gr);background:var(--gl);animation:qo-correct .4s ease}
+@keyframes qo-correct{0%{transform:scale(1)}40%{transform:scale(1.02)}100%{transform:scale(1)}}
+.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55;animation:qo-wrong .35s ease}
+@keyframes qo-wrong{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block;animation:xb-open .3s ease both}.qe strong{color:var(--td)}
+.qe .qe-score{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:13px}
+.qe .qe-score .qs-pts{display:inline-flex;align-items:center;gap:4px;background:var(--gl);color:var(--gr);font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px;letter-spacing:.3px}
+.qe .qe-score .qs-pts.zero{background:var(--rl);color:var(--rd)}
+.qe .qe-score .qs-pts.humility{background:rgba(123,111,174,.12);color:var(--pu)}
+.qe .qe-score .qs-msg{color:var(--tm);font-size:12px}
+
+/* ═══ Wager UI ═══ */
+.wager{margin:6px 0 10px;background:linear-gradient(135deg,#fff8f2,#fff);border:1px dashed rgba(232,129,58,.4);border-radius:8px;padding:11px 14px;transition:all .25s}
+.wager.locked{opacity:.55;border-style:solid;border-color:var(--bd);background:var(--ow)}
+.wager-lab{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.wager-lab::before{content:'';width:14px;height:1px;background:var(--or)}
+.wager-row{display:flex;gap:6px;flex-wrap:wrap}
+.wager-btn{flex:1;min-width:90px;background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .12s}
+.wager-btn:hover{border-color:var(--or);transform:translateY(-1px);box-shadow:0 2px 8px rgba(232,129,58,.15)}
+.wager-btn.pk{border-color:var(--or);background:var(--ol)}
+.wager-btn.pk .wb-mult{background:var(--or);color:#fff}
+.wager-btn:disabled{cursor:not-allowed;opacity:.5}
+.wb-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.wb-mult{display:inline-flex;align-items:center;justify-content:center;background:var(--card);color:var(--td);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;letter-spacing:.3px}
+.wb-name{font-size:13px;font-weight:700;color:var(--td)}
+.wb-sub{font-size:11px;color:var(--mu);line-height:1.3}
+.wager-locked-note{font-size:11px;color:var(--mu);font-style:italic;display:flex;align-items:center;gap:6px}
+.wager-locked-note b{color:var(--td);font-style:normal;font-weight:600}
+
+/* ═══ Reflect modal ═══ */
+#reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#reflect-modal.on{display:flex;animation:rm-fade .25s ease}
+@keyframes rm-fade{from{opacity:0}to{opacity:1}}
+.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:14px;padding:36px 40px 28px;max-width:560px;width:100%;text-align:center;color:#F5F2ED;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:rm-card-in .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rm-card-in{from{opacity:0;transform:scale(.92) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+.rm-q{font-size:22px;line-height:1.45;font-weight:300;margin-bottom:14px;text-wrap:pretty;color:#F5F2ED}
+.rm-q em{color:var(--or);font-style:normal;font-weight:600}
+.rm-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin:0 auto 24px;max-width:440px}
+.rm-actions{display:flex;gap:10px;justify-content:center}
+.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;width:28px;height:28px;line-height:1;border-radius:6px}
+.rm-close:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* ═══ Retake modal ═══ */
+#retake-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#retake-modal.on{display:flex;animation:rm-fade .25s ease}
+.retake-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(217,69,69,.35);border-radius:14px;padding:32px 36px 26px;max-width:480px;width:100%;text-align:center;color:#F5F2ED;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.retake-tag{font-size:10px;letter-spacing:4px;color:#ff8888;font-weight:700;text-transform:uppercase;margin-bottom:14px}
+.retake-q{font-size:20px;line-height:1.4;font-weight:300;margin-bottom:10px;color:#F5F2ED}
+.retake-sub{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:22px}
+.retake-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn.retake-confirm{background:#ff5555;border-color:#ff5555;color:#fff;font-weight:600}
+.btn.retake-confirm:hover{background:#e04545}
+
+/* ═══ Toast ═══ */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1c1820;color:#F5F2ED;font-size:13px;padding:10px 20px;border-radius:8px;border:1px solid rgba(232,129,58,.3);opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:rgba(217,69,69,.4);color:#ff8888}
+
+/* ═══ Stagger fade-in for sp-r children ═══ */
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .3s ease both}
+.slide.on .sp-r>*:nth-child(1){animation-delay:.05s}
+.slide.on .sp-r>*:nth-child(2){animation-delay:.10s}
+.slide.on .sp-r>*:nth-child(3){animation-delay:.15s}
+.slide.on .sp-r>*:nth-child(4){animation-delay:.20s}
+.slide.on .sp-r>*:nth-child(5){animation-delay:.25s}
+.slide.on .sp-r>*:nth-child(6){animation-delay:.30s}
+
+/* ═══ Breather shared ═══ */
+.breather{display:flex;flex-direction:column;align-items:center;padding:18px 24px 10px;min-height:480px;gap:12px}
+.breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.breather-caption{text-align:center;padding:4px 0 2px;max-width:640px}
+.breather-caption p{font-size:14px;line-height:1.6}
+.breather-caption strong{font-weight:700}
+.breather-notice{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.4px;text-align:center;margin-top:6px;font-style:italic}
+.breather-notice b{color:rgba(255,255,255,.65);font-style:normal;font-weight:600}
+.bg-warm{background:linear-gradient(170deg,#1e1a15,#1a1a1a,#1a1520)}
+.bg-warm .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-warm .breather-caption strong{color:var(--or)}
+.bg-navy{background:linear-gradient(170deg,#12141e,#141822,#161420)}
+.bg-navy .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-navy .breather-caption strong{color:var(--or)}
+
+/* ═══ BREATHER: Mobile Top 10 card grid ═══ */
+.m10-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:100%;max-width:680px}
+.m10-card{position:relative;border-radius:6px;padding:10px 8px 8px;text-align:center;cursor:pointer;transition:all .25s;border:1px solid rgba(255,255,255,.08);min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;overflow:hidden}
+/* Staggered pop-in */
+.slide.on .m10-card{animation:m10-pop .4s cubic-bezier(.2,.8,.2,1) both}
+.slide.on .m10-card:nth-child(1){animation-delay:.08s}
+.slide.on .m10-card:nth-child(2){animation-delay:.14s}
+.slide.on .m10-card:nth-child(3){animation-delay:.20s}
+.slide.on .m10-card:nth-child(4){animation-delay:.26s}
+.slide.on .m10-card:nth-child(5){animation-delay:.32s}
+.slide.on .m10-card:nth-child(6){animation-delay:.38s}
+.slide.on .m10-card:nth-child(7){animation-delay:.44s}
+.slide.on .m10-card:nth-child(8){animation-delay:.50s}
+.slide.on .m10-card:nth-child(9){animation-delay:.56s}
+.slide.on .m10-card:nth-child(10){animation-delay:.62s}
+@keyframes m10-pop{from{opacity:0;transform:scale(.8) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+/* Shimmer sweep */
+.m10-card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);animation:m10-shimmer 4s ease-in-out infinite;animation-delay:inherit;pointer-events:none}
+@keyframes m10-shimmer{0%,100%{left:-100%}50%{left:100%}}
+.m10-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.m10-card.cat-absent{background:rgba(217,69,69,.12);border-color:rgba(217,69,69,.25)}
+.m10-card.cat-absent:hover{border-color:rgba(217,69,69,.6);box-shadow:0 6px 20px rgba(217,69,69,.15)}
+.m10-card.cat-weak{background:rgba(232,168,50,.12);border-color:rgba(232,168,50,.25)}
+.m10-card.cat-weak:hover{border-color:rgba(232,168,50,.6);box-shadow:0 6px 20px rgba(232,168,50,.15)}
+.m10-card.cat-misused{background:rgba(229,195,60,.10);border-color:rgba(229,195,60,.2)}
+.m10-card.cat-misused:hover{border-color:rgba(229,195,60,.5);box-shadow:0 6px 20px rgba(229,195,60,.12)}
+.m10-num{font-size:11px;font-weight:800;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
+.cat-absent .m10-num{color:#ff6b6b}
+.cat-weak .m10-num{color:#E5A832}
+.cat-misused .m10-num{color:#d4c24a}
+.m10-name{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.3px;line-height:1.3;text-transform:uppercase}
+.m10-pop{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1a1620;color:#F5F2ED;font-size:11px;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.35);box-shadow:0 8px 24px rgba(0,0,0,.5);width:200px;text-align:left;z-index:10;pointer-events:none}
+.m10-pop::after{content:'';position:absolute;left:50%;top:100%;transform:translateX(-50%);border:6px solid transparent;border-top-color:rgba(232,129,58,.4)}
+.m10-card.expanded .m10-pop{display:block;animation:fi .2s ease both}
+.m10-legend{display:flex;gap:16px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.m10-legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.3px}
+.m10-legend-dot{width:10px;height:10px;border-radius:3px}
+.m10-legend-dot.lg-absent{background:rgba(217,69,69,.35);border:1px solid rgba(217,69,69,.5)}
+.m10-legend-dot.lg-weak{background:rgba(232,168,50,.35);border:1px solid rgba(232,168,50,.5)}
+.m10-legend-dot.lg-misused{background:rgba(229,195,60,.3);border:1px solid rgba(229,195,60,.45)}
+@media(max-width:560px){.m10-grid{grid-template-columns:repeat(3,1fr)}.m10-pop{width:170px}}
+
+/* ═══ BREATHER: Decompiled code ═══ */
+.decomp-wrap{width:100%;max-width:620px;position:relative}
+.decomp-header{background:#0d1017;border:1px solid rgba(255,255,255,.08);border-bottom:none;border-radius:8px 8px 0 0;padding:6px 12px;display:flex;align-items:center;gap:6px}
+.decomp-header .th-dot{width:8px;height:8px;border-radius:50%}
+.decomp-header .th-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.3);margin-left:8px;letter-spacing:.5px}
+.decomp-block{width:100%;background:#07090e;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:18px 20px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.8;color:rgba(255,255,255,.5);overflow-x:auto;white-space:pre;position:relative}
+.decomp-block.has-header{border-radius:0 0 8px 8px}
+.decomp-block .hl-cred{color:#E8813A;font-weight:600}
+.decomp-block .hl-fn{color:rgba(255,255,255,.7)}
+.decomp-block .hl-comment{color:rgba(255,255,255,.25);font-style:italic}
+.decomp-line{opacity:0;transform:translateX(-4px);transition:opacity .3s ease,transform .3s ease}
+.decomp-line.visible{opacity:1;transform:translateX(0)}
+.decomp-scan{position:absolute;left:0;top:18px;width:100%;height:1.8em;background:linear-gradient(180deg,transparent,rgba(232,129,58,.04),transparent);pointer-events:none;animation:decomp-scan-move 4s ease-in-out infinite}
+@keyframes decomp-scan-move{0%{top:18px}100%{top:calc(100% - 30px)}}
+.decomp-cursor{display:inline-block;width:7px;height:14px;background:var(--or);animation:decomp-blink 1s step-end infinite;vertical-align:middle;margin-left:2px;border-radius:1px}
+@keyframes decomp-blink{0%,100%{opacity:1}50%{opacity:0}}
+.decomp-caption{margin-top:8px;font-size:11px;color:rgba(255,255,255,.4);text-align:center;font-style:italic;max-width:620px;line-height:1.5}
+
+/* ═══ BREATHER: Trust boundary ═══ */
+.tb-split{display:flex;width:100%;max-width:660px;gap:0;border-radius:8px;overflow:hidden;min-height:240px;position:relative}
+.tb-zone{flex:1;padding:18px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;justify-content:center}
+.tb-untrusted{background:rgba(217,69,69,.08);border:1px solid rgba(217,69,69,.15);border-right:none;border-radius:8px 0 0 8px}
+.tb-trusted{background:rgba(46,173,107,.08);border:1px solid rgba(46,173,107,.15);border-left:none;border-radius:0 8px 8px 0}
+.tb-zone-tag{font-size:10px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase}
+.tb-untrusted .tb-zone-tag{color:#ff6b6b}
+.tb-trusted .tb-zone-tag{color:var(--gr)}
+.tb-icon{font-size:28px;opacity:.7}
+.tb-items{font-size:11px;color:rgba(255,255,255,.55);line-height:1.6;text-align:center}
+.tb-items strong{color:rgba(255,255,255,.75);font-weight:600}
+.tb-desc{font-size:10px;color:rgba(255,255,255,.35);text-align:center;font-style:italic;line-height:1.4;max-width:140px}
+.tb-boundary{width:4px;background:linear-gradient(180deg,rgba(232,129,58,.6),rgba(232,129,58,.2),rgba(232,129,58,.6));position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:visible}
+.tb-boundary::before{content:'';position:absolute;inset:-2px;background:linear-gradient(180deg,rgba(232,129,58,.3),rgba(232,129,58,.05),rgba(232,129,58,.3));animation:tb-pulse 2.5s ease-in-out infinite;border-radius:2px}
+@keyframes tb-pulse{0%,100%{opacity:.3;transform:scaleX(1)}50%{opacity:1;transform:scaleX(2.5)}}
+.tb-boundary-label{position:absolute;background:#1a1620;color:var(--or);font-size:8px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:4px 8px;border-radius:4px;border:1px solid rgba(232,129,58,.4);white-space:nowrap;writing-mode:vertical-lr;text-orientation:mixed;transform:rotate(180deg);z-index:2}
+.tb-packet{position:absolute;width:6px;height:6px;border-radius:50%;z-index:3;pointer-events:none}
+.tb-packet.pkt-bad{background:#ff6b6b;box-shadow:0 0 8px rgba(255,107,107,.5);animation:pkt-cross-bad 3.5s ease-in-out infinite}
+.tb-packet.pkt-good{background:var(--gr);box-shadow:0 0 8px rgba(46,173,107,.5);animation:pkt-cross-good 4s ease-in-out infinite 1.5s}
+@keyframes pkt-cross-bad{0%{left:15%;top:35%;opacity:0}10%{opacity:1}42%{left:47%;top:35%;opacity:1}50%{left:47%;opacity:0;transform:scale(.5)}100%{left:47%;top:35%;opacity:0}}
+@keyframes pkt-cross-good{0%{left:15%;top:65%;opacity:0}10%{opacity:1}45%{left:48%;top:65%;opacity:1}55%{left:85%;top:65%;opacity:1}60%{left:85%;opacity:0}100%{left:85%;top:65%;opacity:0}}
+.tb-bridge{display:flex;align-items:center;gap:8px;margin-top:4px;padding:8px 12px;background:rgba(232,129,58,.08);border:1px dashed rgba(232,129,58,.3);border-radius:6px;font-size:10px;color:rgba(255,255,255,.55);width:100%;max-width:660px;justify-content:center}
+.tb-bridge strong{color:var(--or);font-weight:700}
+
+/* ═══ BREATHER: Defense layers ═══ */
+.dlayer-flow{display:flex;align-items:center;gap:4px;width:100%;max-width:660px;justify-content:center;flex-wrap:wrap}
+.dlayer-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:100px;padding:12px 8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:6px;transition:all .4s;position:relative;overflow:hidden}
+.slide.on .dlayer-step{animation:dlayer-cascade 8s ease-in-out infinite}
+.slide.on .dlayer-step:nth-child(1){animation-delay:0s}
+.slide.on .dlayer-step:nth-child(3){animation-delay:1.6s}
+.slide.on .dlayer-step:nth-child(5){animation-delay:3.2s}
+.slide.on .dlayer-step:nth-child(7){animation-delay:4.8s}
+.slide.on .dlayer-step:nth-child(9){animation-delay:6.4s}
+@keyframes dlayer-cascade{0%,100%{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06);box-shadow:none}8%{background:rgba(232,129,58,.15);border-color:rgba(232,129,58,.45);box-shadow:0 0 20px rgba(232,129,58,.2)}20%{background:rgba(232,129,58,.06);border-color:rgba(232,129,58,.2);box-shadow:none}30%{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)}}
+.dlayer-step::after{content:'';position:absolute;top:-1px;left:-20%;width:20%;height:2px;background:linear-gradient(90deg,transparent,var(--or),transparent);animation:dlayer-spark 8s ease-in-out infinite;animation-delay:inherit;opacity:0}
+@keyframes dlayer-spark{0%,5%{left:-20%;opacity:0}6%{opacity:1}15%{left:100%;opacity:1}16%{opacity:0}100%{opacity:0}}
+.dlayer-shield{font-size:20px;opacity:.6}
+.dlayer-name{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.dlayer-items{font-size:9px;color:rgba(255,255,255,.35);line-height:1.5;text-align:center}
+.dlayer-arrow{color:rgba(255,255,255,.15);font-size:16px;flex-shrink:0;font-weight:800}
+.slide.on .dlayer-arrow{animation:darrow-pulse 8s ease-in-out infinite}
+.slide.on .dlayer-arrow:nth-child(2){animation-delay:.8s}
+.slide.on .dlayer-arrow:nth-child(4){animation-delay:2.4s}
+.slide.on .dlayer-arrow:nth-child(6){animation-delay:4s}
+.slide.on .dlayer-arrow:nth-child(8){animation-delay:5.6s}
+@keyframes darrow-pulse{0%,100%{color:rgba(255,255,255,.15)}8%{color:var(--or)}20%{color:rgba(255,255,255,.15)}}
+
+/* ═══ Score grid ═══ */
+.score-summary{padding:16px 20px;text-align:center}
+.score-summary .score-title{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--or);margin-bottom:14px}
+.score-summary .score-body{font-size:16px;color:var(--wh);line-height:1.6}
+.score-summary .score-body b{color:var(--or)}
+
+/* ═══ Responsive ═══ */
+@media(max-width:560px){
+  .split{flex-direction:column}
+  .sp-l{width:100%;padding:14px 18px;min-height:auto}
+  .sp-l::after{display:none}
+  .sp-r{max-height:none}
+  .fbody{flex-direction:column;padding:28px 20px;gap:24px}
+  .fb-visual{width:160px;height:160px}
+  .fb-tt{font-size:28px}
+  .tb-split{flex-direction:column}
+  .tb-untrusted{border-right:1px solid rgba(217,69,69,.15);border-bottom:none;border-radius:8px 8px 0 0}
+  .tb-trusted{border-left:1px solid rgba(46,173,107,.15);border-top:none;border-radius:0 0 8px 8px}
+  .tb-boundary{width:auto;height:4px;writing-mode:horizontal-tb;background:linear-gradient(90deg,rgba(232,129,58,.6),rgba(232,129,58,.2),rgba(232,129,58,.6))}
+  .tb-boundary-label{writing-mode:horizontal-tb;transform:none}
+  .dlayer-flow{flex-direction:column;gap:6px}
+  .dlayer-arrow{transform:rotate(90deg)}
+}
+</style>
+</head>
+<body>
+<main class="lms-main">
+<div class="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Module 9a</span> · Mobile Security</span><div class="pips" id="pp0"></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="cover-particles" id="cover-particles"></div>
+    <div class="fb-content" style="animation:fi .8s ease .2s both">
+      <div class="fb-tg">Security Champions · Module 9a</div>
+      <div class="fb-tt" style="animation:fi .8s ease .35s both">Mobile Application Security</div>
+      <div class="fb-sb" style="animation:fi .8s ease .5s both">Threats and controls for the mobile attack surface. Part 1 of 2 — OWASP Mobile Top 10.</div>
+    </div>
+    <div class="fb-visual" style="animation:fi 1s ease .4s both">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <defs>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+          <linearGradient id="shield-gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E8813A" stop-opacity=".5"/><stop offset="100%" stop-color="#E8813A" stop-opacity=".1"/></linearGradient>
+        </defs>
+        <rect x="60" y="20" width="80" height="160" rx="12" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/>
+        <rect x="68" y="36" width="64" height="120" rx="2" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)" stroke-width=".5"/>
+        <circle cx="100" cy="170" r="5" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <rect x="68" y="40" width="64" height="3" rx="1" fill="var(--or)" opacity=".4" filter="url(#glow)">
+          <animate attributeName="y" values="36;152;36" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".15;.5;.15" dur="3s" repeatCount="indefinite"/>
+        </rect>
+        <path d="M100 68 L116 76 L116 94 C116 104 108 112 100 118 C92 112 84 104 84 94 L84 76 Z" fill="url(#shield-gr)" stroke="var(--or)" stroke-width="1.5" filter="url(#glow)">
+          <animate attributeName="opacity" values=".7;1;.7" dur="3s" repeatCount="indefinite"/>
+        </path>
+        <path d="M96 90 L99 93 L106 84" fill="none" stroke="var(--or)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <ellipse cx="100" cy="96" rx="54" ry="18" fill="none" stroke="rgba(232,129,58,.12)" stroke-width=".8" stroke-dasharray="4 4">
+          <animateTransform attributeName="transform" type="rotate" values="0 100 96;360 100 96" dur="20s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="100" cy="96" rx="68" ry="24" fill="none" stroke="rgba(232,129,58,.06)" stroke-width=".6" stroke-dasharray="6 6">
+          <animateTransform attributeName="transform" type="rotate" values="360 100 96;0 100 96" dur="28s" repeatCount="indefinite"/>
+        </ellipse>
+        <circle cx="0" cy="0" r="3" fill="rgba(217,69,69,.6)">
+          <animateMotion dur="20s" repeatCount="indefinite"><mpath href="#orbit1"/></animateMotion>
+        </circle>
+        <circle cx="0" cy="0" r="2" fill="rgba(217,69,69,.4)">
+          <animateMotion dur="20s" repeatCount="indefinite" begin="-7s"><mpath href="#orbit1"/></animateMotion>
+        </circle>
+        <circle cx="0" cy="0" r="2.5" fill="rgba(217,69,69,.5)">
+          <animateMotion dur="20s" repeatCount="indefinite" begin="-14s"><mpath href="#orbit1"/></animateMotion>
+        </circle>
+        <ellipse id="orbit1" cx="100" cy="96" rx="54" ry="18" fill="none" stroke="none"/>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">1 / 17</span><div class="snav"><button class="btn pri" onclick="go(1)">Start →</button></div></div>
+</div>
+
+<!-- ═══ S1 · The landscape ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Why mobile matters</span><div class="sh-right"><div class="pips" id="pp1"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">More than just an app</div></div><div class="sp-r">
+    <div class="prose">Mobile security today covers an entire system — client code, backend APIs, CI/CD pipelines, cloud infrastructure, third-party SDKs, and platform configurations. Each layer requires its own security controls.</div>
+    <div class="prose">The shift has been dramatic: supply chain attacks targeting mobile SDKs increased more than 600% in three years. The <span class="gloss" data-def="OWASP Mobile Top 10 — a consensus list of the ten most critical mobile application security risks, updated in 2024 for the first time since 2016.">OWASP Mobile Top 10</span>, updated in 2024, reflects a fundamentally different threat landscape.</div>
+    <div class="co">If your security program treats mobile as "just another frontend," it's missing the attack surfaces that matter most — <em>supply chain, cloud misconfiguration, and credential management.</em></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">2 / 17 · Landscape</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S2 · Insecure vs insufficient ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Pattern in the Top 10</span><div class="sh-right"><div class="pips" id="pp2"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">A pattern in the Top 10</div></div><div class="sp-r">
+    <div class="prose">The Mobile Top 10 risk names use two recurring words that reveal different categories of failure:</div>
+    <div class="prose"><strong>Insecure</strong> (communication, data storage, auth) — the absence of controls. Nobody applied any protection. No TLS, no encryption, no auth check.</div>
+    <div class="prose"><strong>Insufficient</strong> (validation, binary protections, cryptography) — controls exist but aren't strong enough. Encryption is present but uses a weak algorithm. Validation runs but misses injection vectors.</div>
+    <div class="prose">The first category is a planning failure. The second requires understanding where the sufficiency threshold is — which comes from <span class="gloss" data-def="The structured process of identifying what can go wrong, what to do about it, and how bad it would be if an attacker succeeded. Covered in Module 4.">threat modeling</span>.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">3 / 17 · Patterns</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S3 · Breather: Mobile Top 10 map ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag"><span class="hl">Map</span> · OWASP Mobile Top 10 (2024)</span><div class="sh-right"><div class="pips" id="pp3"></div></div></div>
+  <div class="sb"><div class="breather bg-navy" style="padding:24px 28px 14px">
+    <div style="font-size:11px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:8px">OWASP Mobile Top 10 (2024)</div>
+    <div class="breather-visual" style="flex-direction:column;gap:12px">
+      <div class="m10-grid" id="m10grid">
+        <div class="m10-card cat-misused" onclick="tgm(this)" data-tip="Hardcoded secrets, keys in source code, obfuscation instead of proper credential management."><div class="m10-num">M1</div><div class="m10-name">Improper Credential Usage</div><div class="m10-pop"></div></div>
+        <div class="m10-card cat-weak" onclick="tgm(this)" data-tip="Vulnerable SDKs, typosquatting, AI knowledge base poisoning. New in 2024."><div class="m10-num">M2</div><div class="m10-name">Supply Chain</div><div class="m10-pop"></div></div>
+        <div class="m10-card cat-absent" onclick="tgm(this)" data-tip="Broken auth/authz flows, IDOR, BOLA from distributed logic inconsistencies."><div class="m10-num">M3</div><div class="m10-name">Auth / Authz</div><div class="m10-pop"></div></div>
+        <div class="m10-card cat-weak" onclick="tgm(this)" data-tip="Client-side-only validation. Any check performed only on the app can be bypassed."><div class="m10-num">M4</div><div class="m10-name">Insufficient Validation</div><div class="m10-pop"></div></div>
+        <div class="m10-card cat-absent" onclick="tgm(this)" data-tip="Cleartext HTTP, ATS disabled, missing TLS. A configuration flag away from exposure."><div class="m10-num">M5</div><div class="m10-name">Insecure Communication</div><div class="m10-pop"></div></div>
+        <div class="m10-card cat-misused" onclick="tgm(this)" data-tip="Privacy manifest mismatches. Technical implementation doesn't match declared data collection."><div class="m10-num">M6</div><div class="m10-name">Inadequate Privacy</div><div class="m10-pop"></div></div>
+        <div class="m10-card cat-weak" onclick="tgm(this)" data-tip="Apps decompiled in minutes with jadx. ProGuard/R8 or embedded VM protection needed."><div class="m10-num">M7</div><div class="m10-name">Binary Protections</div><div class="m10-pop"></div></div>
+        <div class="m10-card cat-misused" onclick="tgm(this)" data-tip="Debug mode in prod, verbose errors, unnecessary permissions. CI/CD gate checks."><div class="m10-num">M8</div><div class="m10-name">Misconfiguration</div><div class="m10-pop"></div></div>
+        <div class="m10-card cat-absent" onclick="tgm(this)" data-tip="Sensitive data on SD cards, in logs, or unencrypted local databases. Use Keychain/Keystore."><div class="m10-num">M9</div><div class="m10-name">Insecure Storage</div><div class="m10-pop"></div></div>
+        <div class="m10-card cat-weak" onclick="tgm(this)" data-tip="Weak algorithms, static IVs, custom crypto. Use AES-256, PBKDF2, platform APIs."><div class="m10-num">M10</div><div class="m10-name">Insufficient Crypto</div><div class="m10-pop"></div></div>
+      </div>
+      <div class="m10-legend">
+        <div class="m10-legend-item"><div class="m10-legend-dot lg-absent"></div> Absent controls</div>
+        <div class="m10-legend-item"><div class="m10-legend-dot lg-weak"></div> Weak controls</div>
+        <div class="m10-legend-item"><div class="m10-legend-dot lg-misused"></div> Misused controls</div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Three categories of failure — <strong>absent, weak, and misused</strong> controls — each requiring a different response. Tap any card for details.</p></div>
+    <div class="breather-notice">Notice — <b>M2 (Supply Chain) is brand new</b> in the 2024 update. The threat landscape has fundamentally shifted since 2016.</div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn reflect-btn" onclick="openReflect('top10')">⏸ Reflect</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S4 · M1: Improper credential usage ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · M1 · Credential usage</span><div class="sh-right"><div class="pips" id="pp4"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The #1 mobile risk</div></div><div class="sp-r">
+    <div class="prose">Over 50% of analyzed mobile applications in 2024 contained hardcoded secrets — API keys, tokens, or passwords in source code, config files, or build scripts.</div>
+    <div class="prose">A common misconception: obfuscation provides protection. Splitting a key across variables, Base64-encoding it, or hiding it in resource files feels secure. But compilers optimize code, and decompilation tools reassemble the full value regardless of how it was split.</div>
+    <div class="xp" id="x4a"><button class="xh" aria-expanded="false" aria-controls="x4a-p" onclick="tg('x4a')"><span class="xt">Where credentials should live</span><span class="xa">›</span></button>
+      <div class="xb" id="x4a-p">Use platform-level secure storage: <strong>Android Keystore</strong> and <strong>iOS Keychain</strong>. These are hardware-backed or TEE-backed and significantly more trustworthy than application-level storage. For remote credentials, establish a trusted session and store received tokens in the platform keychain — never in <code>SharedPreferences</code>, <code>NSUserDefaults</code>, or plaintext SQLite.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">5 / 17 · M1</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S5 · Decompiled binary breather ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag"><span class="hl">Visual</span> · What attackers see</span><div class="sh-right"><div class="pips" id="pp5"></div></div></div>
+  <div class="sb"><div class="breather bg-warm" style="padding:24px 28px 14px">
+    <div style="font-size:11px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:8px">What Attackers See</div>
+    <div class="breather-visual" style="flex-direction:column;gap:12px">
+      <div class="decomp-wrap">
+        <div class="decomp-header"><span class="th-dot" style="background:#ff5f57"></span><span class="th-dot" style="background:#febc2e"></span><span class="th-dot" style="background:#28c840"></span><span class="th-title">jadx — decompiled binary output</span></div>
+        <div class="decomp-block has-header" id="decomp-code">
+          <div class="decomp-scan"></div>
+<div class="decomp-line"><span class="hl-comment">; Decompiled iOS binary — credential initialization</span></div>
+<div class="decomp-line"><span class="hl-fn">ADRP    X8, #classRef_INMAWSCredentials@PAGE</span></div>
+<div class="decomp-line"><span class="hl-fn">LDR     X0, [X8, #classRef_INMAWSCredentials@PAGEOFF]</span></div>
+<div class="decomp-line"><span class="hl-fn">BL      _objc_alloc</span></div>
+<div class="decomp-line"><span class="hl-cred">ADRL    X2, cfstr_Ak████████yp  ; "AK██████████ZA"</span></div>
+<div class="decomp-line"><span class="hl-cred">ADRL    X3, cfstr_Yb████████2p  ; "yb████████C6"</span></div>
+<div class="decomp-line"><span class="hl-fn">BL      _objc_msgSend$initWithAccessKey_secretKey_</span><span class="decomp-cursor"></span></div>
+        </div>
+      </div>
+      <div class="decomp-caption">Decompiled iOS binary. AWS access key and secret key visible as string constants. Obfuscation didn't help.</div>
+    </div>
+    <div class="breather-caption"><p>This is what an attacker sees after <strong>5 minutes</strong> with a decompilation tool. Every hardcoded credential is readable.</p></div>
+    <div class="breather-notice">Notice — <b>the highlighted lines contain real credential patterns.</b> The structure is identical in production binaries.</div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn reflect-btn" onclick="openReflect('creds')">⏸ Reflect</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S6 · M2: Supply chain ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · M2 · Supply chain</span><div class="sh-right"><div class="pips" id="pp6"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">A new entry in the Top 10</div></div><div class="sp-r">
+    <div class="prose">Inadequate supply chain security was added to the Mobile Top 10 specifically because of <span class="gloss" data-def="A class of attack where adversaries compromise trusted suppliers or dependencies. Named after the 2020 SolarWinds breach, now a recognized pattern in mobile SDKs.">SolarWinds-style attacks</span> reaching mobile SDKs. Modern mobile apps can't be built from scratch — every framework and package is a trust decision.</div>
+    <div class="xp" id="x6a"><button class="xh" aria-expanded="false" aria-controls="x6a-p" onclick="tg('x6a')"><span class="xt">Typosquatting</span><span class="xa">›</span></button>
+      <div class="xb" id="x6a-p">Misspell a package name by one character, and the misspelled version may already exist with malicious code. Your pipeline doesn't error because the package is real — just not the one you intended. Test this: generate probable typosquatting variants of your dependencies and check which already exist as published packages.</div>
+    </div>
+    <div class="xp" id="x6b"><button class="xh" aria-expanded="false" aria-controls="x6b-p" onclick="tg('x6b')"><span class="xt">AI knowledge base poisoning</span><span class="xa">›</span></button>
+      <div class="xb" id="x6b-p">An emerging vector: attackers publish knowledge repositories (Obsidian vaults, Notion pages) with genuine technical content but embedded prompt injections. When a developer's AI agent processes this content, the injection produces compromised code. Supply chain risk now extends beyond code dependencies to the <strong>AI tools your team uses</strong>.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">7 / 17 · M2</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S7 · M3: Auth and authz ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · M3 · Auth / Authz</span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Broken flows</div></div><div class="sp-r">
+    <div class="prose">Most mobile auth/authz failures come from distributed logic — authorization decisions spread across microservices with inconsistencies between them. <span class="gloss" data-def="Insecure Direct Object Reference — accessing data by changing an ID parameter without authorization checks.">IDOR</span> and <span class="gloss" data-def="Broken Object Level Authorization — a broader category where API endpoints don't verify that the requesting user owns the resource.">BOLA</span> are the common results.</div>
+    <div class="prose">A practical mitigation: develop auth as a <strong>separate, reusable package</strong> that every microservice imports. One codebase for all auth logic, tested centrally, used consistently.</div>
+    <div class="xp" id="x7a"><button class="xh" aria-expanded="false" aria-controls="x7a-p" onclick="tg('x7a')"><span class="xt">The JWT none algorithm</span><span class="xa">›</span></button>
+      <div class="xb" id="x7a-p">A particularly common misconfiguration: servers accepting JWT tokens with the <code>none</code> algorithm — effectively accepting tokens with no signature verification. This should be on every backend configuration checklist.</div>
+    </div>
+    <div class="xp" id="x7b"><button class="xh" aria-expanded="false" aria-controls="x7b-p" onclick="tg('x7b')"><span class="xt">Biometric bypass</span><span class="xa">›</span></button>
+      <div class="xb" id="x7b-p">Mobile biometric authentication can be bypassed via runtime hooks (<strong>Frida</strong>) if it relies on client-side logic. Always use platform APIs (<code>BiometricPrompt</code>, <code>LocalAuthentication</code>) — and treat biometrics as one factor, not the only factor for sensitive operations.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">8 / 17 · M3</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S8 · Breather: Trust boundary ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag"><span class="hl">Visual</span> · The mobile trust boundary</span><div class="sh-right"><div class="pips" id="pp8"></div></div></div>
+  <div class="sb"><div class="breather bg-navy" style="padding:24px 28px 14px">
+    <div style="font-size:11px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:12px">The Mobile Trust Boundary</div>
+    <div class="breather-visual" style="flex-direction:column;gap:10px">
+      <div class="tb-split">
+        <div class="tb-packet pkt-bad"></div>
+        <div class="tb-packet pkt-good"></div>
+        <div class="tb-zone tb-untrusted">
+          <div class="tb-zone-tag">Untrusted</div>
+          <div class="tb-icon">📱</div>
+          <div class="tb-items"><strong>Client code</strong><br>Local storage<br>User input<br>Biometric checks</div>
+          <div class="tb-desc">Everything here can be bypassed, decompiled, or tampered with.</div>
+        </div>
+        <div class="tb-boundary"><div class="tb-boundary-label">Trust Boundary</div></div>
+        <div class="tb-zone tb-trusted">
+          <div class="tb-zone-tag">Trusted</div>
+          <div class="tb-icon">🖥️</div>
+          <div class="tb-items"><strong>Backend API</strong><br>Server-side auth<br>Platform Keychain<br>Keystore</div>
+          <div class="tb-desc">Enforce everything here.</div>
+        </div>
+      </div>
+      <div class="tb-bridge"><strong>Platform security APIs</strong> bridge the gap — hardware-backed storage crosses into the trusted zone.</div>
+    </div>
+    <div class="breather-caption"><p>The client device is <strong>untrusted territory</strong>. Platform APIs and server-side enforcement are the only reliable controls.</p></div>
+    <div class="breather-notice">Notice — <b>the red dot gets blocked at the boundary</b>. The green dot passes through. That's the entire story of mobile security architecture.</div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn reflect-btn" onclick="openReflect('trust')">⏸ Reflect</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S9 · M4: Insufficient validation ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · M4 · Validation</span><div class="sh-right"><div class="pips" id="pp9"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The client lies</div></div><div class="sp-r">
+    <div class="prose">Mobile apps are thick clients on untrusted devices. Any validation performed only on the client — input length, format checks, business rule enforcement — can be bypassed by intercepting the request with a proxy like <span class="gloss" data-def="An HTTP proxy used for intercepting, inspecting, and modifying traffic between a mobile app and its backend. Standard tool in mobile security testing.">Burp Suite</span> or <span class="gloss" data-def="An HTTP debugging proxy that captures traffic from mobile apps. Often used to bypass client-side checks by replaying modified requests.">Charles Proxy</span>.</div>
+    <div class="prose">The rule is absolute: <strong>every input check must be duplicated on the backend.</strong> Client-side validation is a UX convenience, not a security control. Treat the client as a helpful but untrustworthy middleman.</div>
+    <div class="xp" id="x9a"><button class="xh" aria-expanded="false" aria-controls="x9a-p" onclick="tg('x9a')"><span class="xt">A common example: price manipulation</span><span class="xa">›</span></button>
+      <div class="xb" id="x9a-p">An e-commerce app calculates the total on the client and sends it to the backend. An attacker intercepts the request, changes the total from $299 to $0.01, and the backend processes the order because it trusted the client's calculation. The fix: <strong>recalculate server-side</strong>. Never trust a number the client sends if it affects money, permissions, or access.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">10 / 20 · M4</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S10 · M5: Insecure communication ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · M5 · Communication</span><div class="sh-right"><div class="pips" id="pp10"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">One flag away from exposure</div></div><div class="sp-r">
+    <div class="prose">Some apps still ship with <span class="gloss" data-def="App Transport Security — an iOS feature that forces HTTPS. When disabled, the app can make cleartext HTTP requests, exposing data in transit.">App Transport Security</span> disabled or with <code>android:usesCleartextTraffic="true"</code> in the manifest. Both allow cleartext HTTP, exposing every request to network-level interception. These are configuration flags checkable with a simple manifest review.</div>
+    <div class="prose">Beyond the basics, mobile communication has a second layer of risk: <span class="gloss" data-def="Certificate pinning — embedding the expected server certificate (or its hash) in the app so it rejects connections to servers with different certificates, even if those certificates are trusted by the OS.">certificate pinning</span> failures. Without pinning, an attacker who installs a custom CA certificate on the device can intercept all HTTPS traffic — the OS trusts the attacker's certificate.</div>
+    <div class="xp" id="x10a"><button class="xh" aria-expanded="false" aria-controls="x10a-p" onclick="tg('x10a')"><span class="xt">What to check in your manifest</span><span class="xa">›</span></button>
+      <div class="xb" id="x10a-p"><strong>iOS:</strong> search <code>Info.plist</code> for <code>NSAppTransportSecurity</code> — if <code>NSAllowsArbitraryLoads</code> is <code>true</code>, ATS is disabled. <strong>Android:</strong> check <code>AndroidManifest.xml</code> for <code>usesCleartextTraffic</code> and review <code>network_security_config.xml</code> for custom trust anchors. Both checks belong in your CI/CD pipeline as automated gates.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">11 / 20 · M5</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · M6: Inadequate privacy ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · M6 · Privacy</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What you declare vs what you collect</div></div><div class="sp-r">
+    <div class="prose">iOS now requires a <span class="gloss" data-def="A structured declaration (PrivacyInfo.xcprivacy) listing which data the app collects and why. Required since spring 2024 for App Store submissions.">privacy manifest</span> (<code>PrivacyInfo.xcprivacy</code>) declaring exactly which data the app collects and why. Android's Data Safety section in the Play Store serves a similar purpose. Both create a contract between the app and its users.</div>
+    <div class="prose">The security champion's role: ensure the <strong>technical implementation matches the declared privacy posture.</strong> If the manifest says "no tracking," but a third-party SDK sends device fingerprints to an ad network, that's a compliance violation — and increasingly, a legal liability under GDPR and state privacy laws.</div>
+    <div class="xp" id="x11a"><button class="xh" aria-expanded="false" aria-controls="x11a-p" onclick="tg('x11a')"><span class="xt">The SDK audit problem</span><span class="xa">›</span></button>
+      <div class="xb" id="x11a-p">Most privacy violations aren't intentional — they come from SDKs the team didn't audit. An analytics SDK collects location data. A crash reporter logs user email addresses. A push notification library stores device tokens with personally identifiable metadata. <strong>Every SDK is a privacy decision.</strong> Apple now requires privacy manifests from SDK authors too, but enforcement is inconsistent — your team still needs to verify.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">12 / 20 · M6</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S12 · M7: Binary protections ═══ -->
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · M7 · Binary protections</span><div class="sh-right"><div class="pips" id="pp12"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">When decompilation takes minutes</div></div><div class="sp-r">
+    <div class="prose">Android apps can be decompiled with <span class="gloss" data-def="A popular open-source DEX-to-Java decompiler. Converts APK files back to readable Java source in minutes.">jadx</span> in minutes, exposing business logic, API endpoints, and hardcoded keys. Standard protections include <span class="gloss" data-def="Android's built-in code shrinking and obfuscation tools. R8 is the current default, replacing the older ProGuard.">ProGuard/R8</span> and runtime integrity checks.</div>
+    <div class="prose">For truly critical code, a more advanced approach exists: <strong>embedding a lightweight virtual machine</strong> with custom bytecode inside the application. Critical logic is compiled to the VM's instruction set, not standard Java bytecode. Decompilation shows the VM interpreter but not the business logic it executes.</div>
+    <div class="xp" id="x12a"><button class="xh" aria-expanded="false" aria-controls="x12a-p" onclick="tg('x12a')"><span class="xt">The performance trade-off</span><span class="xa">›</span></button>
+      <div class="xb" id="x12a-p">VM protection adds overhead. Use it only for code sections where reverse engineering would cause material business damage (financial algorithms, DRM, proprietary logic) — not for the entire application.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">13 / 20 · M7</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S13 · M8: Security misconfiguration ═══ -->
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · M8 · Misconfiguration</span><div class="sh-right"><div class="pips" id="pp13"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The defaults will betray you</div></div><div class="sp-r">
+    <div class="prose">Debug mode left on in production. Verbose error messages that expose stack traces to the client. Unnecessary permissions requested in the manifest. <span class="gloss" data-def="Android Debug Bridge — a command-line tool that lets developers communicate with an Android device. If backup is enabled in production, an attacker can extract the app's private data via adb backup.">ADB backup</span> enabled. Every one of these is a single configuration flag, and every one ships to production more often than teams expect.</div>
+    <div class="prose">The fix isn't awareness — it's <strong>automation.</strong> Each of these checks belongs in a CI/CD gate that blocks the build before it reaches the store. A human reviewer will eventually miss one. A pipeline check won't.</div>
+    <div class="xp" id="x13a"><button class="xh" aria-expanded="false" aria-controls="x13a-p" onclick="tg('x13a')"><span class="xt">The minimum configuration checklist</span><span class="xa">›</span></button>
+      <div class="xb" id="x13a-p"><strong>Android:</strong> <code>debuggable=false</code>, <code>allowBackup=false</code>, <code>usesCleartextTraffic=false</code>, minimal permissions, ProGuard/R8 enabled. <strong>iOS:</strong> ATS enabled (no exceptions), no <code>NSAppTransportSecurity</code> bypasses, no test entitlements in release builds. <strong>Both:</strong> strip logging statements, disable verbose error responses, remove test endpoints from production API routing.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">14 / 20 · M8</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S14 · M9–M10: Storage & Crypto ═══ -->
+<div class="slide" id="s14">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · M9–M10 · Storage & Crypto</span><div class="sh-right"><div class="pips" id="pp14"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Data at rest</div></div><div class="sp-r">
+    <div class="prose"><strong>M9 — Insecure data storage.</strong> Sensitive data written to SD cards, leaked into system logs via <code>NSLog</code> or <code>Log.d</code>, or stored in unencrypted local databases. The platform provides secure alternatives — <span class="gloss" data-def="iOS Keychain / Android Keystore — hardware-backed secure storage for sensitive data like tokens, keys, and passwords. Data stored here is protected by the device's secure enclave or TEE.">Keychain and Keystore</span> — but teams default to the easier path.</div>
+    <div class="prose"><strong>M10 — Insufficient cryptography.</strong> The failure isn't choosing encryption — it's choosing it <em>wrong.</em> Static <span class="gloss" data-def="Initialization Vector — a random value used to ensure that identical plaintexts produce different ciphertexts. Must be unique per encryption operation.">initialization vectors</span>, deprecated algorithms like MD5 or SHA-1 for hashing passwords, custom crypto implementations nobody audits.</div>
+    <div class="xp" id="x14a"><button class="xh" aria-expanded="false" aria-controls="x14a-p" onclick="tg('x14a')"><span class="xt">Where data leaks in practice</span><span class="xa">›</span></button>
+      <div class="xb" id="x14a-p">The most common leaks: <strong>clipboard</strong> (sensitive data copied stays accessible to other apps), <strong>screenshots</strong> (iOS takes a screenshot when backgrounding — if sensitive data is visible, it's cached), <strong>keyboard cache</strong> (autocomplete suggestions store typed passwords), and <strong>backup files</strong> (iCloud/Google backups include app data unless explicitly excluded). Each needs a specific mitigation.</div>
+    </div>
+    <div class="co">Define your cryptographic standard early — which algorithms, which libraries, which key sizes. Use AES-256-GCM, PBKDF2 or Argon2 for key derivation, and platform APIs for random number generation. A short checklist prevents the majority of crypto failures.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">15 / 20 · M9–M10</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S15 · Quiz ═══ -->
+<div class="slide" id="s15">
+  <div class="sh"><span class="stag">Knowledge check · Credential obfuscation</span><div class="sh-right"><div class="pips" id="pp15"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q1">
+      <div class="qq">A developer obfuscates an API key by splitting it across three variables and Base64-encoding each part. How effective is this protection against a determined attacker?</div>
+      <button class="qo" onclick="pk('q1',0)">A) Highly effective — understanding the reconstruction logic requires significant effort</button>
+      <button class="qo" onclick="pk('q1',1)">B) Moderately effective — it stops casual inspection but not reverse engineering tools</button>
+      <button class="qo" onclick="pk('q1',2)">C) Minimally effective — compilers optimize the code, and decompilation tools reconstruct the full value regardless</button>
+      <button class="qo" onclick="pk('q1',3)">D) It depends on the obfuscation tool</button>
+    </div>
+    <div class="qe" id="q1-e"><strong>Correct: C.</strong> Compilers optimize away the splitting, and tools like jadx or IDA Pro reassemble string constants regardless of source-code structure. The correct approach is to avoid storing the key in the binary entirely — use platform keystores or server-side credential management.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">16 / 20 · Quiz</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn pri" onclick="go(16)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S16 · Breather: Defense layers ═══ -->
+<div class="slide" id="s16">
+  <div class="sh"><span class="stag"><span class="hl">Visual</span> · Mobile defense layers</span><div class="sh-right"><div class="pips" id="pp16"></div></div></div>
+  <div class="sb"><div class="breather bg-warm" style="padding:24px 28px 14px">
+    <div style="font-size:11px;font-weight:800;letter-spacing:4px;color:var(--or);text-transform:uppercase;margin-bottom:12px">Mobile Defense Layers</div>
+    <div class="breather-visual" style="flex-direction:column;gap:10px">
+      <div class="dlayer-flow">
+        <div class="dlayer-step"><div class="dlayer-shield">🎯</div><div class="dlayer-name">Design</div><div class="dlayer-items">Threat model<br>Data classification</div></div>
+        <div class="dlayer-arrow">→</div>
+        <div class="dlayer-step"><div class="dlayer-shield">🔧</div><div class="dlayer-name">Develop</div><div class="dlayer-items">Platform APIs<br>Auth package</div></div>
+        <div class="dlayer-arrow">→</div>
+        <div class="dlayer-step"><div class="dlayer-shield">🏗️</div><div class="dlayer-name">Build</div><div class="dlayer-items">SAST<br>Secret detection</div></div>
+        <div class="dlayer-arrow">→</div>
+        <div class="dlayer-step"><div class="dlayer-shield">🚀</div><div class="dlayer-name">Deploy</div><div class="dlayer-items">Cloud scanning<br>Rules review</div></div>
+        <div class="dlayer-arrow">→</div>
+        <div class="dlayer-step"><div class="dlayer-shield">📊</div><div class="dlayer-name">Monitor</div><div class="dlayer-items">Crash reporting<br>Anomaly detection</div></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Security at every layer. A failure at any single layer shouldn't compromise the whole system — the <strong>cascade illuminates the handoff</strong> between stages.</p></div>
+    <div class="breather-notice">Notice — <b>the glow travels left to right.</b> That's the order security decisions flow through a mobile release cycle.</div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn reflect-btn" onclick="openReflect('layers')">⏸ Reflect</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S17 · Summary ═══ -->
+<div class="slide" id="s17">
+  <div class="sh"><span class="stag"><span class="hl">Summary</span> · Part 1</span><div class="sh-right"><div class="pips" id="pp17"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What you covered</div></div><div class="sp-r">
+    <div class="numlist"><b>01:</b> Mobile security is full-stack — client, backend, CI/CD, cloud, and SDKs all require dedicated controls.</div>
+    <div class="numlist"><b>02:</b> "Insecure" means absent controls; "insufficient" means weak controls. The distinction determines whether you add security or strengthen what exists.</div>
+    <div class="numlist"><b>03:</b> Over 50% of apps have hardcoded secrets. Platform keychain/keystore is the solution — not obfuscation.</div>
+    <div class="numlist"><b>04:</b> Supply chain risks now include AI knowledge base poisoning alongside traditional dependency attacks.</div>
+    <div class="numlist"><b>05:</b> The client is always untrusted. Platform APIs and server-side enforcement are the only reliable defenses.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">18 / 20 · Summary</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S18 · Score grid ═══ -->
+<div class="slide" id="s18">
+  <div class="sh"><span class="stag"><span class="hl">Module 9a</span> · Your score</span><div class="sh-right"><div class="pips" id="pp18"></div></div></div>
+  <div class="sb"><div class="fbody" style="justify-content:center;flex-direction:column;align-items:center;text-align:center;gap:20px">
+    <div class="score-summary">
+      <div class="score-title">Part 1 Results</div>
+      <div class="score-body" id="final-score">Calculating...</div>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">19 / 20 · Score</span><div class="snav"><button class="btn" onclick="go(17)">← Back</button><button class="btn" onclick="openRetake()">↻ Retake</button><button class="btn pri" onclick="go(19)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S19 · Bridge to Part 2 ═══ -->
+<div class="slide" id="s19">
+  <div class="sh"><span class="stag"><span class="hl">Next</span> · Part 2</span><div class="pips" id="pp19"></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content" style="animation:fi .8s ease .2s both">
+      <div class="fb-tg">Next</div>
+      <div class="fb-tt" style="animation:fi .8s ease .35s both">MASVS, Developer Pitfalls &amp; Action Plan</div>
+      <div class="fb-sb" style="animation:fi .8s ease .5s both">Part 2: using the MASVS framework as a practical checklist, avoiding common developer mistakes, and building your mobile security action plan.</div>
+    </div>
+    <div class="fb-visual" style="animation:fi 1s ease .4s both">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <defs>
+          <linearGradient id="check-gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2EAD6B" stop-opacity=".6"/><stop offset="100%" stop-color="#2EAD6B" stop-opacity=".15"/></linearGradient>
+        </defs>
+        <rect x="50" y="30" width="100" height="140" rx="8" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/>
+        <line x1="70" y1="30" x2="70" y2="170" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+        <g><rect x="56" y="50" width="10" height="10" rx="2" fill="url(#check-gr)" stroke="rgba(46,173,107,.5)" stroke-width="1.5"><animate attributeName="opacity" values=".3;1;.3" dur="5s" repeatCount="indefinite"/></rect><path d="M58 55 L60 57.5 L64 52" fill="none" stroke="var(--gr)" stroke-width="1.5" stroke-linecap="round"/><line x1="78" y1="56" x2="135" y2="56" stroke="rgba(255,255,255,.2)" stroke-width="1.5" stroke-linecap="round"/></g>
+        <g><rect x="56" y="74" width="10" height="10" rx="2" fill="url(#check-gr)" stroke="rgba(46,173,107,.5)" stroke-width="1.5"><animate attributeName="opacity" values=".3;1;.3" dur="5s" repeatCount="indefinite" begin=".8s"/></rect><path d="M58 79 L60 81.5 L64 76" fill="none" stroke="var(--gr)" stroke-width="1.5" stroke-linecap="round"/><line x1="78" y1="80" x2="125" y2="80" stroke="rgba(255,255,255,.2)" stroke-width="1.5" stroke-linecap="round"/></g>
+        <g><rect x="56" y="98" width="10" height="10" rx="2" fill="none" stroke="rgba(232,129,58,.5)" stroke-width="1.5"><animate attributeName="stroke-opacity" values=".3;1;.3" dur="2s" repeatCount="indefinite"/></rect><line x1="78" y1="104" x2="140" y2="104" stroke="rgba(255,255,255,.15)" stroke-width="1.5" stroke-linecap="round"/><circle cx="146" cy="104" r="3" fill="var(--or)" opacity=".6"><animate attributeName="opacity" values=".3;.8;.3" dur="1.5s" repeatCount="indefinite"/><animate attributeName="r" values="2;4;2" dur="1.5s" repeatCount="indefinite"/></circle></g>
+        <g opacity=".4"><rect x="56" y="122" width="10" height="10" rx="2" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/><line x1="78" y1="128" x2="118" y2="128" stroke="rgba(255,255,255,.1)" stroke-width="1.5" stroke-linecap="round"/></g>
+        <g opacity=".25"><rect x="56" y="146" width="10" height="10" rx="2" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1.5"/><line x1="78" y1="152" x2="130" y2="152" stroke="rgba(255,255,255,.08)" stroke-width="1.5" stroke-linecap="round"/></g>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">20 / 20 · Bridge</span><div class="snav"><button class="btn" onclick="go(18)">← Back</button><button class="btn pri" onclick="alert('Part 2 — MASVS, Pitfalls & Action Plan — coming next.')">Finish Part 1 ✓</button></div></div>
+</div>
+
+</div>
+
+<!-- Retake modal -->
+<div id="retake-modal" role="dialog" aria-modal="true">
+  <div class="retake-card">
+    <div class="retake-tag">↻ Retake the module</div>
+    <div class="retake-q">Reset all progress and start over?</div>
+    <div class="retake-sub">This will clear your XP, quiz answers, and wagers. The module returns to the cover slide.</div>
+    <div class="retake-actions">
+      <button class="btn" onclick="closeRetake()">Cancel</button>
+      <button class="btn retake-confirm" onclick="doRetake()">Yes, reset everything</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- Reflect modal -->
+<div id="reflect-modal" role="dialog" aria-modal="true" aria-labelledby="rm-q">
+  <div class="rm-card">
+    <button class="rm-close" aria-label="Close" onclick="closeReflect()">×</button>
+    <div class="rm-tag">⏸  Pause to reflect</div>
+    <div class="rm-q" id="rm-q"></div>
+    <div class="rm-sub" id="rm-sub"></div>
+    <div class="rm-actions"><button class="btn pri" onclick="closeReflect()">Got it →</button></div>
+  </div>
+</div>
+
+<script>
+const T=20;let c=0;
+
+const STORAGE_KEY='sc_m9a_mob_v1';
+const RANKS=[
+  {min:0,name:'RECRUIT'},
+  {min:8,name:'APPRENTICE'},
+  {min:18,name:'CHAMPION'},
+  {min:32,name:'CAPTAIN'},
+  {min:50,name:'LEGEND'}
+];
+const DEFAULT_STATE={xp:0,streak:0,bestStreak:0,answers:{},wagers:{},reflections:[]};
+let state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};
+
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const s=JSON.parse(raw);state={...DEFAULT_STATE,...s,answers:s.answers||{},wagers:s.wagers||{},reflections:s.reflections||[]}}}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+function rankFor(xp){let r=RANKS[0];for(const x of RANKS){if(xp>=x.min)r=x}return r}
+
+function renderChips(){
+  const r=rankFor(state.xp);
+  document.querySelectorAll('.scorechip').forEach(chip=>{
+    chip.querySelector('.sc-rank').textContent=r.name[0];
+    chip.querySelector('.sc-rank').title=r.name;
+    chip.querySelector('.sc-xp').innerHTML='<b>'+state.xp+'</b> XP';
+    const sk=chip.querySelector('.sc-streak');
+    if(state.streak>=2){sk.classList.add('live');sk.innerHTML='<span class="sc-flame">🔥</span> '+state.streak}
+    else{sk.classList.remove('live');sk.innerHTML='<span style="opacity:.5">·</span> '+r.name}
+  });
+}
+function bumpChips(){document.querySelectorAll('.scorechip').forEach(c=>{c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')})}
+function toast(msg,err){const t=document.getElementById('toast');t.textContent=msg;t.className=err?'on err':'on';setTimeout(()=>t.className='',2500)}
+
+function go(n){
+  if(n<0||n>=T)return;
+  document.getElementById('s'+c).classList.remove('on');
+  c=n;
+  const slide=document.getElementById('s'+n);
+  slide.classList.add('on');
+  const r=slide.querySelector('.sp-r');if(r)r.scrollTop=0;
+  if(n===5) runDecompTypewriter();
+  if(n===18) populateResults();
+  document.querySelectorAll('.pips').forEach(p=>bp(p));
+  document.querySelector('.lms-main').scrollTo(0,0);
+}
+
+function populateResults(){
+  const fs=document.getElementById('final-score');
+  if(!fs)return;
+  const totalQ=Object.keys(ans).length;
+  const answered=Object.keys(state.answers).length;
+  const correct=Object.values(state.answers).filter(a=>a.correct).length;
+  const reflectCount=state.reflections?state.reflections.length:0;
+  if(answered===0) fs.innerHTML="You haven't answered any quizzes yet. Go back and try them — they're worth it.";
+  else fs.innerHTML='<b>'+correct+'</b> out of <b>'+totalQ+'</b> correct · <b>'+state.xp+' XP</b> earned · <b>'+reflectCount+'</b> reflection'+(reflectCount!==1?'s':'')+' completed';
+}
+
+function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=(function(idx){return function(){go(idx)}})(i);b.setAttribute('aria-label','Slide '+(i+1));el.appendChild(b)}}
+document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(c-1)}});
+function tg(id){var el=document.getElementById(id),b=el.querySelector('.xb'),a=el.querySelector('.xa');var isOpen=b.classList.toggle('op');if(a)a.classList.toggle('op');var btn=el.querySelector('.xh');if(btn)btn.setAttribute('aria-expanded',isOpen?'true':'false')}
+
+var ans={q1:2};
+
+var WAGERS=[
+  {key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},
+  {key:'pretty',mult:2,name:'Pretty sure',sub:'×2 if right · 1 if wrong'},
+  {key:'guess',mult:1,name:'Just guessing',sub:'×1 either way'}
+];
+function buildWagerUI(qw){
+  var qq=qw.querySelector('.qq');if(!qq)return;
+  var qid=qw.id;
+  var w=document.createElement('div');
+  w.className='wager';w.dataset.qid=qid;
+  w.innerHTML='<div class="wager-lab">How confident are you?</div><div class="wager-row">'+WAGERS.map(function(g){return '<button class="wager-btn" data-w="'+g.key+'" data-m="'+g.mult+'"><div class="wb-top"><span class="wb-mult">×'+g.mult+'</span><span class="wb-name">'+g.name+'</span></div><div class="wb-sub">'+g.sub+'</div></button>'}).join('')+'</div>';
+  qq.parentNode.insertBefore(w,qq.nextSibling);
+  w.querySelectorAll('.wager-btn').forEach(function(btn){
+    btn.onclick=function(){
+      if(w.classList.contains('locked'))return;
+      w.querySelectorAll('.wager-btn').forEach(function(b){b.classList.remove('pk')});
+      btn.classList.add('pk');
+      state.wagers[qid]=parseInt(btn.dataset.m,10);
+      saveState();
+    };
+  });
+  if(state.wagers[qid]){
+    var b=w.querySelector('.wager-btn[data-m="'+state.wagers[qid]+'"]');
+    if(b)b.classList.add('pk');
+  }
+}
+function lockWager(qid){
+  var w=document.querySelector('.wager[data-qid="'+qid+'"]');
+  if(!w)return;
+  w.classList.add('locked');
+  w.querySelectorAll('.wager-btn').forEach(function(b){b.disabled=true});
+  var mult=state.wagers[qid]||1;
+  var wname='Just guessing';
+  for(var i=0;i<WAGERS.length;i++){if(WAGERS[i].mult===mult){wname=WAGERS[i].name;break}}
+  w.innerHTML='<div class="wager-locked-note">🎯 You wagered <b>'+wname+'</b> (×'+mult+')</div>';
+}
+
+function pk(q,i){
+  var w=document.getElementById(q),o=w.querySelectorAll('.qo');
+  if(o[0].classList.contains('pk'))return;
+  if(!state.wagers[q])state.wagers[q]=1;
+  var mult=state.wagers[q];
+  var k=ans[q];
+  var correct=(i===k);
+  o.forEach(function(x,j){x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});
+  var pts=0,kind='zero',msg='';
+  if(correct){
+    pts=mult*3;
+    state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak;
+    kind='';
+    if(mult===3)msg='Confident and correct. <b>+'+pts+' XP</b>'+(state.streak>=2?' · 🔥 '+state.streak+' streak':'');
+    else if(mult===2)msg='Right call. <b>+'+pts+' XP</b>';
+    else msg='Lucky guess — still counts. <b>+'+pts+' XP</b>';
+  }else{
+    if(mult===3){pts=0;kind='zero';msg='Confidence didn\'t pay off here. <b>+0 XP</b> · streak reset.'}
+    else if(mult===2){pts=1;kind='humility';msg='Humility bonus — knowing you might be wrong is half the skill. <b>+1 XP</b>'}
+    else{pts=1;kind='humility';msg='Honest guess — keep going. <b>+1 XP</b>'}
+    state.streak=0;
+  }
+  state.xp+=pts;
+  state.answers[q]={picked:i,correct:correct,wager:mult,points:pts};
+  saveState();renderChips();bumpChips();lockWager(q);
+  var e=document.getElementById(q+'-e');
+  e.classList.add('sh');
+  if(!e.querySelector('.qe-score')){
+    var s=document.createElement('div');s.className='qe-score';
+    s.innerHTML='<span class="qs-pts '+kind+'">'+(pts>0?'+':'')+pts+' XP</span><span class="qs-msg">'+msg+'</span>';
+    e.appendChild(s);
+  }
+}
+
+function injectChips(){
+  document.querySelectorAll('.sh').forEach(function(sh){
+    var stag=sh.querySelector('.stag');
+    var pips=sh.querySelector('.pips');
+    if(!stag||!pips)return;
+    if(sh.querySelector('.scorechip'))return;
+    var right=sh.querySelector('.sh-right')||document.createElement('div');
+    if(!right.classList.contains('sh-right')){right.className='sh-right';pips.parentNode.insertBefore(right,pips);right.appendChild(pips)}
+    var chip=document.createElement('div');chip.className='scorechip';chip.title='Your XP and streak';
+    chip.innerHTML='<span class="sc-rank">R</span><span class="sc-xp"><b>0</b> XP</span><span class="sc-streak"><span style="opacity:.5">·</span> RECRUIT</span>';
+    right.insertBefore(chip,pips);
+  });
+}
+
+/* Mobile Top 10 card toggle */
+function tgm(card){
+  var wasExpanded=card.classList.contains('expanded');
+  document.querySelectorAll('.m10-card.expanded').forEach(function(c){c.classList.remove('expanded')});
+  if(!wasExpanded){
+    card.classList.add('expanded');
+    var pop=card.querySelector('.m10-pop');
+    if(pop)pop.textContent=card.dataset.tip;
+  }
+}
+document.addEventListener('click',function(e){if(!e.target.closest('.m10-card'))document.querySelectorAll('.m10-card.expanded').forEach(function(c){c.classList.remove('expanded')})});
+
+/* Decompiled code typewriter */
+var decompRan=false;
+function runDecompTypewriter(){
+  var lines=document.querySelectorAll('#decomp-code .decomp-line');
+  if(decompRan){lines.forEach(function(l){l.classList.add('visible')});return;}
+  decompRan=true;
+  lines.forEach(function(line,i){
+    setTimeout(function(){line.classList.add('visible')},200+i*280);
+  });
+}
+
+/* Cover particles */
+function initCoverParticles(){
+  var container=document.getElementById('cover-particles');
+  if(!container)return;
+  for(var i=0;i<18;i++){
+    var p=document.createElement('div');p.className='cover-particle';
+    p.style.left=Math.random()*100+'%';
+    p.style.bottom='-10px';
+    p.style.animationDuration=(3+Math.random()*5)+'s';
+    p.style.animationDelay=(Math.random()*6)+'s';
+    p.style.width=p.style.height=(1+Math.random()*2.5)+'px';
+    p.style.opacity=.2+Math.random()*.4;
+    container.appendChild(p);
+  }
+}
+
+/* Reflect system */
+var REFLECT_PROMPTS={
+  top10:{
+    q:'Look at the ten risks in the grid. Which <em>category</em> — absent, weak, or misused controls — describes the last mobile security issue your team encountered?',
+    sub:'If it was absent controls, the fix is adding something that doesn\'t exist yet. If it was weak or misused, the fix is strengthening or correcting what\'s already there. The category shapes the conversation.'
+  },
+  creds:{
+    q:'Think about the mobile apps your team ships. Do any of them have <em>API keys or secrets in the binary</em>?',
+    sub:'If you\'re not sure, that\'s the answer — you need a secret detection scan in your build pipeline. Most teams that run one for the first time are surprised by what they find.'
+  },
+  trust:{
+    q:'Where does your team currently draw the <em>trust boundary</em> for its mobile app? Is there any business logic that runs only on the client?',
+    sub:'If business rules or authorization checks run only on the client, they\'re on the wrong side of the boundary. Server-side enforcement is the minimum — client checks are UX, not security.'
+  },
+  layers:{
+    q:'Of the five defense layers — design, develop, build, deploy, monitor — which one gets the <em>least attention</em> in your current mobile release cycle?',
+    sub:'That\'s your highest-leverage improvement. Adding security to a phase that currently has none gives a bigger return than strengthening a phase that\'s already covered.'
+  }
+};
+function openReflect(key){
+  var p=REFLECT_PROMPTS[key];if(!p)return;
+  document.getElementById('rm-q').innerHTML=p.q;
+  document.getElementById('rm-sub').textContent=p.sub;
+  document.getElementById('reflect-modal').classList.add('on');
+  if(state.reflections&&state.reflections.indexOf(key)===-1){
+    state.reflections.push(key);
+    state.xp+=2;saveState();renderChips();bumpChips();
+    toast('⏸ +2 XP for reflecting');
+  }
+}
+function closeReflect(){document.getElementById('reflect-modal').classList.remove('on')}
+document.getElementById('reflect-modal').addEventListener('click',function(e){if(e.target.id==='reflect-modal')closeReflect()});
+
+/* Retake */
+function openRetake(){document.getElementById('retake-modal').classList.add('on')}
+function closeRetake(){document.getElementById('retake-modal').classList.remove('on')}
+function doRetake(){
+  state={xp:0,streak:0,bestStreak:0,answers:{},wagers:{},reflections:[]};
+  try{localStorage.removeItem(STORAGE_KEY)}catch(e){}
+  document.querySelectorAll('.qo').forEach(function(o){o.classList.remove('pk','ok','no');o.disabled=false});
+  document.querySelectorAll('.qe').forEach(function(e){e.classList.remove('sh');var sc=e.querySelector('.qe-score');if(sc)sc.remove()});
+  document.querySelectorAll('.wager').forEach(function(w){w.remove()});
+  document.querySelectorAll('.qw').forEach(buildWagerUI);
+  document.querySelectorAll('.xb').forEach(function(b){b.classList.remove('op')});
+  document.querySelectorAll('.xa').forEach(function(a){a.classList.remove('op')});
+  document.querySelectorAll('.xh').forEach(function(h){h.setAttribute('aria-expanded','false')});
+  decompRan=false;
+  document.querySelectorAll('.decomp-line').forEach(function(l){l.classList.remove('visible')});
+  renderChips();
+  closeRetake();
+  go(0);
+}
+document.getElementById('retake-modal').addEventListener('click',function(e){if(e.target.id==='retake-modal')closeRetake()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('retake-modal').classList.contains('on'))closeRetake();if(document.getElementById('reflect-modal').classList.contains('on'))closeReflect()}});
+
+/* Glossary tooltips */
+(function(){
+  var tip=document.createElement('div');tip.id='gloss-tip';document.body.appendChild(tip);
+  var cur=null;
+  function place(el){
+    var def=el.getAttribute('data-def')||'';
+    tip.textContent=def;
+    var r=el.getBoundingClientRect();
+    tip.classList.remove('below');
+    tip.style.left='0px';tip.style.top='0px';
+    var tw=tip.offsetWidth,th=tip.offsetHeight;
+    var left=r.left;
+    if(left+tw>window.innerWidth-8)left=window.innerWidth-tw-8;
+    if(left<8)left=8;
+    var top=r.top-th-10;
+    if(top<8){top=r.bottom+10;tip.classList.add('below')}
+    tip.style.left=left+'px';tip.style.top=top+'px';
+    tip.classList.add('on');cur=el;
+  }
+  function hide(){tip.classList.remove('on');cur=null}
+  document.addEventListener('mouseover',function(e){var g=e.target.closest('.gloss');if(g&&g!==cur)place(g)});
+  document.addEventListener('mouseout',function(e){var g=e.target.closest('.gloss');if(g)hide()});
+  document.addEventListener('click',function(e){var g=e.target.closest('.gloss');if(g&&window.matchMedia('(hover:none)').matches){if(cur===g)hide();else place(g);e.preventDefault();return}if(!g)hide()});
+  document.addEventListener('scroll',hide,true);
+  window.addEventListener('resize',hide);
+})();
+
+/* Init */
+loadState();
+injectChips();
+initCoverParticles();
+document.querySelectorAll('.qw').forEach(buildWagerUI);
+Object.keys(state.answers).forEach(function(q){
+  var a=state.answers[q];
+  var qw=document.getElementById(q);if(!qw)return;
+  var o=qw.querySelectorAll('.qo'),k=ans[q];
+  o.forEach(function(x,j){x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===a.picked&&j!==k)x.classList.add('no')});
+  var e=document.getElementById(q+'-e');if(e){e.classList.add('sh');if(!e.querySelector('.qe-score')){var s=document.createElement('div');s.className='qe-score';s.innerHTML='<span class="qs-pts '+(a.points===0?'zero':(a.correct?'':'humility'))+'">+'+a.points+' XP</span><span class="qs-msg">Already answered. '+(a.correct?'Correct.':'Try the retake to improve.')+'</span>';e.appendChild(s)}}
+  lockWager(q);
+});
+renderChips();
+document.querySelectorAll('.pips').forEach(function(p){bp(p)});
+</script>
+</main>
+</body>
+</html>

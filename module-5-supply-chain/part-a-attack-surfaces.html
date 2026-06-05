@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supply Chain Security · Part 1 — Attack Surfaces</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:si .35s cubic-bezier(.2,.6,.2,1) both}
+@keyframes si{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.slide:not(.on) *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.slide.on{animation:none}*,*::before,*::after{animation-duration:.001s!important;transition-duration:.01s!important}}
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh .sh-right{display:flex;align-items:center;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}.btn.pri:hover{background:var(--od)}
+.btn.reflect-btn{border-color:rgba(232,129,58,.4);color:var(--or);background:rgba(232,129,58,.06)}.btn.reflect-btn:hover{background:rgba(232,129,58,.15);color:#fff}
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:280px;justify-content:flex-end}
+.pip{width:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}.pip.on{background:var(--or);transform:scaleY(1.8)}
+.split{display:flex;min-height:480px}.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:20px;font-weight:700;color:var(--wh);line-height:1.25}.sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:480px}
+.sp-r::-webkit-scrollbar{width:3px}.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.sb{padding:0}
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}
+.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
+.prose{font-size:15.5px;color:var(--tm);line-height:1.78}
+.prose strong{color:var(--td);font-weight:600}
+.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}
+.co em{font-style:italic;font-weight:500;color:var(--or)}.co strong{font-weight:600}
+.xp{margin:4px 0}
+.xh{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card);border:none;border-radius:6px;padding:12px 16px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--td);text-align:left;transition:background .1s}
+.xh:hover{background:#e5e5e5}
+.xa{font-size:13px;color:var(--mu);transition:transform .18s;margin-left:8px}.xa.op{transform:rotate(90deg);color:var(--or)}
+.xb{display:none;padding:14px 16px;background:var(--ow);border-radius:0 0 6px 6px;font-size:14px;color:var(--tm);line-height:1.7}
+.xb.op{display:block}.xb strong{color:var(--td);font-weight:600}
+.qw{margin:6px 0}
+.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}
+.qo.ok{border-color:var(--gr);background:var(--gl)}
+.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55}
+.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block}.qe strong{color:var(--td)}
+.wager{margin:6px 0 10px;background:linear-gradient(135deg,#fff8f2,#fff);border:1px dashed rgba(232,129,58,.4);border-radius:8px;padding:11px 14px;transition:all .25s}
+.wager.locked{opacity:.55;border-style:solid;border-color:var(--bd);background:var(--ow)}
+.wager-lab{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.wager-lab::before{content:'';width:14px;height:1px;background:var(--or)}
+.wager-row{display:flex;gap:6px;flex-wrap:wrap}
+.wager-btn{flex:1;min-width:90px;background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .12s}
+.wager-btn:hover{border-color:var(--or);transform:translateY(-1px);box-shadow:0 2px 8px rgba(232,129,58,.15)}
+.wager-btn.pk{border-color:var(--or);background:var(--ol)}
+.wager-btn.pk .wb-mult{background:var(--or);color:#fff}
+.wager-btn:disabled{cursor:not-allowed;opacity:.5}
+.wb-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.wb-mult{display:inline-flex;align-items:center;justify-content:center;background:var(--card);color:var(--td);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;letter-spacing:.3px}
+.wb-name{font-size:13px;font-weight:700;color:var(--td)}
+.wb-sub{font-size:11px;color:var(--mu);line-height:1.3}
+.wager-locked-note{font-size:11px;color:var(--mu);font-style:italic;display:flex;align-items:center;gap:6px}
+.wager-locked-note b{color:var(--td);font-style:normal;font-weight:600}
+.qe .qe-score{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:13px}
+.qe .qe-score .qs-pts{display:inline-flex;align-items:center;gap:4px;background:var(--gl);color:var(--gr);font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px;letter-spacing:.3px}
+.qe .qe-score .qs-pts.zero{background:var(--rl);color:var(--rd)}
+.qe .qe-score .qs-pts.humility{background:rgba(123,111,174,.12);color:var(--pu)}
+.qe .qe-score .qs-msg{color:var(--tm);font-size:12px}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .2s ease both}
+.slide.on .sp-r>*:nth-child(1){animation-delay:.03s}
+.slide.on .sp-r>*:nth-child(2){animation-delay:.06s}
+.slide.on .sp-r>*:nth-child(3){animation-delay:.09s}
+.slide.on .sp-r>*:nth-child(4){animation-delay:.12s}
+.slide.on .sp-r>*:nth-child(5){animation-delay:.15s}
+.slide.on .sp-r>*:nth-child(6){animation-delay:.18s}
+.slide.on .sp-r>*:nth-child(7){animation-delay:.21s}
+
+/* Punch */
+.punch{background:#0F0E14;background-image:radial-gradient(ellipse at center,rgba(232,129,58,.08) 0%,transparent 60%),radial-gradient(ellipse at top right,rgba(123,111,174,.06) 0%,transparent 50%);min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;text-align:center;position:relative;overflow:hidden}
+.punch-tag{font-size:10px;letter-spacing:5px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:36px;display:flex;align-items:center;gap:14px;animation:pfi .8s ease both}
+.punch-tag::before,.punch-tag::after{content:'';width:32px;height:1px;background:linear-gradient(90deg,transparent,var(--or),transparent)}
+.punch-quote{font-family:'DM Sans',sans-serif;font-size:42px;font-weight:300;line-height:1.22;letter-spacing:-.02em;color:#F5F2ED;max-width:780px;text-wrap:balance;animation:pfi 1s ease .15s both}
+.punch-quote em{color:var(--or);font-style:normal;font-weight:600}
+.punch-source{font-size:15px;color:rgba(245,242,237,.45);line-height:1.7;max-width:600px;margin-top:26px;animation:pfi 1s ease .4s both}
+.punch-mark{position:absolute;font-size:160px;font-weight:700;color:rgba(232,129,58,.06);line-height:1;pointer-events:none;user-select:none}
+.punch-mark.tl{top:20px;left:30px}.punch-mark.br{bottom:-20px;right:30px;transform:rotate(180deg)}
+@keyframes pfi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Breather */
+.breather{display:flex;flex-direction:column;align-items:center;padding:20px 24px 12px;min-height:480px;gap:14px}
+.breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.breather-caption{text-align:center;padding:6px 0 2px;max-width:720px}
+.breather-caption p{font-size:16.5px;line-height:1.65;color:rgba(255,255,255,.7)}
+.breather-caption strong{font-weight:700}
+.breather-notice{font-size:13px;color:rgba(255,255,255,.5);letter-spacing:.3px;text-align:center;margin-top:8px;font-style:italic}
+.breather-notice b{color:rgba(255,255,255,.75);font-style:normal;font-weight:600}
+.bg-warm{background:linear-gradient(170deg,#1e1a15,#1a1a1a,#1a1520)}
+.bg-warm .breather-caption p{color:rgba(255,255,255,.6)}.bg-warm .breather-caption strong{color:var(--or)}
+.bg-earth{background:linear-gradient(170deg,#1e1b16,#1a1a18,#18161a)}
+.bg-earth .breather-caption p{color:rgba(255,255,255,.6)}.bg-earth .breather-caption strong{color:var(--or)}
+.bg-navy{background:linear-gradient(170deg,#12161e,#151a24,#111820)}
+.bg-navy .breather-caption p{color:rgba(255,255,255,.6)}.bg-navy .breather-caption strong{color:var(--or)}
+
+/* ═══ SCENE WRAPPER — scales animations, adds replay + loop progress + hover-pause ═══ */
+.scene{position:relative;display:inline-block;border-radius:12px}
+.scene-stage{transform-origin:center top;will-change:transform}
+.scene.paused .scene-stage *{animation-play-state:paused!important}
+.scene-tools{position:absolute;top:8px;right:10px;display:flex;gap:6px;z-index:5;opacity:0;transition:opacity .2s}
+.scene:hover .scene-tools,.scene.paused .scene-tools{opacity:1}
+.scene-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);font:600 11px/1 'DM Sans',sans-serif;letter-spacing:.5px;text-transform:uppercase;padding:6px 10px;border-radius:6px;cursor:pointer;backdrop-filter:blur(4px)}
+.scene-btn:hover{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.2)}
+.scene-loop{position:absolute;left:10px;right:10px;bottom:6px;height:2px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;pointer-events:none;z-index:4}
+.scene-loop::after{content:'';display:block;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(232,129,58,.5),transparent);transform-origin:left center;animation:loop-bar var(--loop,10s) linear infinite}
+@keyframes loop-bar{0%{transform:scaleX(0) translateX(0)}99%{transform:scaleX(1) translateX(0)}100%{transform:scaleX(0) translateX(100%)}}
+.scene.paused .scene-loop::after{animation-play-state:paused}
+
+/* ═══ SCENE 1: PIPELINE CYCLE (S1) ═══ */
+.pipeline-box{width:720px;max-width:100%;height:400px;position:relative;overflow:hidden;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06)}
+.pl-ring{position:absolute;top:50%;left:50%;width:260px;height:260px;margin:-130px 0 0 -130px;border-radius:50%;border:2px solid rgba(255,255,255,.1);animation:pl-spin 20s linear infinite}
+@keyframes pl-spin{to{transform:rotate(360deg)}}
+.pl-node{position:absolute;width:80px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:1.5px}
+.pl-n1{top:50%;left:50%;margin:-18px 0 0 95px;background:rgba(232,129,58,.15);border:1.5px solid rgba(232,129,58,.5);color:var(--or)}
+.pl-n2{top:50%;left:50%;margin:-115px 0 0 20px;background:rgba(217,69,69,.12);border:1.5px solid rgba(217,69,69,.4);color:var(--rd)}
+.pl-n3{top:50%;left:50%;margin:-115px 0 0 -100px;background:rgba(74,143,212,.12);border:1.5px solid rgba(74,143,212,.4);color:var(--bl)}
+.pl-n4{top:50%;left:50%;margin:-18px 0 0 -175px;background:rgba(46,173,107,.12);border:1.5px solid rgba(46,173,107,.4);color:var(--gr)}
+.pl-n5{top:50%;left:50%;margin:72px 0 0 -30px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6)}
+.pl-packet{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--or);box-shadow:0 0 16px rgba(232,129,58,.7);animation:pl-orbit 5s ease-in-out infinite;top:50%;left:50%;margin:-5px 0 0 -5px}
+@keyframes pl-orbit{0%{transform:rotate(0deg) translateX(130px)}100%{transform:rotate(360deg) translateX(130px)}}
+.pl-packet:nth-child(8){animation-delay:-1.7s;background:var(--rd);box-shadow:0 0 14px rgba(217,69,69,.6)}
+.pl-packet:nth-child(9){animation-delay:-3.3s;background:var(--bl);box-shadow:0 0 14px rgba(74,143,212,.6)}
+.pl-threat{position:absolute;top:50%;left:50%;width:275px;height:275px;margin:-137px 0 0 -137px;border-radius:50%;border:2.5px solid rgba(217,69,69,.2);animation:pl-pulse 4s ease-in-out infinite;opacity:0}
+@keyframes pl-pulse{0%,100%{transform:scale(.95);opacity:0}50%{transform:scale(1.08);opacity:1}}
+.pl-warn{position:absolute;font-size:20px;font-weight:800;color:var(--rd);opacity:0;animation:pl-warn-flash 10s ease infinite}
+@keyframes pl-warn-flash{0%,85%{opacity:0}88%{opacity:1}92%{opacity:0}96%{opacity:.8}100%{opacity:0}}
+.pl-w1{top:16%;right:12%;animation-delay:0s}.pl-w2{bottom:18%;left:10%;animation-delay:3s}.pl-w3{top:12%;left:25%;animation-delay:6s}
+.pl-label{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:12px;color:rgba(255,255,255,.35);font-weight:600;letter-spacing:2.5px;text-transform:uppercase}
+
+/* ═══ SCENE 2: CONVEYOR BELT (S5) ═══ */
+.conveyor-box{width:840px;max-width:100%;height:380px;position:relative;overflow:hidden;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06)}
+.cv-belt{position:absolute;bottom:90px;left:30px;right:30px;height:5px;background:rgba(255,255,255,.06);border-radius:3px}
+.cv-belt::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,var(--or),var(--rd),var(--bl));border-radius:3px;animation:cv-flow 3s linear infinite;background-size:200% 100%}
+@keyframes cv-flow{0%{background-position:200% 0}100%{background-position:0 0}}
+.cv-zone{position:absolute;bottom:115px;border-radius:12px;text-align:center;padding:18px 14px 14px;opacity:.4;animation:cv-zone-glow 9s ease-in-out infinite}
+@keyframes cv-zone-glow{0%,100%{opacity:.4;transform:translateY(0)}33%{opacity:1;transform:translateY(-5px)}}
+.cv-z1{left:30px;width:220px;background:rgba(232,129,58,.06);border:1.5px dashed rgba(232,129,58,.35);animation-delay:0s}
+.cv-z2{left:290px;width:200px;background:rgba(217,69,69,.06);border:1.5px dashed rgba(217,69,69,.3);animation-delay:3s}
+.cv-z3{right:30px;width:210px;background:rgba(74,143,212,.06);border:1.5px dashed rgba(74,143,212,.3);animation-delay:6s}
+.cv-znum{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;letter-spacing:2.5px;margin-bottom:6px}
+.cv-zname{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:8px}
+.cv-zsub{font-size:11px;color:rgba(255,255,255,.4);line-height:1.5}
+.cv-crate{position:absolute;bottom:95px;width:40px;height:34px;border-radius:5px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);animation:cv-slide 9s ease-in-out infinite}
+@keyframes cv-slide{0%{left:20px;opacity:0}5%{opacity:1}95%{opacity:1}100%{left:calc(100% - 60px);opacity:0}}
+.cv-crate::after{content:'📦';font-size:18px;position:absolute;top:5px;left:7px}
+.cv-crate:nth-child(8){animation-delay:3s}.cv-crate:nth-child(9){animation-delay:6s}
+.cv-atk{position:absolute;font-size:26px;opacity:0;animation:cv-atk-strike 9s ease infinite}
+@keyframes cv-atk-strike{0%,26%{opacity:0;transform:translateY(-24px)}30%{opacity:1;transform:translateY(0)}36%{opacity:0}100%{opacity:0}}
+.cv-a1{top:35px;left:130px;color:var(--or);animation-delay:0s}
+.cv-a2{top:30px;left:380px;color:var(--rd);animation-delay:3s}
+.cv-a3{top:32px;right:120px;color:var(--bl);animation-delay:6s}
+
+/* ═══ SCENE 3: ATTACK TIMELINE (S7) ═══ */
+.timeline-box{width:820px;max-width:100%;height:340px;position:relative;overflow:hidden;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06)}
+.tl-line{position:absolute;top:190px;left:50px;right:50px;height:3px;background:rgba(255,255,255,.08)}
+.tl-event{position:absolute;top:0;text-align:center;opacity:0;animation:tl-drop 12s ease forwards}
+@keyframes tl-drop{0%{top:-70px;opacity:0}8%{opacity:1}15%{top:120px}20%{top:130px}22%{top:122px}100%{top:122px;opacity:1}}
+.tl-dot{width:20px;height:20px;border-radius:50%;margin:0 auto 8px;border:2.5px solid;animation:tl-dot-pulse 3s ease-in-out infinite}
+@keyframes tl-dot-pulse{0%,100%{transform:scale(1);box-shadow:none}50%{transform:scale(1.2);box-shadow:0 0 18px currentColor}}
+.tl-year{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;margin-bottom:4px}
+.tl-name{font-size:13px;color:rgba(255,255,255,.65);max-width:140px;margin:0 auto;line-height:1.45}
+.tl-stage{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-top:6px}
+.tl-e1{left:8%;animation-delay:.3s}.tl-e1 .tl-dot{border-color:var(--bl);background:rgba(74,143,212,.2);color:var(--bl)}.tl-e1 .tl-year{color:var(--bl)}.tl-e1 .tl-stage{color:rgba(74,143,212,.6)}
+.tl-e2{left:30%;animation-delay:1.2s}.tl-e2 .tl-dot{border-color:var(--or);background:rgba(232,129,58,.2);color:var(--or)}.tl-e2 .tl-year{color:var(--or)}.tl-e2 .tl-stage{color:rgba(232,129,58,.6)}
+.tl-e3{left:54%;animation-delay:2.1s}.tl-e3 .tl-dot{border-color:var(--rd);background:rgba(217,69,69,.2);color:var(--rd)}.tl-e3 .tl-year{color:var(--rd)}.tl-e3 .tl-stage{color:rgba(217,69,69,.6)}
+.tl-e4{left:76%;animation-delay:3s}.tl-e4 .tl-dot{border-color:var(--rd);background:rgba(217,69,69,.2);color:var(--rd)}.tl-e4 .tl-year{color:var(--rd)}.tl-e4 .tl-stage{color:rgba(217,69,69,.6)}
+.tl-shock{position:absolute;top:185px;left:0;right:0;height:14px;background:linear-gradient(90deg,transparent,rgba(217,69,69,.2),transparent);opacity:0;animation:tl-shock-wave 12s ease-in-out infinite}
+@keyframes tl-shock-wave{0%,28%{opacity:0}32%{opacity:1}40%{opacity:0}100%{opacity:0}}
+
+/* ═══ SCENE 4: DOMINO CHAIN (S11) ═══ */
+.domino-box{width:840px;max-width:100%;height:350px;position:relative;overflow:hidden;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06)}
+.dm-step{position:absolute;top:45px;width:132px;height:150px;border-radius:10px;text-align:center;padding:18px 10px 10px;opacity:0;transform:translateY(-30px) rotate(-5deg);animation:dm-fall 10s ease-in-out infinite}
+@keyframes dm-fall{0%{opacity:0;transform:translateY(-30px) rotate(-5deg)}10%{opacity:1;transform:translateY(0) rotate(0)}15%{transform:translateY(-3px) rotate(1deg)}18%{transform:translateY(0) rotate(0)}95%{opacity:1}100%{opacity:1}}
+.dm-s1{left:2%;animation-delay:.2s;background:rgba(46,173,107,.06);border:1.5px solid rgba(46,173,107,.3)}
+.dm-s2{left:18%;animation-delay:.7s;background:rgba(217,69,69,.06);border:1.5px solid rgba(217,69,69,.25)}
+.dm-s3{left:35%;animation-delay:1.2s;background:rgba(217,69,69,.09);border:1.5px solid rgba(217,69,69,.35)}
+.dm-s4{left:52%;animation-delay:1.7s;background:rgba(232,129,58,.07);border:1.5px solid rgba(232,129,58,.35)}
+.dm-s5{left:69%;animation-delay:2.2s;background:rgba(217,69,69,.14);border:1.5px solid rgba(217,69,69,.5)}
+.dm-icon{font-size:30px;margin-bottom:6px}
+.dm-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.8);margin-bottom:6px}
+.dm-sub{font-size:11px;color:rgba(255,255,255,.45);line-height:1.45}
+.dm-arrow{position:absolute;top:115px;font-size:18px;color:rgba(232,129,58,.5);opacity:0;animation:dm-arrow-pop 10s ease-in-out infinite}
+@keyframes dm-arrow-pop{0%,10%{opacity:0;transform:translateX(-5px)}15%{opacity:1;transform:translateX(0)}95%{opacity:1}100%{opacity:1}}
+.dm-ar1{left:14.5%;animation-delay:.5s}.dm-ar2{left:31.5%;animation-delay:1s}.dm-ar3{left:48.5%;animation-delay:1.5s}.dm-ar4{left:65.5%;animation-delay:2s}
+.dm-badge{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);background:rgba(232,129,58,.14);border:1.5px solid rgba(232,129,58,.4);border-radius:22px;padding:8px 20px;font-size:13px;font-weight:700;color:var(--or);letter-spacing:1px;white-space:nowrap;opacity:0;animation:dm-badge-in 10s ease-in-out infinite}
+@keyframes dm-badge-in{0%,28%{opacity:0;transform:translateX(-50%) translateY(8px)}33%{opacity:1;transform:translateX(-50%) translateY(0)}95%{opacity:1}100%{opacity:1}}
+.dm-boom{position:absolute;top:25px;right:3%;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(217,69,69,.35),transparent 70%);opacity:0;animation:dm-boom-pulse 10s ease-in-out infinite}
+@keyframes dm-boom-pulse{0%,20%{opacity:0;transform:scale(.5)}24%{opacity:1;transform:scale(1.3)}28%{opacity:.4;transform:scale(1)}32%{opacity:.8;transform:scale(1.15)}36%,95%{opacity:.5;transform:scale(1)}100%{opacity:.5}}
+
+/* ═══ SCENE 5: SECURE VS INSECURE (S19) ═══ */
+.versus-box{width:840px;max-width:100%;height:380px;position:relative;overflow:hidden;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06)}
+.vs-lane{position:absolute;left:24px;right:24px;height:150px;border-radius:10px;padding:16px 20px}
+.vs-top{top:18px;background:rgba(217,69,69,.04);border:1.5px solid rgba(217,69,69,.18)}
+.vs-bot{bottom:18px;background:rgba(46,173,107,.04);border:1.5px solid rgba(46,173,107,.18)}
+.vs-label{font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px}
+.vs-top .vs-label{color:var(--rd)}.vs-bot .vs-label{color:var(--gr)}
+.vs-items{display:flex;gap:10px;flex-wrap:wrap}
+.vs-item{font-size:13px;padding:7px 14px;border-radius:6px;opacity:0;animation:vs-appear 8s ease-in-out infinite}
+@keyframes vs-appear{0%{opacity:0;transform:translateX(-10px)}10%{opacity:1;transform:translateX(0)}90%{opacity:1}100%{opacity:1}}
+.vs-top .vs-item{background:rgba(217,69,69,.1);color:rgba(255,255,255,.65);border:1px solid rgba(217,69,69,.2)}
+.vs-bot .vs-item{background:rgba(46,173,107,.1);color:rgba(255,255,255,.65);border:1px solid rgba(46,173,107,.2)}
+.vs-top .vs-item::before{content:'✗ ';color:var(--rd)}.vs-bot .vs-item::before{content:'✓ ';color:var(--gr)}
+.vs-scan{position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,transparent,var(--or),transparent);opacity:0;animation:vs-scan-move 8s ease-in-out infinite}
+@keyframes vs-scan-move{0%{left:0;opacity:0}5%{opacity:.6}50%{left:calc(100% - 4px)}55%{opacity:0}100%{opacity:0}}
+.vs-verdict{position:absolute;right:28px;font-size:28px;font-weight:800;letter-spacing:3px;opacity:0;animation:vs-verdict-pop 8s ease infinite}
+@keyframes vs-verdict-pop{0%,52%{opacity:0;transform:scale(.6)}56%{opacity:1;transform:scale(1.15)}60%{transform:scale(1)}90%{opacity:1}100%{opacity:1}}
+.vs-v-fail{top:60px;color:var(--rd);animation-delay:.5s}
+.vs-v-pass{bottom:60px;color:var(--gr);animation-delay:.8s}
+
+/* ═══ SCENE 6: SHIELD ASSEMBLY LINE (S24) ═══ */
+.shield-line-box{width:860px;max-width:100%;height:360px;position:relative;overflow:hidden;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06)}
+.sl-rail{position:absolute;top:180px;left:20px;right:20px;height:3px;background:rgba(255,255,255,.06)}
+.sl-station{position:absolute;top:60px;width:110px;text-align:center;opacity:0;animation:sl-station-in 12s ease-in-out infinite}
+@keyframes sl-station-in{0%{opacity:0;transform:translateY(10px)}8%{opacity:1;transform:translateY(0)}90%{opacity:1}100%{opacity:1}}
+.sl-st1{left:1%}.sl-st2{left:17%}.sl-st3{left:33%}.sl-st4{left:49%}.sl-st5{left:65%}.sl-st6{left:81%}
+.sl-st1{animation-delay:.2s}.sl-st2{animation-delay:.5s}.sl-st3{animation-delay:.8s}.sl-st4{animation-delay:1.1s}.sl-st5{animation-delay:1.4s}.sl-st6{animation-delay:1.7s}
+.sl-shield{width:42px;height:48px;margin:0 auto 8px;opacity:.2;animation:sl-shield-arm 12s ease-in-out infinite}
+@keyframes sl-shield-arm{0%,8%{opacity:.2;transform:scale(.7)}15%{opacity:1;transform:scale(1.05)}20%{opacity:1;transform:scale(1)}85%{opacity:1}100%{opacity:1}}
+.sl-st1 .sl-shield{animation-delay:.4s}.sl-st2 .sl-shield{animation-delay:.7s}.sl-st3 .sl-shield{animation-delay:1s}.sl-st4 .sl-shield{animation-delay:1.3s}.sl-st5 .sl-shield{animation-delay:1.6s}.sl-st6 .sl-shield{animation-delay:1.9s}
+.sl-sname{font-size:12px;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:.5px;margin-bottom:3px}
+.sl-ssub{font-size:10px;color:rgba(255,255,255,.4)}
+.sl-beam{position:absolute;top:179px;left:20px;height:5px;background:linear-gradient(90deg,var(--or),var(--gr));border-radius:3px;width:0;animation:sl-beam-grow 12s ease-in-out infinite}
+@keyframes sl-beam-grow{0%{width:0}20%{width:0}80%{width:calc(100% - 40px)}100%{width:calc(100% - 40px)}}
+.sl-gap{position:absolute;top:198px;width:36px;height:24px;border:1.5px dashed rgba(217,69,69,.35);border-radius:5px;opacity:0;animation:sl-gap-blink 12s ease-in-out infinite}
+@keyframes sl-gap-blink{0%,60%{opacity:0}65%{opacity:1}70%{opacity:.3}75%{opacity:.8}80%{opacity:0}100%{opacity:0}}
+.sl-gap::after{content:'?';color:rgba(217,69,69,.6);font-size:13px;font-weight:800;position:absolute;top:2px;left:50%;transform:translateX(-50%)}
+.sl-g1{left:28%}.sl-g2{left:58%}
+
+/* Glossary */
+.gloss{border-bottom:1px dotted var(--or);cursor:help;font-weight:600;color:inherit}
+#gloss-tip{position:fixed;background:#1a1620;color:#F5F2ED;font-size:12px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.4);box-shadow:0 8px 28px rgba(0,0,0,.55);max-width:300px;width:max-content;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none;z-index:9999;text-align:left;font-family:inherit}
+#gloss-tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+#gloss-tip::after{content:'';position:absolute;left:14px;top:100%;width:0;height:0;border:6px solid transparent;border-top-color:rgba(232,129,58,.5)}
+#gloss-tip.below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:rgba(232,129,58,.5)}
+
+/* Score chip */
+.scorechip{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:4px 10px 4px 6px;margin-left:10px;font-family:inherit;cursor:default;transition:all .2s}
+.scorechip.bump{animation:sc-bump .5s ease}
+@keyframes sc-bump{0%{transform:scale(1)}30%{transform:scale(1.12);background:rgba(232,129,58,.18);border-color:rgba(232,129,58,.4)}100%{transform:scale(1)}}
+.scorechip .sc-rank{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--or);font-size:10px;font-weight:800;color:#1A1A1A;letter-spacing:.5px}
+.scorechip .sc-xp{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px}.scorechip .sc-xp b{color:var(--or)}
+.scorechip .sc-streak{font-size:10px;color:rgba(255,255,255,.5);font-weight:600;display:flex;align-items:center;gap:2px;border-left:1px solid rgba(255,255,255,.1);padding-left:8px}
+.scorechip .sc-streak.live{color:#FFB36B}
+.scorechip .sc-streak.live .sc-flame{filter:drop-shadow(0 0 4px rgba(255,150,80,.6));animation:flame-flick .8s ease-in-out infinite}
+@keyframes flame-flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.1) rotate(2deg)}}
+
+/* Case card */
+.case-card{border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin:4px 0}
+.case-head{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--card)}
+.case-tag{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#fff;background:var(--rd);padding:3px 8px;border-radius:10px}
+.case-title{font-size:14px;font-weight:700;color:var(--td)}
+.case-body{padding:14px 16px;font-size:14px;color:var(--tm);line-height:1.7}
+.case-body strong{color:var(--td);font-weight:600}
+.case-stat{display:inline-flex;align-items:center;gap:5px;background:var(--rl);color:var(--rd);font-size:12px;font-weight:700;padding:3px 9px;border-radius:10px;margin-top:6px}
+
+/* Reflect modal */
+#reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#reflect-modal.on{display:flex}
+.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:14px;padding:36px 40px 28px;max-width:560px;width:100%;text-align:center;color:#F5F2ED;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+.rm-q{font-size:22px;line-height:1.45;font-weight:300;margin-bottom:14px;color:#F5F2ED}.rm-q em{color:var(--or);font-style:normal;font-weight:600}
+.rm-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin:0 auto 24px;max-width:440px}
+.rm-actions{display:flex;gap:10px;justify-content:center}
+.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;width:28px;height:28px;border-radius:6px}.rm-close:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* Retake modal */
+#retake-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#retake-modal.on{display:flex;animation:rm-fade .25s ease}
+.retake-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(217,69,69,.35);border-radius:14px;padding:32px 36px 26px;max-width:480px;width:100%;text-align:center;color:#F5F2ED;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.retake-tag{font-size:10px;letter-spacing:4px;color:#ff8888;font-weight:700;text-transform:uppercase;margin-bottom:14px}
+.retake-q{font-size:20px;line-height:1.4;font-weight:300;margin-bottom:10px;color:#F5F2ED}
+.retake-sub{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:22px}
+.retake-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn.retake-confirm{background:#ff5555;border-color:#ff5555;color:#fff;font-weight:600}
+.btn.retake-confirm:hover{background:#e04545}
+
+@media(max-width:700px){.split{flex-direction:column}.sp-l{width:100%;min-height:auto;padding:16px 18px}.sp-r{max-height:none}.fbody{flex-direction:column;padding:32px 24px;gap:24px}.fb-visual{width:180px;height:180px}.fb-tt{font-size:28px}.punch-quote{font-size:28px}}
+</style>
+</head>
+<body>
+<main class="lms-main">
+<div class="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Module 5</span> · Supply Chain Security</span><div class="sh-right"><div class="pips" id="pp0"></div></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Module 5 · Part 1 of 2</div>
+      <div class="fb-tt">Supply Chain Security</div>
+      <div class="fb-sb">Your code is only as secure as the pipeline that builds it. Three attack surfaces, three real cases, and the controls that matter at every stage.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="4 4"><animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="30s" repeatCount="indefinite"/></circle>
+        <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(232,129,58,.12)" stroke-width="1.5"/>
+        <g font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="rgba(255,255,255,.4)" text-anchor="middle">
+          <text x="100" y="32">DEVELOP</text>
+          <text x="165" y="135">BUILD</text>
+          <text x="35" y="135">DELIVER</text>
+        </g>
+        <circle cx="100" cy="40" r="8" fill="rgba(232,129,58,.2)" stroke="var(--or)" stroke-width="1.5"><animate attributeName="r" values="8;10;8" dur="3s" repeatCount="indefinite"/></circle>
+        <circle cx="160" cy="130" r="8" fill="rgba(217,69,69,.15)" stroke="var(--rd)" stroke-width="1.5"><animate attributeName="r" values="8;10;8" dur="3s" begin="1s" repeatCount="indefinite"/></circle>
+        <circle cx="40" cy="130" r="8" fill="rgba(74,143,212,.15)" stroke="var(--bl)" stroke-width="1.5"><animate attributeName="r" values="8;10;8" dur="3s" begin="2s" repeatCount="indefinite"/></circle>
+        <path d="M108 46 Q145 70 155 122" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1" stroke-dasharray="3 3"/>
+        <path d="M92 46 Q55 70 45 122" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1" stroke-dasharray="3 3"/>
+        <path d="M48 136 Q100 160 152 136" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1" stroke-dasharray="3 3"/>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">01 / 28 · Cover</span><div class="snav"><button class="btn pri" onclick="go(1)">Start →</button></div></div>
+</div>
+
+<!-- ═══ S1 · BREATHER: Pipeline Cycle ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · The SDLC pipeline</span><div class="sh-right"><div class="pips" id="pp1"></div></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div class="breather-visual"><div class="scene" data-loop="10s" style="--loop:10s"><div class="scene-tools"><button class="scene-btn" data-act="pause">⏸ Pause</button><button class="scene-btn" data-act="replay">↻ Replay</button></div><div class="scene-stage"><div class="pipeline-box">
+      <div class="pl-ring"></div>
+      <div class="pl-threat"></div>
+      <div class="pl-node pl-n1">DEV</div>
+      <div class="pl-node pl-n2">BUILD</div>
+      <div class="pl-node pl-n3">TEST</div>
+      <div class="pl-node pl-n4">DELIVER</div>
+      <div class="pl-node pl-n5">OPERATE</div>
+      <div class="pl-packet"></div><div class="pl-packet"></div><div class="pl-packet"></div>
+      <div class="pl-warn pl-w1">⚠</div>
+      <div class="pl-warn pl-w2">⚠</div>
+      <div class="pl-warn pl-w3">⚠</div>
+      <div class="pl-label">your sdlc — every stage is an attack surface</div>
+    </div></div><div class="scene-loop"></div></div></div>
+    <div class="breather-caption"><p>Data packets circle the pipeline. <strong>Threats pulse at every stage.</strong> You test. You review. But supply chain risk keeps rising — because attackers target the pipeline itself.</p>
+    <div class="breather-notice">Did you notice — <b>the warning signs flash at different stages</b>? No single checkpoint catches them all.</div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn reflect-btn" onclick="openReflect('pipeline')">⏸ Reflect</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S2 · The scale problem ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Why supply chain matters</span><div class="sh-right"><div class="pips" id="pp2"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The scale problem</div><div class="sp-s">Dependencies you chose vs. dependencies you inherited</div></div><div class="sp-r">
+    <div class="prose">Your app has 20 direct dependencies. Those pull in 200 <span class="gloss" data-def="Transitive dependency — a dependency of a dependency. You didn't choose it, but your app ships with it. npm, pip, and Maven all pull transitive deps automatically.">transitive</span> ones. You chose 20. You inherited 200.</div>
+    <div class="prose">Each transitive dependency is code you didn't audit, written by someone you don't know, updated on a schedule you don't control. A vulnerability in any one of them is your vulnerability — in your container, serving your customers.</div>
+    <div class="xp" id="x2a"><button class="xh" onclick="tg('x2a')"><span>What's a transitive dependency?</span><span class="xa">›</span></button><div class="xb" id="x2a-p">A dependency of a dependency of a dependency. When you install <code>express</code>, you also get <code>body-parser</code>, which pulls in <code>raw-body</code>, which pulls in <code>iconv-lite</code>. You never asked for <code>iconv-lite</code>. But a vulnerability in it is your problem. Run <code>npm ls --all</code> and count the lines — that's your real dependency surface.</div></div>
+    <div class="co">Consider the question honestly: <em>how many dependencies does your project have right now? 10? 15? 50?</em> The real answer, once you count transitive deps, is almost always <em>hundreds.</em> We are not C developers anymore. We compose — and the cost of composition is supply chain risk.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">03 / 28</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S3 · Assume Breach ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Why supply chain matters</span><div class="sh-right"><div class="pips" id="pp3"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Assume Breach</div><div class="sp-s">The paradigm shift</div></div><div class="sp-r">
+    <div class="prose">There is no environment that is 100% safe. Even with high-protection standards, there is always internal risk. The concept of a fully "secure environment" contradicts the <strong>Assume Breach</strong> paradigm.</div>
+    <div class="prose">Assume Breach means designing your systems as if an attacker already has a foothold somewhere. A disgruntled employee, a compromised VPN, a stolen laptop, a supply chain dependency with a backdoor — the breach vector is secondary. What matters is how your architecture limits the blast radius.</div>
+    <div class="xp" id="x3a"><button class="xh" onclick="tg('x3a')"><span>Why "secure environment" is a contradiction</span><span class="xa">›</span></button><div class="xb" id="x3a-p">If you assume your environment is secure, you stop looking for indicators of compromise inside it. You trust internal traffic. You grant wide access to build systems. You don't monitor east-west network movement. Assume Breach flips that — every zone is potentially compromised, and controls exist at every boundary.</div></div>
+    <div class="co">Threat scenarios to hold in mind: a <em>disgruntled employee</em> with legitimate access, a <em>compromised VPN credential</em> sold on a dark web marketplace, or an <em>insider threat</em> that passes every background check because they weren't a threat when they were hired.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">04 / 28</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S4 · Punch quote ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">Module 5</span> · Core principle</span><div class="sh-right"><div class="pips" id="pp4"></div></div></div>
+  <div class="sb"><div class="punch">
+    <span class="punch-mark tl">"</span>
+    <div class="punch-tag">Supply Chain Principle</div>
+    <div class="punch-quote">You cannot <em>secure</em> what you do not inventory. You cannot <em>monitor</em> what you do not own.</div>
+    <div class="punch-source">Every control in this module traces back to two things: <b>visibility</b> and <b>ownership</b>.</div>
+    <span class="punch-mark br">"</span>
+  </div></div>
+  <div class="sf"><span class="shint">05 / 28</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S5 · Three attack surfaces ═══ -->
+<!-- ═══ S5 · BREATHER: Three Attack Surfaces ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Three attack surfaces</span><div class="sh-right"><div class="pips" id="pp5"></div></div></div>
+  <div class="sb"><div class="breather bg-earth">
+    <div class="breather-visual"><div class="scene" data-loop="9s" style="--loop:9s"><div class="scene-tools"><button class="scene-btn" data-act="pause">⏸ Pause</button><button class="scene-btn" data-act="replay">↻ Replay</button></div><div class="scene-stage"><div class="conveyor-box">
+      <div class="cv-belt"></div>
+      <div class="cv-zone cv-z1"><div class="cv-znum" style="color:var(--or)">① DEVELOP</div><div class="cv-zname">code + deps</div><div class="cv-zsub">MR review · signed commits</div></div>
+      <div class="cv-zone cv-z2"><div class="cv-znum" style="color:var(--rd)">② BUILD</div><div class="cv-zname">CI/CD + containers</div><div class="cv-zsub">isolated builds · monitoring</div></div>
+      <div class="cv-zone cv-z3"><div class="cv-znum" style="color:var(--bl)">③ DELIVER</div><div class="cv-zname">signing + dist</div><div class="cv-zsub">signed artifacts · SBOM</div></div>
+      <div class="cv-crate"></div><div class="cv-crate"></div><div class="cv-crate"></div>
+      <div class="cv-atk cv-a1">⚡</div><div class="cv-atk cv-a2">⚡</div><div class="cv-atk cv-a3">⚡</div>
+    </div></div><div class="scene-loop"></div></div></div>
+    <div class="breather-caption"><p>Packages move through three zones. <strong>Each zone lights up</strong> when it's under attack — attackers strike at every stage.</p>
+    <div class="breather-notice">Did you notice — <b>the lightning bolts hit from above</b>? Attacks target the pipeline, not just your code.</div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn reflect-btn" onclick="openReflect('surfaces')">⏸ Reflect</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S6 · Quiz: pipeline basics ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag">Knowledge check · pipeline basics</span><div class="sh-right"><div class="pips" id="pp6"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Which stage?</div><div class="sp-s">Think about the attack vector</div></div><div class="sp-r">
+    <div class="qw" id="q1"><div class="qq">An airport receives new HP network printers. Three days later, SIEM detects malicious traffic from the printers' IP addresses. Which supply chain stage was compromised?</div>
+      <button class="qo" onclick="pk('q1',0)">A) Development</button>
+      <button class="qo" onclick="pk('q1',1)">B) Build</button>
+      <button class="qo" onclick="pk('q1',2)">C) Testing</button>
+      <button class="qo" onclick="pk('q1',3)">D) Delivery</button>
+      <div class="qe" id="q1-e"><strong>D — Delivery.</strong> The printers were compromised during physical delivery — between the manufacturer and the airport. The firmware was legitimate when it left the factory. Somewhere in the logistics chain, it was tampered with. Not a code problem. Not a build problem. A delivery problem.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">07 / 28</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S7 · Breather: attack timeline ═══ -->
+<!-- ═══ S7 · BREATHER: Attack Timeline ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Supply chain attacks</span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
+  <div class="sb"><div class="breather bg-warm">
+    <div class="breather-visual"><div class="scene" data-loop="12s" style="--loop:12s"><div class="scene-tools"><button class="scene-btn" data-act="pause">⏸ Pause</button><button class="scene-btn" data-act="replay">↻ Replay</button></div><div class="scene-stage"><div class="timeline-box">
+      <div class="tl-line"></div>
+      <div class="tl-event tl-e1"><div class="tl-dot"></div><div class="tl-year">2016</div><div class="tl-name">Airport printers</div><div class="tl-stage">Deliver</div></div>
+      <div class="tl-event tl-e2"><div class="tl-dot"></div><div class="tl-year">2017</div><div class="tl-name">NotPetya / MEDOC</div><div class="tl-stage">Develop + Build</div></div>
+      <div class="tl-event tl-e3"><div class="tl-dot"></div><div class="tl-year">2018</div><div class="tl-name">17 Docker Hub images</div><div class="tl-stage">Build</div></div>
+      <div class="tl-event tl-e4"><div class="tl-dot"></div><div class="tl-year">2019</div><div class="tl-name">GitLab runner exploit</div><div class="tl-stage">Build</div></div>
+      <div class="tl-shock"></div>
+    </div></div><div class="scene-loop"></div></div></div>
+    <div class="breather-caption"><p>Incidents drop onto the timeline — <strong>every year, a different stage</strong>. The question is not <em>if</em> — it's <em>which stage</em> is weakest in your pipeline.</p>
+    <div class="breather-notice">Did you notice — <b>the shockwave ripples after the last event</b>? Each incident amplifies the next.</div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn reflect-btn" onclick="openReflect('timeline')">⏸ Reflect</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S8 · Act 2 divider ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span></span><div class="sh-right"><div class="pips" id="pp8"></div></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Attack Surface ①</div>
+      <div class="fb-tt">Development & Dependencies</div>
+      <div class="fb-sb">The code you write — and the code you import.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 120 120" width="200" height="200">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(232,129,58,.15)" stroke-width="1"/>
+        <circle cx="60" cy="60" r="20" fill="rgba(232,129,58,.1)" stroke="rgba(232,129,58,.4)" stroke-width="1.5"/>
+        <text x="60" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="var(--or)">YOUR</text>
+        <text x="60" y="74" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="var(--or)">CODE</text>
+        <g opacity=".5">
+          <circle cx="60" cy="14" r="4" fill="rgba(255,255,255,.3)"/>
+          <circle cx="95" cy="35" r="4" fill="rgba(255,255,255,.3)"/>
+          <circle cx="100" cy="72" r="4" fill="rgba(255,255,255,.3)"/>
+          <circle cx="80" cy="103" r="4" fill="rgba(255,255,255,.3)"/>
+          <circle cx="40" cy="103" r="4" fill="rgba(255,255,255,.3)"/>
+          <circle cx="20" cy="72" r="4" fill="rgba(255,255,255,.3)"/>
+          <circle cx="25" cy="35" r="4" fill="rgba(255,255,255,.3)"/>
+        </g>
+        <line x1="60" y1="40" x2="60" y2="18" stroke="rgba(255,255,255,.12)" stroke-width=".5"/>
+        <line x1="76" y1="50" x2="92" y2="38" stroke="rgba(255,255,255,.12)" stroke-width=".5"/>
+        <line x1="80" y1="60" x2="97" y2="70" stroke="rgba(255,255,255,.12)" stroke-width=".5"/>
+        <line x1="72" y1="75" x2="78" y2="100" stroke="rgba(255,255,255,.12)" stroke-width=".5"/>
+        <line x1="48" y1="75" x2="42" y2="100" stroke="rgba(255,255,255,.12)" stroke-width=".5"/>
+        <line x1="40" y1="60" x2="23" y2="70" stroke="rgba(255,255,255,.12)" stroke-width=".5"/>
+        <line x1="44" y1="50" x2="28" y2="38" stroke="rgba(255,255,255,.12)" stroke-width=".5"/>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">09 / 28</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S9 · Third-party dependency risk ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · Dependencies</span><div class="sh-right"><div class="pips" id="pp9"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Third-party dependency risk</div><div class="sp-s">Two problems from the field</div></div><div class="sp-r">
+    <div class="prose">The first problem is sheer volume — a big amount of uncontrolled and potentially vulnerable dependencies that you never explicitly chose. The second is invisibility: transitive dependencies don't show up in your project file. They exist deep in the tree.</div>
+    <div class="prose">Scanners like <span class="gloss" data-def="Trivy — an open-source vulnerability scanner for containers, filesystems, and git repos. Maintained by Aqua Security. Fast, but produces noise on transitive deps.">Trivy</span> and <span class="gloss" data-def="Aqua Security — a cloud-native security company. Their scanner tools find known CVEs in container images and dependencies.">Aqua</span> find known CVEs — but they also find non-exploitable vulnerabilities buried in transitive deps. This creates <strong>alert fatigue</strong>: your team sees 400 findings, 380 of which are noise, and starts ignoring the list entirely.</div>
+    <div class="xp" id="x9a"><button class="xh" onclick="tg('x9a')"><span>Why scanner noise matters</span><span class="xa">›</span></button><div class="xb" id="x9a-p">When every scan produces hundreds of findings, the team triages less carefully. Real vulnerabilities — the ones actually exploitable in your context — get buried in the noise. Alert fatigue is not laziness. It's a structural consequence of scanning without context. The fix isn't "pay more attention" — it's filtering by reachability: is this vulnerable code path actually called by your application?</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">10 / 28</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S10 · Case: NotPetya ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">Case</span> · NotPetya (2017)</span><div class="sh-right"><div class="pips" id="pp10"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">NotPetya</div><div class="sp-s">2017 · $10B+ damages</div></div><div class="sp-r">
+    <div class="case-card"><div class="case-head"><span class="case-tag">Real Case</span><span class="case-title">NotPetya via MEDOC (2017)</span></div><div class="case-body">Adversaries accessed the update servers of MEDOC — a legitimate Ukrainian accounting software used by virtually every business in the country. They injected malicious code into a routine software update. The update was signed, distributed through official channels, and installed automatically by trusting customers. The result: a global wiper disguised as ransomware that spread through corporate networks for months. <span class="case-stat">$10B+ in global damages</span></div></div>
+    <div class="prose">This wasn't a dependency attack. This was a <strong>trusted vendor's code</strong>, compromised at the source. Both the development process and the build pipeline were breached. No customer had any reason to suspect the update — it came from the official source, through the official channel.</div>
+    <div class="co"><em>The lesson:</em> trusting a vendor is not a security strategy. Verification is. If MEDOC's update had included integrity hashes verified by an independent mechanism, the tampered payload would have failed validation on client side.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">11 / 28</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · Breather: NotPetya failure chain ═══ -->
+<!-- ═══ S11 · BREATHER: NotPetya Failure Chain ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · NotPetya failure chain</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
+  <div class="sb"><div class="breather bg-warm">
+    <div class="breather-visual"><div class="scene" data-loop="10s" style="--loop:10s"><div class="scene-tools"><button class="scene-btn" data-act="pause">⏸ Pause</button><button class="scene-btn" data-act="replay">↻ Replay</button></div><div class="scene-stage"><div class="domino-box">
+      <div class="dm-step dm-s1"><div class="dm-icon">🏢</div><div class="dm-title">Trusted Vendor</div><div class="dm-sub">MEDOC<br>accounting</div></div>
+      <div class="dm-arrow dm-ar1">→</div>
+      <div class="dm-step dm-s2"><div class="dm-icon">💀</div><div class="dm-title">Compromised</div><div class="dm-sub">Update server<br>backdoored</div></div>
+      <div class="dm-arrow dm-ar2">→</div>
+      <div class="dm-step dm-s3"><div class="dm-icon">💉</div><div class="dm-title">Malicious Code</div><div class="dm-sub">Injected into<br>routine update</div></div>
+      <div class="dm-arrow dm-ar3">→</div>
+      <div class="dm-step dm-s4"><div class="dm-icon">📦</div><div class="dm-title">Distributed</div><div class="dm-sub">Legitimate<br>update channel</div></div>
+      <div class="dm-arrow dm-ar4">→</div>
+      <div class="dm-step dm-s5"><div class="dm-icon">🌍</div><div class="dm-title">GLOBAL SPREAD</div><div class="dm-sub">$10B+<br>damages</div></div>
+      <div class="dm-badge">⚠ No integrity verification at any step</div>
+      <div class="dm-boom"></div>
+    </div></div><div class="scene-loop"></div></div></div>
+    <div class="breather-caption"><p>Dominoes fall — trusted vendor to <strong>global catastrophe</strong> in five steps. One compromised update server. <strong>$10 billion in damages.</strong></p>
+    <div class="breather-notice">Did you notice — <b>no verification existed between any step</b>? Each domino trusted the one before it.</div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn reflect-btn" onclick="openReflect('trust')">⏸ Reflect</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S12 · Managing dependencies ═══ -->
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · Controls</span><div class="sh-right"><div class="pips" id="pp12"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Managing dependencies</div><div class="sp-s">Three essential controls</div></div><div class="sp-r">
+    <div class="prose"><strong>Feature-to-dependency mapping.</strong> Every dependency references a feature ID and triggers a threat model update. If nobody can say which feature needs this library, it shouldn't be there.</div>
+    <div class="prose"><strong><span class="gloss" data-def="SBOM — Software Bill of Materials. A formal, machine-readable inventory listing every component (direct and transitive) in your software. Think of it as a nutrition label for code.">SBOM</span> (Software Bill of Materials).</strong> A formal inventory — direct and transitive dependencies, versions, licenses. Generated automatically in the build pipeline, not maintained by hand.</div>
+    <div class="prose"><strong>Dependency firewall.</strong> A predefined permitted list of approved packages. Everything else is blocked by default. New packages require explicit approval with a documented justification.</div>
+    <div class="xp" id="x12a"><button class="xh" onclick="tg('x12a')"><span>Blast radius awareness</span><span class="xa">›</span></button><div class="xb" id="x12a-p">When a dependency has a vulnerability, the question isn't just "how bad is the CVE" — it's "which teams and services use this dependency?" Blast radius awareness means mapping dependencies to owners. When <code>lodash</code> gets a prototype pollution CVE, you know in minutes which 14 services need patching — not hours.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">13 / 28</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S13 · Securing development ═══ -->
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · Controls</span><div class="sh-right"><div class="pips" id="pp13"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Securing development</div><div class="sp-s">Process controls</div></div><div class="sp-r">
+    <div class="prose"><strong>Code review</strong> — real review, not rubber-stamp. The reviewer should understand the business context of the change, not just scan for syntax. <strong>Signed commits</strong> — every change has a verified author. If a commit isn't signed, it should be flagged.</div>
+    <div class="prose"><strong>Ticket-linked changes.</strong> Each code change references a ticket or feature. This creates traceability — if code is touched without a corresponding task, that's a signal worth investigating.</div>
+    <div class="prose"><strong>Ownership tracking.</strong> If someone modifies code they don't normally touch, and there's no ticket for it, that's suspicious. Not necessarily malicious — but worth a conversation.</div>
+    <div class="co">Be honest with yourself: <em>has merge request approval on your team become a formality?</em> If the answer is yes — that's the risk. A rubber-stamped review is worse than no review, because it creates the illusion of coverage.</div>
+    <div class="xp" id="x13a"><button class="xh" onclick="tg('x13a')"><span>Solution design as source of truth</span><span class="xa">›</span></button><div class="xb" id="x13a-p">The solution design document defines which dependencies are expected. If a merge request introduces a library not in the design — that's a conversation trigger. The design is the contract; the code should implement it, not expand it silently.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">14 / 28</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S14 · Quiz: dependency scenario ═══ -->
+<div class="slide" id="s14">
+  <div class="sh"><span class="stag">Knowledge check · dependencies</span><div class="sh-right"><div class="pips" id="pp14"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Dependency scenario</div><div class="sp-s">Think about transitive risk</div></div><div class="sp-r">
+    <div class="qw" id="q2"><div class="qq">A developer adds a new npm package. It passes security audit. Two weeks later, one of its 47 transitive dependencies is found to contain a backdoor. What control would have caught this earliest?</div>
+      <button class="qo" onclick="pk('q2',0)">A) Code review of the main package</button>
+      <button class="qo" onclick="pk('q2',1)">B) Signed commits</button>
+      <button class="qo" onclick="pk('q2',2)">C) Transitive dependency scanning + SBOM</button>
+      <button class="qo" onclick="pk('q2',3)">D) Feature-to-dependency mapping</button>
+      <div class="qe" id="q2-e"><strong>C — Transitive dependency scanning + SBOM.</strong> The backdoor was in a transitive dependency — invisible without deep scanning. Code review of the main package wouldn't reveal it. Signed commits verify authorship, not content safety. Feature-to-dependency mapping helps with direct deps but wouldn't catch a transitive backdoor. An SBOM that lists all transitive deps, combined with continuous vulnerability scanning, would flag the compromised package.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">15 / 28</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S15 · Act 3 divider ═══ -->
+<div class="slide" id="s15">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span></span><div class="sh-right"><div class="pips" id="pp15"></div></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Attack Surface ②</div>
+      <div class="fb-tt">Build Process</div>
+      <div class="fb-sb">Where your code becomes an artifact — and where that artifact can be poisoned.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 120 120" width="200" height="200">
+        <rect x="20" y="20" width="80" height="80" rx="8" fill="none" stroke="rgba(217,69,69,.2)" stroke-width="1.5"/>
+        <rect x="30" y="30" width="60" height="60" rx="5" fill="rgba(217,69,69,.08)" stroke="rgba(217,69,69,.3)" stroke-width="1"/>
+        <text x="60" y="55" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600" fill="rgba(255,255,255,.5)">CI/CD</text>
+        <text x="60" y="68" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600" fill="rgba(255,255,255,.5)">PIPELINE</text>
+        <g opacity=".4">
+          <rect x="35" y="78" width="12" height="8" rx="2" fill="var(--rd)"/><text x="41" y="85" text-anchor="middle" font-size="5" fill="#fff" font-weight="700">KEY</text>
+          <rect x="52" y="78" width="16" height="8" rx="2" fill="var(--or)"/><text x="60" y="85" text-anchor="middle" font-size="5" fill="#fff" font-weight="700">CODE</text>
+          <rect x="73" y="78" width="12" height="8" rx="2" fill="rgba(255,255,255,.2)"/><text x="79" y="85" text-anchor="middle" font-size="5" fill="#fff" font-weight="700">ENV</text>
+        </g>
+        <path d="M60 10 L60 20" stroke="rgba(255,255,255,.15)" stroke-width="1" stroke-dasharray="2 2"><animate attributeName="stroke-dashoffset" from="4" to="0" dur="1s" repeatCount="indefinite"/></path>
+        <path d="M60 100 L60 110" stroke="rgba(255,255,255,.15)" stroke-width="1" stroke-dasharray="2 2"><animate attributeName="stroke-dashoffset" from="4" to="0" dur="1s" repeatCount="indefinite"/></path>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">16 / 28</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn pri" onclick="go(16)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S16 · Build chain exploits ═══ -->
+<div class="slide" id="s16">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Build exploits</span><div class="sh-right"><div class="pips" id="pp16"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Build chain exploits</div><div class="sp-s">How artifacts get poisoned</div></div><div class="sp-r">
+    <div class="prose">Build environments are high-value targets because they have access to everything: source code, secrets, deployment keys, and the ability to produce artifacts that the rest of the pipeline trusts implicitly.</div>
+    <div class="prose">Known attack patterns include spoofing package paths or dependency sources, injecting additional libraries or compiled components into the build output, leaking secrets embedded in build configuration, compromising build tools themselves, and modifying container registry destination paths to exfiltrate code.</div>
+    <div class="xp" id="x16a"><button class="xh" onclick="tg('x16a')"><span>Why build environments are high-value targets</span><span class="xa">›</span></button><div class="xb" id="x16a-p">A CI/CD runner typically has read access to the source repository, write access to the artifact registry, and access to secrets needed for deployment. Compromise one runner, and you can inject code into production artifacts, steal credentials, and exfiltrate proprietary code — all without triggering alerts that monitor the production environment itself.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">17 / 28</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S17 · Case: GitLab runner exploit ═══ -->
+<div class="slide" id="s17">
+  <div class="sh"><span class="stag"><span class="hl">Case</span> · GitLab runner exploit</span><div class="sh-right"><div class="pips" id="pp17"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">GitLab runner</div><div class="sp-s">2019 · One parameter change</div></div><div class="sp-r">
+    <div class="case-card"><div class="case-head"><span class="case-tag">Real Case</span><span class="case-title">GitLab Runner Exploit (2019)</span></div><div class="case-body">Attackers gained access to a GitLab runner. They changed <strong>one parameter</strong>: the container registry destination path. The build pipeline continued running normally — same code, same tests, same green checkmarks. But the output artifact was now pushed to an attacker-controlled registry. Worse: the source code contained hardcoded credentials in configuration files, which were exfiltrated along with the code.</div></div>
+    <div class="co"><em>One parameter change.</em> Full code exfiltration + credential leak. No alerts fired because the build itself succeeded. The monitoring was watching for build failures, not for changes to build configuration.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">18 / 28</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S18 · Build hardening ═══ -->
+<div class="slide" id="s18">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Hardening</span><div class="sh-right"><div class="pips" id="pp18"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Build hardening</div><div class="sp-s">Key controls</div></div><div class="sp-r">
+    <div class="prose"><strong>Network isolation</strong> for the build environment — no arbitrary outbound access. <strong>Build count monitoring:</strong> the number of builds should equal the number of merge requests. If it doesn't, something triggered a build outside the normal flow.</div>
+    <div class="prose"><strong>MFA for development systems.</strong> Service accounts — which often outnumber regular users — need auditing. Logging and alerting on all build pipeline access. Exfiltration prevention through security groups, firewalls, and destination whitelisting.</div>
+    <div class="xp" id="x18a"><button class="xh" onclick="tg('x18a')"><span>Reproducible builds</span><span class="xa">›</span></button><div class="xb" id="x18a-p">The ideal: re-running the same merge request produces the same artifact, byte for byte. In practice this is hard — timestamps, non-deterministic compilation, and floating dependency versions all break reproducibility. But working toward it gives you a powerful verification tool: if the artifact doesn't match what the source should produce, something changed.</div></div>
+    <div class="xp" id="x18b"><button class="xh" onclick="tg('x18b')"><span>Service account audit — why it matters</span><span class="xa">›</span></button><div class="xb" id="x18b-p">In many organizations, service accounts outnumber human users 3-to-1. They often have broad permissions, rarely rotate credentials, and are the first target for lateral movement. An audit should answer: how many exist, what do they access, when were credentials last rotated, and can any be decommissioned?</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">19 / 28</span><div class="snav"><button class="btn" onclick="go(17)">← Back</button><button class="btn pri" onclick="go(19)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S19 · Breather: secure vs insecure build ═══ -->
+<!-- ═══ S19 · BREATHER: Secure vs Insecure Build ═══ -->
+<div class="slide" id="s19">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Secure vs insecure build</span><div class="sh-right"><div class="pips" id="pp19"></div></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div class="breather-visual"><div class="scene" data-loop="8s" style="--loop:8s"><div class="scene-tools"><button class="scene-btn" data-act="pause">⏸ Pause</button><button class="scene-btn" data-act="replay">↻ Replay</button></div><div class="scene-stage"><div class="versus-box">
+      <div class="vs-lane vs-top">
+        <div class="vs-label">insecure build</div>
+        <div class="vs-items">
+          <div class="vs-item" style="animation-delay:.3s">Open network access</div>
+          <div class="vs-item" style="animation-delay:.6s">No build monitoring</div>
+          <div class="vs-item" style="animation-delay:.9s">Shared service accounts</div>
+          <div class="vs-item" style="animation-delay:1.2s">No artifact signing</div>
+          <div class="vs-item" style="animation-delay:1.5s">No config-change alerts</div>
+        </div>
+      </div>
+      <div class="vs-lane vs-bot">
+        <div class="vs-label">hardened build</div>
+        <div class="vs-items">
+          <div class="vs-item" style="animation-delay:.4s">Isolated network</div>
+          <div class="vs-item" style="animation-delay:.7s">Build count = MR count</div>
+          <div class="vs-item" style="animation-delay:1s">Dedicated accounts + MFA</div>
+          <div class="vs-item" style="animation-delay:1.3s">Signed output artifacts</div>
+          <div class="vs-item" style="animation-delay:1.6s">Alerts on all access</div>
+        </div>
+      </div>
+      <div class="vs-scan"></div>
+      <div class="vs-verdict vs-v-fail">FAIL</div>
+      <div class="vs-verdict vs-v-pass">PASS</div>
+    </div></div><div class="scene-loop"></div></div></div>
+    <div class="breather-caption"><p>Same code. Same pipeline. An X-ray scan reveals the difference — the <strong>controls</strong> are what separate failure from safety.</p>
+    <div class="breather-notice">Did you notice — <b>the scan line sweeps both lanes identically</b>? The code is the same. Only the controls differ.</div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(18)">← Back</button><button class="btn reflect-btn" onclick="openReflect('build')">⏸ Reflect</button><button class="btn pri" onclick="go(20)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S20 · Delivery risks ═══ -->
+<div class="slide" id="s20">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · Delivery</span><div class="sh-right"><div class="pips" id="pp20"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Delivery risks</div><div class="sp-s">Attack Surface ③</div></div><div class="sp-r">
+    <div class="prose">Delivery-stage attacks target what happens <em>after</em> the artifact is built and signed. Violation of the signature process, compromising signing keys, targeting distribution systems (CDN, partner portals), and physical delivery compromise — hardware or firmware tampered with before reaching the customer.</div>
+    <div class="co"><em>You signed the build. But did anyone verify the signature after delivery?</em> A signed artifact means nothing if the customer's installation process doesn't check the signature. And a compromised CDN can replace the signed artifact with a different one entirely.</div>
+    <div class="xp" id="x20a"><button class="xh" onclick="tg('x20a')"><span>Physical delivery as attack vector</span><span class="xa">›</span></button><div class="xb" id="x20a-p">It sounds old-fashioned, but physical supply chain attacks are real and growing. Hardware intercepted in shipping, firmware modified before installation, pre-loaded malware on devices — these bypass every software-based security control. The airport printer case from the quiz is a real example: network printers compromised somewhere between the manufacturer and the customer.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">21 / 28</span><div class="snav"><button class="btn" onclick="go(19)">← Back</button><button class="btn pri" onclick="go(21)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S21 · Case: airport printers ═══ -->
+<div class="slide" id="s21">
+  <div class="sh"><span class="stag"><span class="hl">Case</span> · Airport printers (2016)</span><div class="sh-right"><div class="pips" id="pp21"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Airport printers</div><div class="sp-s">2016 · Physical delivery</div></div><div class="sp-r">
+    <div class="case-card"><div class="case-head"><span class="case-tag">Real Case</span><span class="case-title">Airport HP Printers (2016)</span></div><div class="case-body">An airport received new HP network printers through standard procurement. The IT team installed them, connected them to the internal network. Three days later, the SIEM flagged malicious traffic originating from the printers' IP addresses. Investigation revealed the printers had been <strong>compromised during physical delivery</strong> — the firmware was tampered with before reaching the airport.</div></div>
+    <div class="prose">Not a code problem. Not a build problem. A <strong>delivery problem</strong>. The printers passed every procurement check. They looked right, they functioned correctly, they came from an authorized vendor. The compromise happened in the logistics chain between manufacturer and customer.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">22 / 28</span><div class="snav"><button class="btn" onclick="go(20)">← Back</button><button class="btn pri" onclick="go(22)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S22 · Signing & verification ═══ -->
+<div class="slide" id="s22">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · Controls</span><div class="sh-right"><div class="pips" id="pp22"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Signing & verification</div><div class="sp-s">Delivery controls</div></div><div class="sp-r">
+    <div class="prose"><strong>Digital signatures</strong> for packages, updates, and components — signed by the producer, verified by the consumer. <strong>Internal registry mirroring</strong> — don't pull directly from public repos in production. Mirror what you've verified into an internal registry and pull from there.</div>
+    <div class="prose"><strong>SBOM included in delivery</strong>, verified by the customer. The vendor signs the artifact and includes a bill of materials. The customer verifies the signature and runs their own independent composition analysis.</div>
+    <div class="xp" id="x22a"><button class="xh" onclick="tg('x22a')"><span>What mutual verification looks like</span><span class="xa">›</span></button><div class="xb" id="x22a-p">The vendor signs the artifact and includes an SBOM listing every component and version. The customer verifies the signature against the vendor's public key, then runs their own composition analysis tool against the delivered artifact. If the scan finds a component not in the SBOM, or a component that differs from what's declared, the delivery is flagged. Trust, but verify — independently.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">23 / 28</span><div class="snav"><button class="btn" onclick="go(21)">← Back</button><button class="btn pri" onclick="go(23)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S23 · Quiz: delivery scenario ═══ -->
+<div class="slide" id="s23">
+  <div class="sh"><span class="stag">Knowledge check · delivery</span><div class="sh-right"><div class="pips" id="pp23"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Delivery scenario</div><div class="sp-s">Think about post-signing</div></div><div class="sp-r">
+    <div class="qw" id="q3"><div class="qq">Your team digitally signs all builds and publishes to a private registry. A customer reports that their installed version contains a component not in your SBOM. What most likely happened?</div>
+      <button class="qo" onclick="pk('q3',0)">A) A developer added an undocumented dependency</button>
+      <button class="qo" onclick="pk('q3',1)">B) The build was compromised after signing</button>
+      <button class="qo" onclick="pk('q3',2)">C) The delivery channel was compromised — artifact modified in transit</button>
+      <button class="qo" onclick="pk('q3',3)">D) The customer's scanner has a false positive</button>
+      <div class="qe" id="q3-e"><strong>C — Delivery channel compromise.</strong> If the SBOM doesn't match the artifact, something changed after signing. The build was signed with a valid SBOM — but the artifact the customer received is different. That means the modification happened during delivery: a compromised CDN, a man-in-the-middle on the download, or a tampered registry mirror. This is exactly why the customer needs to verify the signature independently, not just trust that the download was clean.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">24 / 28</span><div class="snav"><button class="btn" onclick="go(22)">← Back</button><button class="btn pri" onclick="go(24)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S24 · Breather: end-to-end pipeline ═══ -->
+<!-- ═══ S24 · BREATHER: End-to-End Pipeline ═══ -->
+<div class="slide" id="s24">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · End-to-end controls</span><div class="sh-right"><div class="pips" id="pp24"></div></div></div>
+  <div class="sb"><div class="breather bg-earth">
+    <div class="breather-visual"><div class="scene" data-loop="12s" style="--loop:12s"><div class="scene-tools"><button class="scene-btn" data-act="pause">⏸ Pause</button><button class="scene-btn" data-act="replay">↻ Replay</button></div><div class="scene-stage"><div class="shield-line-box">
+      <div class="sl-rail"></div>
+      <div class="sl-beam"></div>
+      <div class="sl-station sl-st1"><svg class="sl-shield" viewBox="0 0 24 28"><path d="M12,1 L22,6 L22,18 L12,26 L2,18 L2,6 Z" fill="rgba(232,129,58,.15)" stroke="var(--or)" stroke-width="1.5"/><path d="M8,14 L11,17 L16,11" fill="none" stroke="var(--or)" stroke-width="2" stroke-linecap="round"/></svg><div class="sl-sname">Signed Commit</div><div class="sl-ssub">verified author</div></div>
+      <div class="sl-station sl-st2"><svg class="sl-shield" viewBox="0 0 24 28"><path d="M12,1 L22,6 L22,18 L12,26 L2,18 L2,6 Z" fill="rgba(232,129,58,.15)" stroke="var(--or)" stroke-width="1.5"/><path d="M8,14 L11,17 L16,11" fill="none" stroke="var(--or)" stroke-width="2" stroke-linecap="round"/></svg><div class="sl-sname">Reviewed MR</div><div class="sl-ssub">approved change</div></div>
+      <div class="sl-station sl-st3"><svg class="sl-shield" viewBox="0 0 24 28"><path d="M12,1 L22,6 L22,18 L12,26 L2,18 L2,6 Z" fill="rgba(217,69,69,.12)" stroke="var(--rd)" stroke-width="1.5"/><path d="M8,14 L11,17 L16,11" fill="none" stroke="var(--rd)" stroke-width="2" stroke-linecap="round"/></svg><div class="sl-sname">Isolated Build</div><div class="sl-ssub">no net access</div></div>
+      <div class="sl-station sl-st4"><svg class="sl-shield" viewBox="0 0 24 28"><path d="M12,1 L22,6 L22,18 L12,26 L2,18 L2,6 Z" fill="rgba(217,69,69,.12)" stroke="var(--rd)" stroke-width="1.5"/><path d="M8,14 L11,17 L16,11" fill="none" stroke="var(--rd)" stroke-width="2" stroke-linecap="round"/></svg><div class="sl-sname">Signed Artifact</div><div class="sl-ssub">integrity hash</div></div>
+      <div class="sl-station sl-st5"><svg class="sl-shield" viewBox="0 0 24 28"><path d="M12,1 L22,6 L22,18 L12,26 L2,18 L2,6 Z" fill="rgba(74,143,212,.12)" stroke="var(--bl)" stroke-width="1.5"/><path d="M8,14 L11,17 L16,11" fill="none" stroke="var(--bl)" stroke-width="2" stroke-linecap="round"/></svg><div class="sl-sname">Verified Delivery</div><div class="sl-ssub">sig + SBOM</div></div>
+      <div class="sl-station sl-st6"><svg class="sl-shield" viewBox="0 0 24 28"><path d="M12,1 L22,6 L22,18 L12,26 L2,18 L2,6 Z" fill="rgba(46,173,107,.12)" stroke="var(--gr)" stroke-width="1.5"/><path d="M8,14 L11,17 L16,11" fill="none" stroke="var(--gr)" stroke-width="2" stroke-linecap="round"/></svg><div class="sl-sname">Scanned Deploy</div><div class="sl-ssub">runtime scan</div></div>
+      <div class="sl-gap sl-g1"></div>
+      <div class="sl-gap sl-g2"></div>
+    </div></div><div class="scene-loop"></div></div></div>
+    <div class="breather-caption"><p>Six shields arm one by one as the pipeline hardens. But the <strong>blinking gaps</strong> between them — those are the opportunities you haven't closed yet.</p>
+    <div class="breather-notice">Did you notice — <b>the question marks blink between stations</b>? Every gap is an adversary's opportunity.</div></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(23)">← Back</button><button class="btn reflect-btn" onclick="openReflect('gaps')">⏸ Reflect</button><button class="btn pri" onclick="go(25)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S25 · Summary ═══ -->
+<div class="slide" id="s25">
+  <div class="sh"><span class="stag"><span class="hl">Summary</span> · Part 1</span><div class="sh-right"><div class="pips" id="pp25"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Five takeaways</div><div class="sp-s">Part 1 complete</div></div><div class="sp-r">
+    <div class="prose"><strong>Supply chain risks exist at every SDLC stage</strong> — not just in your dependencies. Development, build, and delivery each have distinct attack surfaces and need distinct controls.</div>
+    <div class="prose"><strong>Assume Breach</strong> — there is no secure environment. Design your architecture to limit blast radius, not to prevent all entry.</div>
+    <div class="prose"><strong>Dependencies need inventory, ownership, and a firewall.</strong> You cannot secure what you do not know about. SBOM, feature-to-dependency mapping, and a permitted-list approach are the foundation.</div>
+    <div class="prose"><strong>Build environments are high-value targets</strong> — they have access to source, secrets, and deployment. Isolate them, monitor them, and verify that build count matches merge request count.</div>
+    <div class="prose"><strong>Signed builds mean nothing if delivery isn't verified.</strong> The customer must independently verify the signature and composition. Signing without verification is a false sense of security.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">26 / 28</span><div class="snav"><button class="btn" onclick="go(24)">← Back</button><button class="btn pri" onclick="go(26)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S26 · Score grid ═══ -->
+<div class="slide" id="s26">
+  <div class="sh"><span class="stag"><span class="hl">Part 1</span> · Your results</span><div class="sh-right"><div class="pips" id="pp26"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Part 1 complete</div><div class="sp-s">Attack Surfaces</div></div><div class="sp-r">
+    <div class="co" id="final-score" style="text-align:center;font-size:15px;padding:16px 20px"><strong>Your score:</strong> calculating...</div>
+    <div class="prose">You covered the three attack surfaces — development, build, and delivery — with real cases and specific controls for each. Part 2 goes deeper: Docker, Kubernetes, Jenkins hardening, and the SLSA maturity framework.</div>
+    <div class="xp" id="x26a"><button class="xh" onclick="tg('x26a')"><span>What to review before Part 2</span><span class="xa">›</span></button><div class="xb" id="x26a-p">If you missed any quiz, re-read the case study it relates to. The cases in Part 1 are the foundation for the technical deep dives in Part 2 — container security, CI/CD hardening, and SLSA levels all build on the attack surface model introduced here.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">27 / 28</span><div class="snav"><button class="btn" onclick="go(25)">← Back</button><button class="btn" onclick="openRetake()">↻ Retake</button><button class="btn pri" onclick="go(27)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S27 · Bridge to Part 2 ═══ -->
+<div class="slide" id="s27">
+  <div class="sh"><span class="stag"><span class="hl">Bridge</span> · Part 2</span><div class="sh-right"><div class="pips" id="pp27"></div></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Next</div>
+      <div class="fb-tt">Hardening & SLSA</div>
+      <div class="fb-sb">You now know the three attack surfaces. In Part 2: Docker, Kubernetes, and Jenkins deep dives — plus the SLSA framework for measuring your supply chain maturity.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 120 120" width="200" height="200">
+        <g transform="translate(60,60)">
+          <rect x="-45" y="-45" width="90" height="90" rx="10" fill="none" stroke="rgba(232,129,58,.15)" stroke-width="1"/>
+          <g font-family="JetBrains Mono,monospace" font-size="9" font-weight="600" text-anchor="middle">
+            <text y="-25" fill="rgba(255,255,255,.35)">DOCKER</text>
+            <text y="-8" fill="rgba(255,255,255,.35)">KUBERNETES</text>
+            <text y="9" fill="rgba(255,255,255,.35)">JENKINS</text>
+            <text y="32" fill="var(--or)" font-size="11">SLSA</text>
+          </g>
+          <path d="M-40,45 L40,45" stroke="rgba(232,129,58,.3)" stroke-width="1"/>
+          <text x="0" y="55" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(232,129,58,.5)">maturity framework</text>
+        </g>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">28 / 28</span><div class="snav"><button class="btn" onclick="go(26)">← Back</button><button class="btn pri" onclick="go(0)">Finish Part 1 ✓</button></div></div>
+</div>
+
+</div><!-- end .deck -->
+
+<!-- Reflect modal -->
+<div id="reflect-modal" role="dialog" aria-modal="true" aria-labelledby="rm-q">
+  <div class="rm-card">
+    <button class="rm-close" aria-label="Close" onclick="closeReflect()">×</button>
+    <div class="rm-tag">⏸  Pause to reflect</div>
+    <div class="rm-q" id="rm-q"></div>
+    <div class="rm-sub" id="rm-sub"></div>
+    <div class="rm-actions"><button class="btn pri" onclick="closeReflect()">Got it →</button></div>
+  </div>
+</div>
+
+<!-- Retake confirmation modal -->
+<div id="retake-modal" role="dialog" aria-modal="true">
+  <div class="retake-card">
+    <div class="retake-tag">↻ Retake the module</div>
+    <div class="retake-q">Reset all progress and start over?</div>
+    <div class="retake-sub">This will clear your XP, quiz answers, wagers, reflections, and streak. The module returns to the cover slide.</div>
+    <div class="retake-actions">
+      <button class="btn" onclick="closeRetake()">Cancel</button>
+      <button class="btn retake-confirm" onclick="doRetake()">Yes, reset everything</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const T=28;let c=0;
+
+const STORAGE_KEY='sc_m5a_sc_v1';
+const RANKS=[
+  {min:0,name:'RECRUIT',label:'Just getting started'},
+  {min:8,name:'APPRENTICE',label:'Building the instinct'},
+  {min:20,name:'CHAMPION',label:'You\'ve got the mindset'},
+  {min:36,name:'CAPTAIN',label:'Lead the way'},
+  {min:50,name:'LEGEND',label:'Top of your class'}
+];
+const DEFAULT_STATE={xp:0,streak:0,bestStreak:0,answers:{},wagers:{},reflections:[]};
+let state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};
+
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const s=JSON.parse(raw);state={...DEFAULT_STATE,...s,answers:s.answers||{},wagers:s.wagers||{},reflections:s.reflections||[]}}}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+function rankFor(xp){let r=RANKS[0];for(const x of RANKS){if(xp>=x.min)r=x}return r}
+
+function openRetake(){document.getElementById('retake-modal').classList.add('on')}
+function closeRetake(){document.getElementById('retake-modal').classList.remove('on')}
+function doRetake(){
+  try{localStorage.removeItem(STORAGE_KEY)}catch(e){}
+  window.location.reload();
+}
+document.getElementById('retake-modal').addEventListener('click',e=>{if(e.target.id==='retake-modal')closeRetake()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('retake-modal').classList.contains('on'))closeRetake()});
+
+function renderChips(){
+  const r=rankFor(state.xp);
+  document.querySelectorAll('.scorechip').forEach(chip=>{
+    chip.querySelector('.sc-rank').textContent=r.name[0];
+    chip.querySelector('.sc-rank').title=r.name;
+    chip.querySelector('.sc-xp').innerHTML=`<b>${state.xp}</b> XP`;
+    const sk=chip.querySelector('.sc-streak');
+    if(state.streak>=2){sk.classList.add('live');sk.innerHTML=`<span class="sc-flame">🔥</span> ${state.streak}`}
+    else{sk.classList.remove('live');sk.innerHTML=`<span style="opacity:.5">·</span> ${r.name}`}
+  });
+}
+function bumpChips(){document.querySelectorAll('.scorechip').forEach(c=>{c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')})}
+
+function go(n){
+  if(n<0||n>=T)return;
+  document.getElementById('s'+c).classList.remove('on');
+  c=n;
+  const slide=document.getElementById('s'+n);
+  slide.classList.add('on');
+  const r=slide.querySelector('.sp-r');if(r)r.scrollTop=0;
+  if(n===26){
+    const fs=document.getElementById('final-score');
+    if(fs){
+      const totalQ=Object.keys(ans).length;
+      const answered=Object.keys(state.answers).length;
+      const correct=Object.values(state.answers).filter(a=>a.correct).length;
+      if(answered===0) fs.innerHTML='<strong>You haven\'t answered any quizzes yet.</strong> Go back and try them.';
+      else fs.innerHTML=`<strong>${correct} out of ${totalQ}</strong> correct · <strong>${state.xp} XP</strong> earned · Rank: <strong>${rankFor(state.xp).name}</strong>`;
+    }
+  }
+  document.querySelectorAll('.pips').forEach(p=>bp(p));
+  window.scrollTo(0,0);
+}
+function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(c-1)}});
+function tg(id){const el=document.getElementById(id),b=el.querySelector('.xb'),a=el.querySelector('.xa');b.classList.toggle('op');if(a)a.classList.toggle('op')}
+
+const ans={q1:3,q2:2,q3:2};
+
+const WAGERS=[
+  {key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},
+  {key:'pretty',mult:2,name:'Pretty sure',sub:'×2 if right · 1 if wrong'},
+  {key:'guess',mult:1,name:'Just guessing',sub:'×1 either way'}
+];
+function buildWagerUI(qw){
+  const qq=qw.querySelector('.qq');if(!qq)return;
+  const qid=qw.id;
+  const w=document.createElement('div');
+  w.className='wager';w.dataset.qid=qid;
+  w.innerHTML=`<div class="wager-lab">How confident are you?</div>
+    <div class="wager-row">${WAGERS.map(g=>`<button class="wager-btn" data-w="${g.key}" data-m="${g.mult}"><div class="wb-top"><span class="wb-mult">×${g.mult}</span><span class="wb-name">${g.name}</span></div><div class="wb-sub">${g.sub}</div></button>`).join('')}</div>`;
+  qq.parentNode.insertBefore(w,qq.nextSibling);
+  w.querySelectorAll('.wager-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      if(w.classList.contains('locked'))return;
+      w.querySelectorAll('.wager-btn').forEach(b=>b.classList.remove('pk'));
+      btn.classList.add('pk');
+      state.wagers[qid]=parseInt(btn.dataset.m,10);
+      saveState();
+    };
+  });
+  if(state.wagers[qid]){
+    const b=w.querySelector(`.wager-btn[data-m="${state.wagers[qid]}"]`);
+    if(b)b.classList.add('pk');
+  }
+}
+function lockWager(qid){
+  const w=document.querySelector(`.wager[data-qid="${qid}"]`);
+  if(!w)return;
+  w.classList.add('locked');
+  w.querySelectorAll('.wager-btn').forEach(b=>b.disabled=true);
+  const mult=state.wagers[qid]||1;
+  const wname=WAGERS.find(g=>g.mult===mult)?.name||'Just guessing';
+  w.innerHTML=`<div class="wager-locked-note">🎯 You wagered <b>${wname}</b> (×${mult})</div>`;
+}
+
+function pk(q,i){
+  const w=document.getElementById(q),o=w.querySelectorAll('.qo');
+  if(o[0].classList.contains('pk'))return;
+  if(!state.wagers[q])state.wagers[q]=1;
+  const mult=state.wagers[q];
+  const k=ans[q];
+  const correct=(i===k);
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});
+  let pts=0,kind='zero',msg='';
+  if(correct){
+    pts=mult*3;
+    state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak;
+    kind='';
+    if(mult===3)msg=`Confident and correct. <b>+${pts} XP</b>${state.streak>=2?` · 🔥 ${state.streak} streak`:''}`;
+    else if(mult===2)msg=`Right call. <b>+${pts} XP</b>`;
+    else msg=`Lucky guess — still counts. <b>+${pts} XP</b>`;
+  }else{
+    if(mult===3){pts=0;kind='zero';msg=`Confidence didn't pay off here. <b>+0 XP</b> · streak reset.`}
+    else if(mult===2){pts=1;kind='humility';msg=`Humility bonus — knowing you might be wrong is half the skill. <b>+1 XP</b>`}
+    else {pts=1;kind='humility';msg=`Honest guess — keep going. <b>+1 XP</b>`}
+    state.streak=0;
+  }
+  state.xp+=pts;
+  state.answers[q]={picked:i,correct,wager:mult,points:pts};
+  saveState();renderChips();bumpChips();lockWager(q);
+  const e=document.getElementById(q+'-e');
+  e.classList.add('sh');
+  if(!e.querySelector('.qe-score')){
+    const s=document.createElement('div');s.className='qe-score';
+    s.innerHTML=`<span class="qs-pts ${kind}">${pts>0?'+':''}${pts} XP</span><span class="qs-msg">${msg}</span>`;
+    e.appendChild(s);
+  }
+}
+
+/* Reflections */
+const REFLECT_PROMPTS={
+  pipeline:{q:'Think about your team\'s SDLC. At which stage do you have the <em>least visibility</em> into what\'s happening?',sub:'If you can\'t name the exact tools, controls, and owners for a stage — that\'s where risk accumulates silently.'},
+  surfaces:{q:'Of the three attack surfaces — develop, build, deliver — which one does your team <em>talk about least</em>?',sub:'The stage nobody discusses is usually the one with the weakest controls. Silence is a signal.'},
+  timeline:{q:'If an attacker compromised one of your <em>build dependencies today</em>, how long before your team would notice?',sub:'Hours? Days? Weeks? That gap is your mean time to detect — and it\'s the number that matters most.'},
+  trust:{q:'Name one vendor or tool your team trusts <em>without independent verification</em>. What would it take to verify?',sub:'NotPetya succeeded because trust was implicit. Verification doesn\'t mean distrust — it means professionalism.'},
+  build:{q:'Look at your current CI/CD pipeline. Is it closer to the <em>insecure</em> side or the <em>hardened</em> side?',sub:'Pick one control from the hardened column that your pipeline is missing. Could you implement it this sprint?'},
+  gaps:{q:'Count the <em>handoff points</em> between your commit and production deployment. How many have <em>no verification step</em>?',sub:'Every gap between shields is an opportunity. The goal isn\'t zero gaps — it\'s knowing where they are.'}
+};
+function openReflect(key){
+  const p=REFLECT_PROMPTS[key];if(!p)return;
+  document.getElementById('rm-q').innerHTML=p.q;
+  document.getElementById('rm-sub').textContent=p.sub;
+  document.getElementById('reflect-modal').classList.add('on');
+  if(state.reflections&&!state.reflections.includes(key)){
+    state.reflections.push(key);
+    state.xp+=2;saveState();renderChips();bumpChips();
+  }
+}
+function closeReflect(){document.getElementById('reflect-modal').classList.remove('on')}
+document.getElementById('reflect-modal').addEventListener('click',e=>{if(e.target.id==='reflect-modal')closeReflect()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('reflect-modal').classList.contains('on'))closeReflect()});
+
+/* Score chip injection */
+function injectChips(){
+  document.querySelectorAll('.sh').forEach(sh=>{
+    if(sh.querySelector('.scorechip'))return;
+    const right=sh.querySelector('.sh-right');
+    if(!right)return;
+    const pips=right.querySelector('.pips');
+    const chip=document.createElement('div');chip.className='scorechip';chip.title='Your XP and streak';
+    chip.innerHTML=`<span class="sc-rank">R</span><span class="sc-xp"><b>0</b> XP</span><span class="sc-streak"><span style="opacity:.5">·</span> RECRUIT</span>`;
+    right.insertBefore(chip,pips);
+  });
+}
+
+/* Init */
+loadState();
+injectChips();
+document.querySelectorAll('.qw').forEach(buildWagerUI);
+Object.keys(state.answers).forEach(q=>{
+  const a=state.answers[q];
+  const qw=document.getElementById(q);if(!qw)return;
+  const o=qw.querySelectorAll('.qo'),k=ans[q];
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===a.picked&&j!==k)x.classList.add('no')});
+  const e=document.getElementById(q+'-e');if(e){e.classList.add('sh');if(!e.querySelector('.qe-score')){const s=document.createElement('div');s.className='qe-score';s.innerHTML=`<span class="qs-pts ${a.points===0?'zero':(a.correct?'':'humility')}">+${a.points} XP</span><span class="qs-msg">Already answered. ${a.correct?'Correct.':'Review the explanation above.'}</span>`;e.appendChild(s)}}
+  lockWager(q);
+});
+renderChips();
+document.querySelectorAll('.pips').forEach(p=>bp(p));
+
+/* ═══ SCENE: hover-pause + pause/replay buttons + responsive scale-down ═══ */
+function fitScene(scene){
+  const stage=scene.querySelector('.scene-stage');if(!stage)return;
+  const visual=scene.parentElement;if(!visual)return;
+  stage.style.transform='';scene.style.width='';scene.style.height='';
+  const sw=stage.scrollWidth,sh=stage.scrollHeight;
+  const aw=visual.clientWidth-8;
+  const scale=Math.min(1,aw/sw);
+  if(scale<1){
+    stage.style.transform=`scale(${scale})`;
+    scene.style.width=Math.round(sw*scale)+'px';
+    scene.style.height=Math.round(sh*scale)+'px';
+  }else{scene.style.width=sw+'px';scene.style.height=sh+'px'}
+}
+function fitAllScenes(){document.querySelectorAll('.scene').forEach(fitScene)}
+function replayScene(scene){
+  const stage=scene.querySelector('.scene-stage');if(!stage)return;
+  const clone=stage.cloneNode(true);stage.replaceWith(clone);
+  scene.classList.remove('paused');
+  const pBtn=scene.querySelector('[data-act="pause"]');if(pBtn)pBtn.textContent='⏸ Pause';
+  const loop=scene.querySelector('.scene-loop');if(loop){const next=loop.cloneNode(true);loop.replaceWith(next)}
+  fitScene(scene);
+}
+document.querySelectorAll('.scene').forEach(scene=>{
+  scene.addEventListener('mouseenter',()=>{if(!scene.dataset.userPaused)scene.classList.add('paused')});
+  scene.addEventListener('mouseleave',()=>{if(!scene.dataset.userPaused)scene.classList.remove('paused')});
+  scene.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-act]');if(!btn)return;
+    if(btn.dataset.act==='pause'){
+      const paused=scene.classList.toggle('paused');
+      scene.dataset.userPaused=paused?'1':'';
+      btn.textContent=paused?'▶ Play':'⏸ Pause';
+    }else if(btn.dataset.act==='replay'){
+      scene.dataset.userPaused='';replayScene(scene);
+    }
+  });
+});
+window.addEventListener('resize',fitAllScenes);
+window.addEventListener('load',fitAllScenes);
+fitAllScenes();
+const _origGo=go;go=function(n){_origGo(n);setTimeout(fitAllScenes,30)};
+
+/* Glossary tooltip */
+(function(){
+  const tip=document.createElement('div');tip.id='gloss-tip';document.body.appendChild(tip);
+  let cur=null;
+  function place(el){
+    const def=el.getAttribute('data-def')||'';
+    tip.textContent=def;
+    const r=el.getBoundingClientRect();
+    tip.classList.remove('below');
+    tip.style.left='0px';tip.style.top='0px';
+    const tw=tip.offsetWidth,th=tip.offsetHeight;
+    let left=r.left;
+    if(left+tw>window.innerWidth-8)left=window.innerWidth-tw-8;
+    if(left<8)left=8;
+    let top=r.top-th-10;
+    if(top<8){top=r.bottom+10;tip.classList.add('below')}
+    tip.style.left=left+'px';tip.style.top=top+'px';
+    tip.classList.add('on');cur=el;
+  }
+  function hide(){tip.classList.remove('on');cur=null}
+  document.addEventListener('mouseover',e=>{const g=e.target.closest('.gloss');if(g&&g!==cur)place(g)});
+  document.addEventListener('mouseout',e=>{const g=e.target.closest('.gloss');if(g&&!e.relatedTarget?.closest?.('.gloss'))hide()});
+  document.addEventListener('click',e=>{const g=e.target.closest('.gloss');if(g&&window.matchMedia('(hover:none)').matches){if(cur===g)hide();else place(g);e.preventDefault();return}if(!g)hide()});
+  document.addEventListener('scroll',hide,true);
+  window.addEventListener('resize',hide);
+})();
+</script>
+</main>
+</body>
+</html>

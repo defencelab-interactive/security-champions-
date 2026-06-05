@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Configuration · Security Champions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:slide-in .35s cubic-bezier(.2,.6,.2,1) both}
+@keyframes slide-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.slide:not(.on) *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.slide.on{animation:none}*,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
+
+/* Header & footer */
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh .sh-right{display:flex;align-items:center;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}
+.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}
+.btn.pri:hover{background:var(--od)}
+.btn.reflect-btn{border-color:rgba(232,129,58,.4);color:var(--or);background:rgba(232,129,58,.06)}
+.btn.reflect-btn:hover{background:rgba(232,129,58,.15);color:#fff}
+
+/* Pips */
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:280px;justify-content:flex-end}
+.pip{width:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}
+.pip.on{background:var(--or);transform:scaleY(1.8)}
+
+/* Score chip */
+.scorechip{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:4px 10px 4px 6px;margin-left:10px;font-family:inherit;cursor:default;transition:all .2s}
+.scorechip.bump{animation:sc-bump .5s ease}
+@keyframes sc-bump{0%{transform:scale(1)}30%{transform:scale(1.12);background:rgba(232,129,58,.18);border-color:rgba(232,129,58,.4)}100%{transform:scale(1)}}
+.scorechip .sc-rank{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--or);font-size:10px;font-weight:800;color:#1A1A1A;letter-spacing:.5px}
+.scorechip .sc-xp{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px}
+.scorechip .sc-xp b{color:var(--or)}
+.scorechip .sc-streak{font-size:10px;color:rgba(255,255,255,.5);font-weight:600;display:flex;align-items:center;gap:2px;border-left:1px solid rgba(255,255,255,.1);padding-left:8px}
+.scorechip .sc-streak.live{color:#FFB36B}
+.scorechip .sc-streak.live .sc-flame{filter:drop-shadow(0 0 4px rgba(255,150,80,.6));animation:flame-flick .8s ease-in-out infinite}
+@keyframes flame-flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.1) rotate(2deg)}}
+@media(max-width:560px){.scorechip .sc-streak{display:none}.scorechip{margin-left:6px;padding:3px 8px 3px 4px}}
+
+/* Split layout */
+.split{display:flex;min-height:480px}
+.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:20px;font-weight:700;color:var(--wh);line-height:1.25}
+.sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:480px}
+.sp-r::-webkit-scrollbar{width:3px}
+.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+
+/* Full-bleed body */
+.sb{padding:0}
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}
+.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
+
+/* Prose */
+.prose{font-size:15.5px;color:var(--tm);line-height:1.78}
+.prose strong{color:var(--td);font-weight:600}
+.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.prose em{font-style:italic}
+
+/* Callout */
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}
+.co em{font-style:italic;font-weight:500;color:var(--or)}
+.co strong{font-weight:600}
+
+/* Expand */
+.xp{margin:4px 0}
+.xh{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card);border:none;border-radius:6px;padding:12px 16px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--td);text-align:left;transition:background .1s}
+.xh:hover{background:#e5e5e5}
+.xa{font-size:13px;color:var(--mu);transition:transform .18s;margin-left:8px}.xa.op{transform:rotate(90deg);color:var(--or)}
+.xb{display:none;padding:14px 16px;background:var(--ow);border-radius:0 0 6px 6px;font-size:14px;color:var(--tm);line-height:1.7}
+.xb.op{display:block}.xb strong{color:var(--td);font-weight:600}
+
+/* Quiz */
+.qw{margin:6px 0}
+.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}
+.qo.ok{border-color:var(--gr);background:var(--gl)}
+.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55}
+.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block}.qe strong{color:var(--td)}
+.qe .qe-score{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:13px}
+.qe .qe-score .qs-pts{display:inline-flex;align-items:center;gap:4px;background:var(--gl);color:var(--gr);font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px;letter-spacing:.3px}
+.qe .qe-score .qs-pts.zero{background:var(--rl);color:var(--rd)}
+.qe .qe-score .qs-pts.humility{background:rgba(123,111,174,.12);color:var(--pu)}
+.qe .qe-score .qs-msg{color:var(--tm);font-size:12px}
+
+/* Wager */
+.wager{margin:6px 0 10px;background:linear-gradient(135deg,#fff8f2,#fff);border:1px dashed rgba(232,129,58,.4);border-radius:8px;padding:11px 14px;transition:all .25s}
+.wager.locked{opacity:.55;border-style:solid;border-color:var(--bd);background:var(--ow)}
+.wager-lab{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.wager-lab::before{content:'';width:14px;height:1px;background:var(--or)}
+.wager-row{display:flex;gap:6px;flex-wrap:wrap}
+.wager-btn{flex:1;min-width:90px;background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .12s}
+.wager-btn:hover{border-color:var(--or);transform:translateY(-1px);box-shadow:0 2px 8px rgba(232,129,58,.15)}
+.wager-btn.pk{border-color:var(--or);background:var(--ol)}
+.wager-btn.pk .wb-mult{background:var(--or);color:#fff}
+.wager-btn:disabled{cursor:not-allowed;opacity:.5}
+.wb-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.wb-mult{display:inline-flex;align-items:center;justify-content:center;background:var(--card);color:var(--td);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;letter-spacing:.3px}
+.wb-name{font-size:13px;font-weight:700;color:var(--td)}
+.wb-sub{font-size:11px;color:var(--mu);line-height:1.3}
+.wager-locked-note{font-size:11px;color:var(--mu);font-style:italic;display:flex;align-items:center;gap:6px}
+.wager-locked-note b{color:var(--td);font-style:normal;font-weight:600}
+
+/* Punch quote */
+.punch{background:#0F0E14;background-image:radial-gradient(ellipse at center,rgba(232,129,58,.08) 0%,transparent 60%),radial-gradient(ellipse at top right,rgba(123,111,174,.06) 0%,transparent 50%);min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;text-align:center;position:relative;overflow:hidden}
+.punch-tag{font-size:10px;letter-spacing:5px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:36px;display:flex;align-items:center;gap:14px;animation:punch-fade-in .8s ease both}
+.punch-tag::before,.punch-tag::after{content:'';width:32px;height:1px;background:linear-gradient(90deg,transparent,var(--or),transparent)}
+.punch-quote{font-family:'DM Sans',sans-serif;font-size:36px;font-weight:300;line-height:1.35;letter-spacing:-.02em;color:#F5F2ED;max-width:780px;text-wrap:balance;animation:punch-fade-in 1s ease .15s both}
+.punch-quote em{font-style:italic;color:var(--or);font-weight:500}
+.punch-source{margin-top:38px;font-size:13px;color:rgba(255,255,255,.5);line-height:1.7;max-width:480px;animation:punch-fade-in 1s ease .35s both}
+.punch-source b{color:rgba(255,255,255,.8);font-weight:600;font-style:normal}
+.punch-mark{position:absolute;font-family:Georgia,serif;color:rgba(232,129,58,.08);font-size:280px;line-height:1;font-weight:700;pointer-events:none;user-select:none;animation:punch-mark-fade 1.4s ease .1s both}
+.punch-mark.tl{top:-30px;left:24px}
+.punch-mark.br{bottom:-180px;right:24px;transform:rotate(180deg)}
+@keyframes punch-fade-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes punch-mark-fade{from{opacity:0}to{opacity:1}}
+@media(max-width:560px){.punch-quote{font-size:26px}.punch-mark{font-size:180px}}
+
+/* Best Practice */
+.bp-slide{padding:28px 30px;display:flex;flex-direction:column;gap:16px;min-height:480px}
+.bp-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(46,173,107,.1);border:1px solid rgba(46,173,107,.35);border-radius:20px;padding:5px 14px 5px 10px;align-self:flex-start}
+.bp-star{font-size:16px}
+.bp-badge-text{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gr)}
+.bp-title{font-size:24px;font-weight:700;color:var(--td);line-height:1.25;max-width:640px}
+.bp-body{font-size:15px;color:var(--tm);line-height:1.78}
+.bp-body strong{color:var(--td);font-weight:600}
+.bp-body code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.bp-callout{border-left:3px solid var(--gr);padding:12px 16px;background:var(--gl);font-size:14px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}
+.bp-callout strong{font-weight:600}
+
+/* Breather */
+.breather{display:flex;flex-direction:column;align-items:center;padding:18px 24px 10px;min-height:480px;gap:12px}
+.breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.breather-caption{text-align:center;padding:4px 0 2px;max-width:640px}
+.breather-caption p{font-size:14px;line-height:1.6}
+.breather-caption strong{font-weight:700}
+.breather-notice{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.4px;text-align:center;margin-top:6px;font-style:italic}
+.breather-notice b{color:rgba(255,255,255,.65);font-style:normal;font-weight:600}
+.bg-navy{background:linear-gradient(170deg,#0d1020,#141422,#0f1018)}
+.bg-navy .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-navy .breather-caption strong{color:var(--or)}
+.bg-earth{background:linear-gradient(170deg,#1a1710,#1a1a1a,#1a1520)}
+.bg-earth .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-earth .breather-caption strong{color:var(--or)}
+.bg-warm{background:linear-gradient(170deg,#1e1a15,#1a1a1a,#1a1520)}
+.bg-warm .breather-caption p{color:rgba(255,255,255,.6)}
+.bg-warm .breather-caption strong{color:var(--or)}
+.breather-title{font-size:10px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--or);text-align:center;padding-top:8px}
+
+/* Summary items */
+.sum-item{display:flex;gap:12px;align-items:flex-start;padding:6px 0}
+.sum-num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--or);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;margin-top:2px}
+.sum-text{font-size:14.5px;color:var(--tm);line-height:1.65}
+.sum-text strong{color:var(--td);font-weight:600}
+
+/* Score grid */
+.score-grid{padding:36px 40px;background:linear-gradient(170deg,#0F0E14,#161620);min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+.sg-tag{font-size:10px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--or)}
+.sg-title{font-size:28px;font-weight:700;color:#fff;text-align:center}
+.sg-stats{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.sg-stat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:18px 24px;text-align:center;min-width:140px}
+.sg-stat-val{font-size:28px;font-weight:800;color:var(--or);font-family:'JetBrains Mono',monospace}
+.sg-stat-label{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.sg-rank{font-size:14px;color:rgba(255,255,255,.6);margin-top:8px}
+.sg-rank b{color:var(--or);font-weight:700}
+
+/* Five forces cards */
+.ff-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;width:680px;max-width:100%}
+.ff-card{flex:1;min-width:110px;max-width:130px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:14px 10px;text-align:center;transition:all .3s}
+.ff-card:hover{background:rgba(232,129,58,.08);border-color:var(--or);transform:translateY(-2px)}
+.ff-icon{font-size:24px;margin-bottom:8px;display:block}
+.ff-name{font-size:11px;font-weight:700;color:#fff;letter-spacing:.3px;line-height:1.3}
+.ff-line{width:680px;max-width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--or),transparent);margin-top:8px;position:relative}
+.ff-line-label{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:10px;color:rgba(255,255,255,.5);letter-spacing:2px;font-weight:700;text-transform:uppercase;white-space:nowrap}
+
+/* Drift timeline */
+.drift-timeline{width:700px;max-width:100%;height:340px;position:relative}
+.drift-point{position:absolute;display:flex;flex-direction:column;align-items:center;gap:4px}
+.drift-dot{width:14px;height:14px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800}
+.drift-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.7);text-align:center;max-width:90px;line-height:1.3}
+.drift-sub{font-size:9px;color:rgba(255,255,255,.4);text-align:center;max-width:100px;line-height:1.3}
+.drift-gap{position:absolute;bottom:40px;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end}
+.drift-baseline{position:absolute;bottom:80px;left:40px;right:40px;height:1px;background:rgba(46,173,107,.3);border:none}
+.drift-baseline-label{position:absolute;bottom:84px;left:40px;font-size:9px;color:rgba(46,173,107,.6);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.drift-reality{position:absolute;left:40px;right:40px;height:1px;border:none}
+
+/* Cost multiplier bars */
+.cost-bars{display:flex;align-items:flex-end;justify-content:center;gap:40px;width:600px;max-width:100%;height:300px;padding-bottom:30px;position:relative}
+.cost-bar{display:flex;flex-direction:column;align-items:center;gap:8px}
+.cost-bar-fill{width:100px;border-radius:6px 6px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:12px 8px;transition:all .3s}
+.cost-bar-mult{font-size:28px;font-weight:800;color:#fff;font-family:'JetBrains Mono',monospace;text-shadow:0 2px 8px rgba(0,0,0,.3)}
+.cost-bar-name{font-size:12px;font-weight:700;color:#fff;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.cost-bar-desc{font-size:10px;color:rgba(255,255,255,.5);text-align:center;max-width:110px;line-height:1.4;margin-top:4px}
+.cost-arrow{position:absolute;bottom:0;left:50px;right:50px;display:flex;justify-content:space-between;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.cost-arrow-left{color:var(--gr)}
+.cost-arrow-right{color:var(--rd)}
+
+/* Reflect modal */
+#reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px;animation:rm-fade .25s ease}
+#reflect-modal.on{display:flex}
+@keyframes rm-fade{from{opacity:0}to{opacity:1}}
+.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:14px;padding:36px 40px 28px;max-width:560px;width:100%;text-align:center;color:#F5F2ED;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+.rm-q{font-size:22px;line-height:1.45;font-weight:300;margin-bottom:14px;text-wrap:pretty;color:#F5F2ED}
+.rm-q em{color:var(--or);font-style:normal;font-weight:600}
+.rm-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin:0 auto 24px;max-width:440px}
+.rm-actions{display:flex;gap:10px;justify-content:center}
+.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;width:28px;height:28px;line-height:1;border-radius:6px}
+.rm-close:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* Retake modal */
+#retake-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#retake-modal.on{display:flex;animation:rm-fade .25s ease}
+.retake-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(217,69,69,.35);border-radius:14px;padding:32px 36px 26px;max-width:480px;width:100%;text-align:center;color:#F5F2ED;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.retake-tag{font-size:10px;letter-spacing:4px;color:#ff8888;font-weight:700;text-transform:uppercase;margin-bottom:14px}
+.retake-q{font-size:20px;line-height:1.4;font-weight:300;margin-bottom:10px;color:#F5F2ED}
+.retake-sub{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:22px}
+.retake-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn.retake-confirm{background:#ff5555;border-color:#ff5555;color:#fff;font-weight:600}
+.btn.retake-confirm:hover{background:#e04545}
+
+/* Glossary tooltip */
+.gloss{border-bottom:1px dotted var(--or);cursor:help;font-weight:600;color:inherit}
+#gloss-tip{position:fixed;background:#1a1620;color:#F5F2ED;font-size:12px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.4);box-shadow:0 8px 28px rgba(0,0,0,.55);max-width:300px;width:max-content;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none;z-index:9999;text-align:left;font-family:inherit}
+#gloss-tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+#gloss-tip::after{content:'';position:absolute;left:14px;top:100%;width:0;height:0;border:6px solid transparent;border-top-color:rgba(232,129,58,.5)}
+#gloss-tip.below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:rgba(232,129,58,.5)}
+
+/* Fade-in for sp-r children */
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .2s ease both}
+.slide.on .sp-r>*:nth-child(1){animation-delay:.03s}
+.slide.on .sp-r>*:nth-child(2){animation-delay:.06s}
+.slide.on .sp-r>*:nth-child(3){animation-delay:.09s}
+.slide.on .sp-r>*:nth-child(4){animation-delay:.12s}
+.slide.on .sp-r>*:nth-child(5){animation-delay:.15s}
+.slide.on .sp-r>*:nth-child(6){animation-delay:.18s}
+.slide.on .sp-r>*:nth-child(7){animation-delay:.21s}
+
+/* Responsive */
+@media(max-width:700px){
+  .split{flex-direction:column}
+  .sp-l{width:100%;min-height:auto;padding:16px 18px}
+  .sp-r{max-height:none}
+  .fbody{flex-direction:column;padding:32px 24px;gap:24px}
+  .fb-visual{width:180px;height:180px}
+  .fb-tt{font-size:28px}
+  .punch-quote{font-size:24px}
+  .bp-slide{padding:20px 18px}
+  .bp-title{font-size:20px}
+  .ff-row{width:100%}
+  .ff-card{min-width:80px;max-width:none}
+  .cost-bars{width:100%;gap:20px}
+  .cost-bar-fill{width:70px}
+  .drift-timeline{width:100%;height:300px}
+}
+</style>
+</head>
+<body>
+<main class="lms-main">
+<div class="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Module 7a</span> · Security Configuration</span><div class="sh-right"><div class="pips" id="pp0"></div></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Security Champions · Module 7a</div>
+      <div class="fb-tt">Security Configuration</div>
+      <div class="fb-sb">Defaults are not secure. Drift is a defect. Part 1 of 2 — Configuration &amp; Defaults.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <rect x="40" y="30" width="120" height="150" rx="4" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+        <line x1="60" y1="60" x2="140" y2="60" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+        <line x1="60" y1="80" x2="140" y2="80" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+        <line x1="60" y1="100" x2="140" y2="100" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+        <line x1="60" y1="120" x2="140" y2="120" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+        <line x1="60" y1="140" x2="140" y2="140" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+        <text x="55" y="55" fill="rgba(255,255,255,.25)" font-size="7" font-family="JetBrains Mono, monospace">port: 8080</text>
+        <text x="55" y="75" fill="rgba(255,255,255,.25)" font-size="7" font-family="JetBrains Mono, monospace">auth: false</text>
+        <text x="55" y="95" fill="rgba(232,129,58,.6)" font-size="7" font-family="JetBrains Mono, monospace" font-weight="700">tls: disabled</text>
+        <text x="55" y="115" fill="rgba(255,255,255,.25)" font-size="7" font-family="JetBrains Mono, monospace">encrypt: none</text>
+        <text x="55" y="135" fill="rgba(255,255,255,.25)" font-size="7" font-family="JetBrains Mono, monospace">debug: true</text>
+        <!-- Warning triangle -->
+        <g transform="translate(138,24)">
+          <polygon points="16,0 32,28 0,28" fill="rgba(232,129,58,.25)" stroke="var(--or)" stroke-width="1.5"/>
+          <text x="16" y="22" text-anchor="middle" fill="var(--or)" font-size="14" font-weight="800">!</text>
+        </g>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">01 / 22 · Cover</span><div class="snav"><button class="btn pri" onclick="go(1)">Start →</button></div></div>
+</div>
+
+<!-- ═══ S1 · The uncomfortable question ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Why it happens</span><div class="sh-right"><div class="pips" id="pp1"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Why does it keep happening?</div></div><div class="sp-r">
+    <div class="prose">You know not to hardcode credentials. Your team has done security training. You've seen the post-mortems. And yet — hard-coded API keys still show up in production. Default configs ship unchanged. Ports stay open for months after a "temporary" exception.</div>
+    <div class="prose">This isn't about ignorance. It's about the <strong>conditions</strong> under which experienced people make predictable mistakes.</div>
+    <div class="co">The question isn't "do you know better?" — you do. The question is <em>"what makes smart people skip the step they know matters?"</em></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">02 / 22</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S2 · Five forces behind misconfigurations ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Root causes</span><div class="sh-right"><div class="pips" id="pp2"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The five forces</div></div><div class="sp-r">
+    <div class="prose">Five conditions reliably produce misconfigurations. Not one of them involves incompetence.</div>
+    <div class="xp" id="x2a"><button class="xh" aria-expanded="false" aria-controls="x2a-p" onclick="tg('x2a')"><span class="xt">"It works" pressure</span><span class="xa">›</span></button><div class="xb" id="x2a-p">The deployment needs to go live. The client demo is tomorrow. The hotfix must ship now. Security becomes a trade-off — "we'll harden it after this hot period." The hot period never ends. You never come back.</div></div>
+    <div class="xp" id="x2b"><button class="xh" aria-expanded="false" aria-controls="x2b-p" onclick="tg('x2b')"><span class="xt">Complexity growth</span><span class="xa">›</span></button><div class="xb" id="x2b-p"><span class="gloss" data-def="Key Management Service — a managed service for creating, rotating, and controlling cryptographic keys. AWS KMS, Azure Key Vault, and Google Cloud KMS are the main providers.">KMS</span> started as a nice service for storing small secrets. Today, one unchecked checkbox can leave your certificates unrotated and your system exposed. Complexity doesn't grow year to year — it grows month to month. And no human tracks all the implications of every option.</div></div>
+    <div class="xp" id="x2c"><button class="xh" aria-expanded="false" aria-controls="x2c-p" onclick="tg('x2c')"><span class="xt">Manual changes without tracking</span><span class="xa">›</span></button><div class="xb" id="x2c-p">Production is down. You whitelist an IP directly in the console. Add a security group rule via CLI. Grant explicit permissions to unblock a deploy. It works. Nobody records the change. It stays forever.</div></div>
+    <div class="xp" id="x2d"><button class="xh" aria-expanded="false" aria-controls="x2d-p" onclick="tg('x2d')"><span class="xt">Identity debt</span><span class="xa">›</span></button><div class="xb" id="x2d-p">Permissions accumulate. Accounts that were needed six months ago still have contributor access. Service accounts multiply — in most organizations, there are more service accounts than people. Nobody audits them because nobody owns them.</div></div>
+    <div class="xp" id="x2e"><button class="xh" aria-expanded="false" aria-controls="x2e-p" onclick="tg('x2e')"><span class="xt">No baseline = no way to measure drift</span><span class="xa">›</span></button><div class="xb" id="x2e-p">A standard means something written down. If you have no baseline, you can't tell what changed. If you can't tell what changed, you can't catch misconfigurations. They're invisible until they're exploited.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">03 / 22</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S3 · Two modes of failure ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Failure modes</span><div class="sh-right"><div class="pips" id="pp3"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">When it goes wrong</div></div><div class="sp-r">
+    <div class="prose">Misconfigurations appear in two distinct moments.</div>
+    <div class="prose"><strong>From scratch</strong> — setting up a new deployment, a new pipeline, a new environment. The wrong assumption is made at the beginning, and everything built on top of it inherits the flaw.</div>
+    <div class="prose"><strong>During operation</strong> — changing a running system under pressure. This is the more dangerous mode. You're changing something that already works. The "just this once" change that becomes permanent because nobody tracks it.</div>
+    <div class="co">Configuration from scratch is a <em>planning failure</em>. Configuration during operation is a <em>process failure</em>. Both require different controls.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">04 / 22</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S4 · Punch quote ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">The eternal debate</span></span><div class="sh-right"><div class="pips" id="pp4"></div></div></div>
+  <div class="sb"><div class="punch">
+    <span class="punch-mark tl">"</span>
+    <span class="punch-mark br">"</span>
+    <div class="punch-tag">The eternal debate</div>
+    <div class="punch-quote">"It should work."<br>— "No, it should work <em>securely</em>."<br>— "No. It should work. <em>Now.</em> We'll fix it later."</div>
+    <div class="punch-source">Later never comes.</div>
+  </div></div>
+  <div class="sf"><span class="shint">05 / 22</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S5 · Breather: five forces ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Five forces</span><div class="sh-right"><div class="pips" id="pp5"></div></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div class="breather-title">FIVE FORCES BEHIND MISCONFIGURATIONS</div>
+    <div class="breather-visual">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+        <div class="ff-row">
+          <div class="ff-card"><span class="ff-icon">🔥</span><div class="ff-name">Pressure</div></div>
+          <div class="ff-card"><span class="ff-icon">🧩</span><div class="ff-name">Complexity</div></div>
+          <div class="ff-card"><span class="ff-icon">✋</span><div class="ff-name">Manual changes</div></div>
+          <div class="ff-card"><span class="ff-icon">👤</span><div class="ff-name">Identity debt</div></div>
+          <div class="ff-card"><span class="ff-icon">📏</span><div class="ff-name">No baseline</div></div>
+        </div>
+        <div class="ff-line"><span class="ff-line-label">They compound</span></div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Which of these is <strong>strongest</strong> in your current project?</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Pause and reflect</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn reflect-btn" onclick="openReflect('forces')">⏸ Reflect</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S6 · Defaults are not secure ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · Baselines</span><div class="sh-right"><div class="pips" id="pp6"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The default trap</div></div><div class="sp-r">
+    <div class="prose">Every system ships with defaults optimized for quick setup, not security. <span class="gloss" data-def="Redis — an in-memory data store commonly used for caching, session management, and message brokering. Known for its speed and simplicity.">Redis</span>: no authentication, no TLS, plain-text protocol. <span class="gloss" data-def="MySQL — a widely used open-source relational database management system.">MySQL</span>: guest user enabled, test database accessible. <span class="gloss" data-def="Kubernetes — an open-source container orchestration platform for automating deployment, scaling, and management of containerized applications.">Kubernetes</span>: API server on port 8080 bypasses all auth.</div>
+    <div class="prose">One of the earliest hardening scripts was <code>mysql_secure_installation</code> — a simple command that removed the guest user, dropped the test database, and set a root password. It was primitive. But it established a principle: <strong>the first thing you do after install is harden.</strong></div>
+    <div class="prose">Today, hardening is more complex. But the principle hasn't changed: defaults are a starting point, not a destination. Every environment needs a specific baseline — and that baseline needs to be written down.</div>
+    <div class="co">A baseline is like rails — it helps you move faster. But when you drift from the rails, that drift is a defect. Track it. Record it in Jira. Don't accept it as <em>"that's just how it is."</em></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">07 / 22</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S7 · Best Practice: Treat drift as a defect ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">★ Best practice</span></span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
+  <div class="sb"><div class="bp-slide">
+    <div class="bp-badge"><span class="bp-star">★</span><span class="bp-badge-text">Best Practice</span></div>
+    <div class="bp-title">Treat every baseline drift as a defect</div>
+    <div class="bp-body">This is the single most effective habit for managing configuration security. When you have a baseline — any baseline — and something deviates from it, don't file it as "known risk" or "accepted deviation."</div>
+    <div class="bp-body"><strong>File it as a defect.</strong> Put it in Jira. Assign it. Track it.</div>
+    <div class="bp-body">Why this works: it makes drift visible — all deviations are in one place. It creates accountability — someone owns the fix. It creates a timeline — you can see when drift accelerated. And it enables periodic review — "show me all configuration defects from Q3."</div>
+    <div class="bp-body">Without this habit, drift is invisible. It compounds silently until an auditor or an attacker finds it.</div>
+    <div class="bp-callout"><strong>You don't need a perfect baseline.</strong> You need a written baseline and the discipline to track every deviation from it.</div>
+  </div></div>
+  <div class="sf"><span class="shint">08 / 22 · Best Practice</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S8 · Hard-coded credentials ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · Credentials</span><div class="sh-right"><div class="pips" id="pp8"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The obvious problem nobody solves</div></div><div class="sp-r">
+    <div class="prose">Hard-coded credentials in source code. In environment templates. In container images. In Slack messages. It's the most obvious security issue in the industry — and it persists in a significant number of production systems.</div>
+    <div class="prose">The reasons are human, not technical. Time pressure — "I need to test this integration right now. I'll move the key to a vault later." Copy-paste errors — "I was sure I pasted into the export command, not the config file." Two-screen mistakes — switching between terminal and editor, losing track of what went where. Proof-of-concept inertia — the project started as a PoC, the key was hardcoded for speed, the PoC became production.</div>
+    <div class="xp" id="x8a"><button class="xh" aria-expanded="false" aria-controls="x8a-p" onclick="tg('x8a')"><span class="xt">What actually works</span><span class="xa">›</span></button><div class="xb" id="x8a-p">Policies and talks don't prevent hardcoded credentials. After 11+ years of experience, only two things work: <strong>pipeline tooling that blocks the merge</strong>, and <strong>culture where "no secrets leave the laptop" is a reflex</strong>, not a rule. Tools like <span class="gloss" data-def="git-leaks / TruffleHog / Snyk — tools that scan code repositories for hardcoded secrets, API keys, credentials, and sensitive data. They can run in CI/CD pipelines to block commits containing secrets.">git-leaks, TruffleHog, and Snyk</span> must be in the pipeline before the team starts delivering — not added retroactively when someone finds a key in production.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">09 / 22</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S9 · Best Practice: Secrets pipeline from day one ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag"><span class="hl">★ Best practice</span></span><div class="sh-right"><div class="pips" id="pp9"></div></div></div>
+  <div class="sb"><div class="bp-slide">
+    <div class="bp-badge"><span class="bp-star">★</span><span class="bp-badge-text">Best Practice</span></div>
+    <div class="bp-title">Install secret scanning before the first line of code</div>
+    <div class="bp-body">The investment problem is real: new projects, especially proof-of-concepts, feel like they can't justify pipeline tooling. "We'll add security later, when there's budget."</div>
+    <div class="bp-body">This is where bad habits form. A developer hardcodes a key in week one. By month three, there are seventeen hardcoded secrets across four services. Retrofitting is exponentially harder than preventing.</div>
+    <div class="bp-body"><strong>The fix is cultural + technical:</strong> start every project with <code>.env</code> files — never put secrets in code, not even for testing. No production access for developers — separation of environments from day one. Pipeline scanning (git-leaks, TruffleHog) installed as part of project bootstrap, not as a security add-on. Make it a reflex: "no secrets leave the laptop."</div>
+    <div class="bp-callout"><strong>People, process, technology — all three.</strong> But technology must be in place before delivery starts.</div>
+  </div></div>
+  <div class="sf"><span class="shint">10 / 22 · Best Practice</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S10 · Quiz: the midnight hotfix ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag">Knowledge check · midnight hotfix</span><div class="sh-right"><div class="pips" id="pp10"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q1"><div class="qq">Your team finishes a hotfix at 2am. A DevOps engineer whitelists a partner's IP address directly in the AWS console — not via Terraform — to get the integration working. The fix is successful. What happens next?</div>
+      <button class="qo" onclick="pk('q1',0)">A) Nothing — the fix is in place and working</button>
+      <button class="qo" onclick="pk('q1',1)">B) The Terraform state and actual cloud state are now different — the next <code>terraform apply</code> may revert the change</button>
+      <button class="qo" onclick="pk('q1',2)">C) The partner's IP stays whitelisted indefinitely because nobody tracks manual changes</button>
+      <button class="qo" onclick="pk('q1',3)">D) Both B and C</button>
+      <div class="qe" id="q1-e"><strong>D.</strong> Manual changes create state drift AND are forgotten. The <span class="gloss" data-def="Terraform — an infrastructure-as-code tool that lets you define cloud resources in declarative configuration files. Terraform tracks the expected state and applies changes to match it.">Terraform</span> state doesn't know about the console change, so the next apply may silently remove it — or worse, the change persists undocumented for months. This is why manual changes must be tracked as defects and reconciled with IaC.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">11 / 22 · Quiz</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · Breather: configuration drift ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Drift</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
+  <div class="sb"><div class="breather bg-earth">
+    <div class="breather-title">CONFIGURATION DRIFT</div>
+    <div class="breather-visual">
+      <svg viewBox="0 0 700 300" width="700" style="max-width:100%">
+        <!-- Baseline -->
+        <line x1="40" y1="240" x2="660" y2="240" stroke="rgba(46,173,107,.3)" stroke-width="1.5" stroke-dasharray="6 4"/>
+        <text x="44" y="256" fill="rgba(46,173,107,.5)" font-size="9" font-weight="700" letter-spacing="1" font-family="JetBrains Mono, monospace">BASELINE</text>
+        <!-- Reality path diverging -->
+        <path d="M 60,240 L 180,240 L 260,210 L 360,190 L 460,155 L 560,110 L 640,60" fill="none" stroke="rgba(232,129,58,.6)" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Day 1 dot -->
+        <circle cx="60" cy="240" r="6" fill="rgba(46,173,107,.8)"/>
+        <text x="60" y="275" text-anchor="middle" fill="rgba(255,255,255,.6)" font-size="10" font-weight="700">Day 1</text>
+        <text x="60" y="287" text-anchor="middle" fill="rgba(46,173,107,.6)" font-size="8">BASELINE</text>
+        <!-- Week 3 -->
+        <circle cx="210" cy="225" r="5" fill="rgba(232,129,58,.6)"/>
+        <text x="210" y="210" text-anchor="middle" fill="rgba(255,255,255,.55)" font-size="9" font-weight="600">Week 3</text>
+        <text x="210" y="198" text-anchor="middle" fill="rgba(232,129,58,.5)" font-size="8">IP whitelist</text>
+        <!-- Month 2 -->
+        <circle cx="330" cy="195" r="5" fill="rgba(232,129,58,.7)"/>
+        <text x="330" y="180" text-anchor="middle" fill="rgba(255,255,255,.55)" font-size="9" font-weight="600">Month 2</text>
+        <text x="330" y="168" text-anchor="middle" fill="rgba(232,129,58,.5)" font-size="8">SG exception</text>
+        <!-- Month 4 -->
+        <circle cx="460" cy="155" r="5" fill="rgba(232,129,58,.8)"/>
+        <text x="460" y="140" text-anchor="middle" fill="rgba(255,255,255,.55)" font-size="9" font-weight="600">Month 4</text>
+        <text x="460" y="128" text-anchor="middle" fill="rgba(232,129,58,.5)" font-size="8">hotfix, forgot revert</text>
+        <!-- Month 8 -->
+        <circle cx="620" cy="70" r="8" fill="rgba(217,69,69,.7)" stroke="rgba(217,69,69,.9)" stroke-width="2"/>
+        <text x="620" y="50" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="10" font-weight="700">Month 8</text>
+        <text x="620" y="38" text-anchor="middle" fill="rgba(217,69,69,.7)" font-size="9" font-weight="600">what IS our config?</text>
+        <!-- Gap annotation -->
+        <line x1="640" y1="70" x2="640" y2="240" stroke="rgba(217,69,69,.3)" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="655" y="160" fill="rgba(217,69,69,.5)" font-size="9" font-weight="700" transform="rotate(-90,655,160)">DRIFT GAP</text>
+      </svg>
+    </div>
+    <div class="breather-caption"><p>Drift compounds. Each <strong>"just this once"</strong> adds up until nobody knows the real configuration.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Drift visualization</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S12 · Over-privileged IAM roles ═══ -->
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Privileges &amp; encryption</span><div class="sh-right"><div class="pips" id="pp12"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The wildcard problem</div></div><div class="sp-r">
+    <div class="prose">Over-privileged <span class="gloss" data-def="IAM — Identity and Access Management. The system that controls who can access what in a cloud environment. AWS IAM, Azure AD/Entra, and GCP IAM are the main implementations.">IAM</span> roles are significantly more common in AWS than in Azure. The reason isn't that AWS engineers are less careful — it's that the platforms have different design philosophies.</div>
+    <div class="prose">Azure invested heavily in a group-based role model with predefined, well-scoped built-in roles. The UI makes it intuitive to assign a named role to a group. Creating a custom role with specific permissions takes time, but the path is clear.</div>
+    <div class="prose">AWS IAM is more powerful but more complex. JSON-based policies, wildcards that are easy to add and hard to audit, roles that accumulate permissions over time. The result: during audits, wildcard permissions and unrotated secrets appear frequently.</div>
+    <div class="prose">The same pattern shows up in Kubernetes — service accounts created with broad permissions "to get things working" and never scoped down. <strong>Tools that help:</strong> <span class="gloss" data-def="Prowler / Scout Suite — open-source tools that scan AWS, Azure, and GCP accounts for security misconfigurations, compliance violations, and over-privileged roles.">Prowler and Scout Suite</span> can scan your cloud accounts and identify over-privileged roles, unrotated secrets, and policy violations. But the tool only finds the problem — fixing it requires process.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">13 / 22</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S13 · The encryption gap ═══ -->
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Encryption at rest</span><div class="sh-right"><div class="pips" id="pp13"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The checkbox nobody checked</div></div><div class="sp-r">
+    <div class="prose">A question for you: are all your production databases encrypted at rest right now?</div>
+    <div class="prose">If you're honest, the answer is probably "I'm not sure." And that uncertainty is the problem.</div>
+    <div class="prose">Databases end up unencrypted in production for predictable reasons. Someone forgot to tick the encryption checkbox during launch — or forgot the config attribute in Terraform. The database went to production. Data flowed in. Users connected. Everything worked fine.</div>
+    <div class="prose">Six months later, a compliance audit asks: "Is this database encrypted at rest?" Now you have a problem. Encrypting a running production database requires either stopping production, launching an encrypted replica and migrating, or encrypting record by record. All options are expensive. <strong>The checkbox at launch time cost zero.</strong></div>
+    <div class="xp" id="x13a"><button class="xh" aria-expanded="false" aria-controls="x13a-p" onclick="tg('x13a')"><span class="xt">Don't forget the backups</span><span class="xa">›</span></button><div class="xb" id="x13a-p">If your database is encrypted at rest, your backups must be too — with at least the same level of security. An unencrypted backup of an encrypted database is a hole. Check: does your backup configuration match your database configuration?</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">14 / 22</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S14 · Best Practice: Catch it at the cheapest stage ═══ -->
+<div class="slide" id="s14">
+  <div class="sh"><span class="stag"><span class="hl">★ Best practice</span></span><div class="sh-right"><div class="pips" id="pp14"></div></div></div>
+  <div class="sb"><div class="bp-slide">
+    <div class="bp-badge"><span class="bp-star">★</span><span class="bp-badge-text">Best Practice</span></div>
+    <div class="bp-title">The cost multiplier — catch misconfigurations early</div>
+    <div class="bp-body">The cost of fixing a misconfiguration increases exponentially the later you catch it.</div>
+    <div class="bp-body"><strong>Pipeline check</strong> — <span class="gloss" data-def="Checkov / Terrascan — open-source IaC scanning tools that check Terraform, CloudFormation, and Kubernetes files for security misconfigurations before deployment.">Checkov/Terrascan</span> flags missing encryption in your Terraform file. Cost: seconds. Fix: one attribute in code.</div>
+    <div class="bp-body"><strong>Staging catch</strong> — QA or security review notices the database isn't encrypted. Cost: hours. Fix: recreate the database, migrate data, update connections.</div>
+    <div class="bp-body"><strong>Production retrofit</strong> — compliance audit discovers the gap six months in. Cost: days to weeks. Fix: maintenance windows, migration planning, resource allocation, risk documentation.</div>
+    <div class="bp-callout"><strong>The ratio is roughly 1× : 10× : 100×.</strong> Pipeline checks aren't overhead. They're the cheapest security investment you'll ever make.</div>
+  </div></div>
+  <div class="sf"><span class="shint">15 / 22 · Best Practice</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S15 · Quiz: the encryption problem ═══ -->
+<div class="slide" id="s15">
+  <div class="sh"><span class="stag">Knowledge check · encryption</span><div class="sh-right"><div class="pips" id="pp15"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q2"><div class="qq">A production database was launched 6 months ago without encryption at rest. A compliance review now requires it. What's the realistic path forward?</div>
+      <button class="qo" onclick="pk('q2',0)">A) Enable encryption with zero downtime — modern databases support this transparently</button>
+      <button class="qo" onclick="pk('q2',1)">B) Launch an encrypted replica, migrate data, switch traffic — requires planning, resources, and a maintenance window</button>
+      <button class="qo" onclick="pk('q2',2)">C) Encrypt only the backups going forward — it's cheaper and covers the compliance requirement</button>
+      <button class="qo" onclick="pk('q2',3)">D) Accept the risk and document the exception</button>
+      <div class="qe" id="q2-e"><strong>B.</strong> Retroactive encryption of a running production database is possible but requires significant effort: a parallel encrypted database, data migration, connection updates, and usually some form of maintenance window. Option A is theoretically possible for some managed services, but rarely "zero downtime" in practice. Option C doesn't satisfy "encryption at rest" requirements. This is why pipeline-stage checks matter — the fix at launch time costs zero.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">16 / 22 · Quiz</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn pri" onclick="go(16)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S16 · Breather: cost multiplier ═══ -->
+<div class="slide" id="s16">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Cost multiplier</span><div class="sh-right"><div class="pips" id="pp16"></div></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div class="breather-title">THE COST MULTIPLIER</div>
+    <div class="breather-visual">
+      <div class="cost-bars">
+        <div class="cost-bar">
+          <div class="cost-bar-fill" style="height:60px;background:linear-gradient(180deg,rgba(46,173,107,.7),rgba(46,173,107,.4))">
+            <div class="cost-bar-mult">1×</div>
+          </div>
+          <div class="cost-bar-name" style="color:rgba(46,173,107,.8)">Pipeline</div>
+          <div class="cost-bar-desc">Seconds to fix. One config attribute.</div>
+        </div>
+        <div class="cost-bar">
+          <div class="cost-bar-fill" style="height:140px;background:linear-gradient(180deg,rgba(232,129,58,.7),rgba(232,129,58,.4))">
+            <div class="cost-bar-mult">10×</div>
+          </div>
+          <div class="cost-bar-name" style="color:rgba(232,129,58,.8)">Staging</div>
+          <div class="cost-bar-desc">Hours. Recreate + migrate.</div>
+        </div>
+        <div class="cost-bar">
+          <div class="cost-bar-fill" style="height:260px;background:linear-gradient(180deg,rgba(217,69,69,.7),rgba(217,69,69,.4))">
+            <div class="cost-bar-mult">100×</div>
+          </div>
+          <div class="cost-bar-name" style="color:rgba(217,69,69,.8)">Production</div>
+          <div class="cost-bar-desc">Days. Maintenance windows. Migration planning.</div>
+        </div>
+      </div>
+    </div>
+    <div class="breather-caption"><p>Every stage you wait <strong>multiplies the cost</strong>. Catch it in the pipeline.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Cost visualization</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S17 · Unsecured services and exposed ports ═══ -->
+<div class="slide" id="s17">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Ports &amp; exceptions</span><div class="sh-right"><div class="pips" id="pp17"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The exception that became permanent</div></div><div class="sp-r">
+    <div class="prose">Security groups and firewall rules accumulate exceptions the same way IAM roles accumulate permissions. A vendor needs access — you add a rule. An integration requires a port — you open it. A partner needs a temporary IP whitelist — you add it.</div>
+    <div class="prose">Each exception is justified at the time. Few are removed when the reason expires.</div>
+    <div class="prose">The challenge is compounded by infrastructure-as-code. Even when you manage security groups via Terraform, there's always the option to change them via CLI or the cloud console. And when someone does, the IaC state and the actual cloud state diverge silently.</div>
+    <div class="xp" id="x17a"><button class="xh" aria-expanded="false" aria-controls="x17a-p" onclick="tg('x17a')"><span class="xt">The dual-check approach</span><span class="xa">›</span></button><div class="xb" id="x17a-p">When auditing security groups or IAM rules, check both sources at the same time: the Terraform/Ansible files AND the current cloud state. If they don't match, someone made a manual change. That change is either a tracked defect (good) or an invisible drift (dangerous).</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">18 / 22</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S18 · Encryption in transit ═══ -->
+<div class="slide" id="s18">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Transit encryption</span><div class="sh-right"><div class="pips" id="pp18"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The other encryption</div></div><div class="sp-r">
+    <div class="prose">Encryption at rest gets most of the attention. But encryption in transit — <span class="gloss" data-def="TLS — Transport Layer Security. The cryptographic protocol that provides encryption in transit for web traffic (HTTPS), database connections, API calls, and inter-service communication.">TLS</span> between services, between databases and applications, between APIs — introduces its own complexity: certificate management.</div>
+    <div class="prose">Certificates expire. They get revoked. They need to be renewed before expiration, which requires automation or very reliable manual processes. A certificate renewal failure at 3am can take down production just as effectively as a security breach.</div>
+    <div class="prose">The answer is automation — certificate management tools, auto-renewal, monitoring for upcoming expirations. But the first step is knowing what certificates you have and when they expire. Many teams discover they don't have that inventory until something breaks.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">19 / 22</span><div class="snav"><button class="btn" onclick="go(17)">← Back</button><button class="btn pri" onclick="go(19)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S19 · Summary ═══ -->
+<div class="slide" id="s19">
+  <div class="sh"><span class="stag"><span class="hl">Part 1</span> · Summary</span><div class="sh-right"><div class="pips" id="pp19"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What you covered</div></div><div class="sp-r">
+    <div class="sum-item"><span class="sum-num">01</span><div class="sum-text"><strong>Five forces</strong> produce misconfigurations — pressure, complexity, manual changes, identity debt, and missing baselines. None of them involve incompetence.</div></div>
+    <div class="sum-item"><span class="sum-num">02</span><div class="sum-text"><strong>Defaults are starting points</strong>, not destinations. Every environment needs a specific, written baseline.</div></div>
+    <div class="sum-item"><span class="sum-num">03</span><div class="sum-text"><strong>Drift from baseline is a defect.</strong> Track it in Jira. Don't accept it as "known risk."</div></div>
+    <div class="sum-item"><span class="sum-num">04</span><div class="sum-text"><strong>Hard-coded credentials persist</strong> because of conditions, not ignorance. Pipeline scanning must be in place before the first delivery.</div></div>
+    <div class="sum-item"><span class="sum-num">05</span><div class="sum-text">The <strong>cost of fixing misconfigurations multiplies 10–100×</strong> with each stage. Catch them in the pipeline.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">20 / 22 · Summary</span><div class="snav"><button class="btn" onclick="go(18)">← Back</button><button class="btn pri" onclick="go(20)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S20 · Score grid ═══ -->
+<div class="slide" id="s20">
+  <div class="sh"><span class="stag"><span class="hl">Module 7a</span> · Results</span><div class="sh-right"><div class="pips" id="pp20"></div></div></div>
+  <div class="sb"><div class="score-grid">
+    <div class="sg-tag">Your results</div>
+    <div class="sg-title" id="sg-title">Part 1 complete</div>
+    <div class="sg-stats">
+      <div class="sg-stat"><div class="sg-stat-val" id="sg-correct">—</div><div class="sg-stat-label">Correct</div></div>
+      <div class="sg-stat"><div class="sg-stat-val" id="sg-xp">—</div><div class="sg-stat-label">XP earned</div></div>
+      <div class="sg-stat"><div class="sg-stat-val" id="sg-streak">—</div><div class="sg-stat-label">Best streak</div></div>
+    </div>
+    <div class="sg-rank" id="sg-rank"></div>
+  </div></div>
+  <div class="sf"><span class="shint">21 / 22 · Score</span><div class="snav"><button class="btn" onclick="go(19)">← Back</button><button class="btn" onclick="openRetake()">↻ Retake</button><button class="btn pri" onclick="go(21)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S21 · Bridge to Part 2 ═══ -->
+<div class="slide" id="s21">
+  <div class="sh"><span class="stag"><span class="hl">Next</span> · Part 2</span><div class="sh-right"><div class="pips" id="pp21"></div></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Next</div>
+      <div class="fb-tt">Access Control &amp; Policy Enforcement</div>
+      <div class="fb-sb">You now understand why configurations go wrong and how to establish baselines. In Part 2: how to control who has access to what — and how to enforce it automatically.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="45" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+        <!-- Lock icon -->
+        <rect x="82" y="90" width="36" height="30" rx="3" fill="none" stroke="var(--or)" stroke-width="2"/>
+        <path d="M90 90 L90 78 A10 10 0 0 1 110 78 L110 90" fill="none" stroke="var(--or)" stroke-width="2"/>
+        <circle cx="100" cy="105" r="4" fill="var(--or)"/>
+        <!-- Key rays -->
+        <line x1="100" y1="30" x2="100" y2="50" stroke="rgba(232,129,58,.3)" stroke-width="1"><animate attributeName="opacity" values=".2;.6;.2" dur="3s" repeatCount="indefinite"/></line>
+        <line x1="100" y1="150" x2="100" y2="170" stroke="rgba(232,129,58,.3)" stroke-width="1"><animate attributeName="opacity" values=".2;.6;.2" dur="3s" repeatCount="indefinite" begin=".5s"/></line>
+        <line x1="30" y1="100" x2="50" y2="100" stroke="rgba(232,129,58,.3)" stroke-width="1"><animate attributeName="opacity" values=".2;.6;.2" dur="3s" repeatCount="indefinite" begin="1s"/></line>
+        <line x1="150" y1="100" x2="170" y2="100" stroke="rgba(232,129,58,.3)" stroke-width="1"><animate attributeName="opacity" values=".2;.6;.2" dur="3s" repeatCount="indefinite" begin="1.5s"/></line>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">22 / 22 · Bridge</span><div class="snav"><button class="btn" onclick="go(20)">← Back</button><button class="btn pri" onclick="alert('Module 7a complete. Part 2 — Access Control & Policy Enforcement — coming next.')">Finish Part 1 ✓</button></div></div>
+</div>
+
+</div><!-- end .deck -->
+
+<!-- Retake confirm modal -->
+<div id="retake-modal" role="dialog" aria-modal="true">
+  <div class="retake-card">
+    <div class="retake-tag">↻ Retake the module</div>
+    <div class="retake-q">Reset all progress and start over?</div>
+    <div class="retake-sub">This will clear your XP, quiz answers, wagers, reflections, and return to the cover slide.</div>
+    <div class="retake-actions">
+      <button class="btn" onclick="closeRetake()">Cancel</button>
+      <button class="btn retake-confirm" onclick="doRetake()">Yes, reset everything</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reflection modal -->
+<div id="reflect-modal" role="dialog" aria-modal="true" aria-labelledby="rm-q">
+  <div class="rm-card">
+    <button class="rm-close" aria-label="Close" onclick="closeReflect()">×</button>
+    <div class="rm-tag">⏸  Pause to reflect</div>
+    <div class="rm-q" id="rm-q"></div>
+    <div class="rm-sub" id="rm-sub"></div>
+    <div class="rm-actions"><button class="btn pri" onclick="closeReflect()">Got it →</button></div>
+  </div>
+</div>
+
+<script>
+const T=22;let c=0;
+const STORAGE_KEY='sc_m7a_cfg_v1';
+const RANKS=[{min:0,name:'RECRUIT'},{min:8,name:'APPRENTICE'},{min:18,name:'CHAMPION'},{min:32,name:'CAPTAIN'},{min:50,name:'LEGEND'}];
+const DEFAULT_STATE={xp:0,streak:0,bestStreak:0,answers:{},wagers:{},reflections:[]};
+let state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};
+
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const s=JSON.parse(raw);state={...DEFAULT_STATE,...s,answers:s.answers||{},wagers:s.wagers||{},reflections:s.reflections||[]}}}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+function rankFor(xp){let r=RANKS[0];for(const x of RANKS){if(xp>=x.min)r=x}return r}
+
+function renderChips(){
+  const r=rankFor(state.xp);
+  document.querySelectorAll('.scorechip').forEach(chip=>{
+    chip.querySelector('.sc-rank').textContent=r.name[0];
+    chip.querySelector('.sc-rank').title=r.name;
+    chip.querySelector('.sc-xp').innerHTML=`<b>${state.xp}</b> XP`;
+    const sk=chip.querySelector('.sc-streak');
+    if(state.streak>=2){sk.classList.add('live');sk.innerHTML=`<span class="sc-flame">🔥</span> ${state.streak}`}
+    else{sk.classList.remove('live');sk.innerHTML=`<span style="opacity:.5">·</span> ${r.name}`}
+  });
+}
+function bumpChips(){document.querySelectorAll('.scorechip').forEach(c=>{c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')})}
+
+function go(n){
+  if(n<0||n>=T)return;
+  document.getElementById('s'+c).classList.remove('on');
+  c=n;
+  const slide=document.getElementById('s'+n);
+  const animated=slide.querySelectorAll('[class*="ff-"],[class*="cost-"],[class*="punch-"],[class*="drift-"]');
+  animated.forEach(el=>{const a=el.style.animation;el.style.animation='none';el.offsetHeight;el.style.animation=a||''});
+  slide.classList.add('on');
+  const r=slide.querySelector('.sp-r');if(r)r.scrollTop=0;
+  if(n===20)populateResults();
+  document.querySelectorAll('.pips').forEach(p=>bp(p));
+  window.scrollTo(0,0);
+}
+function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(c-1)}});
+function tg(id){const el=document.getElementById(id),b=el.querySelector('.xb'),a=el.querySelector('.xa'),btn=el.querySelector('.xh');const isOpen=b.classList.toggle('op');if(a)a.classList.toggle('op');if(btn)btn.setAttribute('aria-expanded',isOpen?'true':'false')}
+
+const ans={q1:3,q2:1};
+
+const WAGERS=[
+  {key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},
+  {key:'pretty',mult:2,name:'Pretty sure',sub:'×2 if right · 1 if wrong'},
+  {key:'guess',mult:1,name:'Just guessing',sub:'×1 either way'}
+];
+function buildWagerUI(qw){
+  const qq=qw.querySelector('.qq');if(!qq)return;
+  const qid=qw.id;
+  const w=document.createElement('div');w.className='wager';w.dataset.qid=qid;
+  w.innerHTML=`<div class="wager-lab">How confident are you?</div><div class="wager-row">${WAGERS.map(g=>`<button class="wager-btn" data-w="${g.key}" data-m="${g.mult}"><div class="wb-top"><span class="wb-mult">×${g.mult}</span><span class="wb-name">${g.name}</span></div><div class="wb-sub">${g.sub}</div></button>`).join('')}</div>`;
+  qq.parentNode.insertBefore(w,qq.nextSibling);
+  w.querySelectorAll('.wager-btn').forEach(btn=>{
+    btn.onclick=()=>{if(w.classList.contains('locked'))return;w.querySelectorAll('.wager-btn').forEach(b=>b.classList.remove('pk'));btn.classList.add('pk');state.wagers[qid]=parseInt(btn.dataset.m,10);saveState()};
+  });
+  if(state.wagers[qid]){const b=w.querySelector(`.wager-btn[data-m="${state.wagers[qid]}"]`);if(b)b.classList.add('pk')}
+}
+function lockWager(qid){
+  const w=document.querySelector(`.wager[data-qid="${qid}"]`);if(!w)return;
+  w.classList.add('locked');w.querySelectorAll('.wager-btn').forEach(b=>b.disabled=true);
+  const mult=state.wagers[qid]||1;const wname=WAGERS.find(g=>g.mult===mult)?.name||'Just guessing';
+  w.innerHTML=`<div class="wager-locked-note">🎯 You wagered <b>${wname}</b> (×${mult})</div>`;
+}
+
+function pk(q,i){
+  const w=document.getElementById(q),o=w.querySelectorAll('.qo');
+  if(o[0].classList.contains('pk'))return;
+  if(!state.wagers[q])state.wagers[q]=1;
+  const mult=state.wagers[q];const k=ans[q];const correct=(i===k);
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});
+  let pts=0,kind='zero',msg='';
+  if(correct){pts=mult*3;state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak;kind='';
+    if(mult===3)msg=`Confident and correct. <b>+${pts} XP</b>${state.streak>=2?` · 🔥 ${state.streak} streak`:''}`;
+    else if(mult===2)msg=`Right call. <b>+${pts} XP</b>`;else msg=`Lucky guess — still counts. <b>+${pts} XP</b>`;
+  }else{if(mult===3){pts=0;kind='zero';msg=`Confidence didn't pay off here. <b>+0 XP</b> · streak reset.`}
+    else if(mult===2){pts=1;kind='humility';msg=`Humility bonus — knowing you might be wrong is half the skill. <b>+1 XP</b>`}
+    else{pts=1;kind='humility';msg=`Honest guess — keep going. <b>+1 XP</b>`}state.streak=0;
+  }
+  state.xp+=pts;state.answers[q]={picked:i,correct,wager:mult,points:pts};
+  saveState();renderChips();bumpChips();lockWager(q);
+  const e=document.getElementById(q+'-e');e.classList.add('sh');
+  if(!e.querySelector('.qe-score')){const s=document.createElement('div');s.className='qe-score';s.innerHTML=`<span class="qs-pts ${kind}">${pts>0?'+':''}${pts} XP</span><span class="qs-msg">${msg}</span>`;e.appendChild(s)}
+}
+
+function populateResults(){
+  const totalQ=Object.keys(ans).length;
+  const answered=Object.keys(state.answers).length;
+  const correct=Object.values(state.answers).filter(a=>a.correct).length;
+  const r=rankFor(state.xp);
+  document.getElementById('sg-correct').textContent=answered===0?'—':`${correct}/${totalQ}`;
+  document.getElementById('sg-xp').textContent=state.xp;
+  document.getElementById('sg-streak').textContent=state.bestStreak||'—';
+  document.getElementById('sg-rank').innerHTML=answered===0?'Answer the quizzes to see your score.':`Rank: <b>${r.name}</b>`;
+}
+
+const REFLECT_PROMPTS={
+  forces:{q:'Which of the <em>five forces</em> — pressure, complexity, manual changes, identity debt, no baseline — is strongest in your current project?',sub:'And which one has the clearest fix you could start this week? Often the easiest win is writing down a baseline — even an imperfect one.'}
+};
+function openReflect(key){
+  const p=REFLECT_PROMPTS[key];if(!p)return;
+  document.getElementById('rm-q').innerHTML=p.q;document.getElementById('rm-sub').textContent=p.sub;
+  document.getElementById('reflect-modal').classList.add('on');
+  if(state.reflections&&!state.reflections.includes(key)){state.reflections.push(key);state.xp+=2;saveState();renderChips();bumpChips()}
+}
+function closeReflect(){document.getElementById('reflect-modal').classList.remove('on')}
+document.getElementById('reflect-modal').addEventListener('click',e=>{if(e.target.id==='reflect-modal')closeReflect()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.getElementById('reflect-modal').classList.contains('on'))closeReflect();if(document.getElementById('retake-modal').classList.contains('on'))closeRetake()}});
+
+function openRetake(){document.getElementById('retake-modal').classList.add('on')}
+function closeRetake(){document.getElementById('retake-modal').classList.remove('on')}
+function doRetake(){try{localStorage.removeItem(STORAGE_KEY)}catch(e){}window.location.reload()}
+document.getElementById('retake-modal').addEventListener('click',e=>{if(e.target.id==='retake-modal')closeRetake()});
+
+function injectChips(){
+  document.querySelectorAll('.sh').forEach(sh=>{
+    const stag=sh.querySelector('.stag');const pips=sh.querySelector('.pips');
+    if(!stag||!pips)return;
+    let right=sh.querySelector('.sh-right');
+    if(!right){right=document.createElement('div');right.className='sh-right';pips.parentNode.insertBefore(right,pips);right.appendChild(pips)}
+    if(!right.querySelector('.scorechip')){
+      const chip=document.createElement('div');chip.className='scorechip';chip.title='Your XP and streak';
+      chip.innerHTML=`<span class="sc-rank">R</span><span class="sc-xp"><b>0</b> XP</span><span class="sc-streak"><span style="opacity:.5">·</span> RECRUIT</span>`;
+      right.insertBefore(chip,pips);
+    }
+  });
+}
+
+loadState();
+injectChips();
+document.querySelectorAll('.qw').forEach(buildWagerUI);
+Object.keys(state.answers).forEach(q=>{
+  const a=state.answers[q];const qw=document.getElementById(q);if(!qw)return;
+  const o=qw.querySelectorAll('.qo'),k=ans[q];
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===a.picked&&j!==k)x.classList.add('no')});
+  const e=document.getElementById(q+'-e');if(e){e.classList.add('sh');if(!e.querySelector('.qe-score')){const s=document.createElement('div');s.className='qe-score';s.innerHTML=`<span class="qs-pts ${a.points===0?'zero':(a.correct?'':'humility')}">+${a.points} XP</span><span class="qs-msg">Already answered. ${a.correct?'Correct.':'Try the retake to improve.'}</span>`;e.appendChild(s)}}
+  lockWager(q);
+});
+renderChips();
+document.querySelectorAll('.pips').forEach(p=>bp(p));
+
+/* Glossary tooltip */
+(function(){
+  const tip=document.createElement('div');tip.id='gloss-tip';document.body.appendChild(tip);
+  let cur=null;
+  function place(el){const def=el.getAttribute('data-def')||'';tip.textContent=def;const r=el.getBoundingClientRect();tip.classList.remove('below');tip.style.left='0px';tip.style.top='0px';const tw=tip.offsetWidth,th=tip.offsetHeight;let left=r.left;if(left+tw>window.innerWidth-8)left=window.innerWidth-tw-8;if(left<8)left=8;let top=r.top-th-10;if(top<8){top=r.bottom+10;tip.classList.add('below')}tip.style.left=left+'px';tip.style.top=top+'px';tip.classList.add('on');cur=el}
+  function hide(){tip.classList.remove('on');cur=null}
+  document.addEventListener('mouseover',e=>{const g=e.target.closest('.gloss');if(g&&g!==cur)place(g)});
+  document.addEventListener('mouseout',e=>{const g=e.target.closest('.gloss');if(g&&!e.relatedTarget?.closest?.('.gloss'))hide()});
+  document.addEventListener('click',e=>{const g=e.target.closest('.gloss');if(g&&window.matchMedia('(hover:none)').matches){if(cur===g)hide();else place(g);e.preventDefault();return}if(!g)hide()});
+  document.addEventListener('scroll',hide,true);window.addEventListener('resize',hide);
+})();
+</script>
+</main>
+</body>
+</html>

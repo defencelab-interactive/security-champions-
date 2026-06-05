@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operationalizing IR · Security Champions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:slide-in .35s cubic-bezier(.2,.6,.2,1) both}
+@keyframes slide-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.slide:not(.on) *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.slide.on{animation:none}*,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}
+.btn.pri:hover{background:var(--od)}
+.btn.reflect-btn{border-color:rgba(232,129,58,.4);color:var(--or);background:rgba(232,129,58,.06)}
+.btn.reflect-btn:hover{background:rgba(232,129,58,.15);color:#fff}
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:280px;justify-content:flex-end}
+.pip{width:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}
+.pip.on{background:var(--or);transform:scaleY(1.8)}
+.scorechip{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:4px 10px 4px 6px;margin-left:10px;font-family:inherit;cursor:default;transition:all .2s}
+.scorechip.bump{animation:sc-bump .5s ease}
+@keyframes sc-bump{0%{transform:scale(1)}30%{transform:scale(1.12);background:rgba(232,129,58,.18);border-color:rgba(232,129,58,.4)}100%{transform:scale(1)}}
+.scorechip .sc-rank{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--or);font-size:10px;font-weight:800;color:#1A1A1A}
+.scorechip .sc-xp{font-size:11px;font-weight:700;color:rgba(255,255,255,.8)}.scorechip .sc-xp b{color:var(--or)}
+.scorechip .sc-streak{font-size:10px;color:rgba(255,255,255,.5);font-weight:600;display:flex;align-items:center;gap:2px;border-left:1px solid rgba(255,255,255,.1);padding-left:8px}
+.scorechip .sc-streak.live{color:#FFB36B}
+.scorechip .sc-streak.live .sc-flame{filter:drop-shadow(0 0 4px rgba(255,150,80,.6));animation:flame-flick .8s ease-in-out infinite}
+@keyframes flame-flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.1) rotate(2deg)}}
+@media(max-width:560px){.scorechip .sc-streak{display:none}.scorechip{margin-left:6px;padding:3px 8px 3px 4px}}
+#reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px;animation:rm-fade .25s ease}
+#reflect-modal.on{display:flex}
+@keyframes rm-fade{from{opacity:0}to{opacity:1}}
+.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:14px;padding:36px 40px 28px;max-width:560px;width:100%;text-align:center;color:#F5F2ED;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+.rm-q{font-size:22px;line-height:1.45;font-weight:300;margin-bottom:14px;color:#F5F2ED}.rm-q em{color:var(--or);font-style:normal;font-weight:600}
+.rm-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin:0 auto 24px;max-width:440px}
+.rm-actions{display:flex;gap:10px;justify-content:center}
+.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;width:28px;height:28px;line-height:1;border-radius:6px}.rm-close:hover{background:rgba(255,255,255,.08);color:#fff}
+.wager{margin:6px 0 10px;background:linear-gradient(135deg,#fff8f2,#fff);border:1px dashed rgba(232,129,58,.4);border-radius:8px;padding:11px 14px;transition:all .25s}
+.wager.locked{opacity:.55;border-style:solid;border-color:var(--bd);background:var(--ow)}
+.wager-lab{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:6px}.wager-lab::before{content:'';width:14px;height:1px;background:var(--or)}
+.wager-row{display:flex;gap:6px;flex-wrap:wrap}
+.wager-btn{flex:1;min-width:90px;background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .12s}
+.wager-btn:hover{border-color:var(--or);transform:translateY(-1px);box-shadow:0 2px 8px rgba(232,129,58,.15)}
+.wager-btn.pk{border-color:var(--or);background:var(--ol)}.wager-btn.pk .wb-mult{background:var(--or);color:#fff}
+.wager-btn:disabled{cursor:not-allowed;opacity:.5}
+.wb-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.wb-mult{display:inline-flex;align-items:center;justify-content:center;background:var(--card);color:var(--td);font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px}
+.wb-name{font-size:13px;font-weight:700;color:var(--td)}
+.wb-sub{font-size:11px;color:var(--mu);line-height:1.3}
+.wager-locked-note{font-size:11px;color:var(--mu);font-style:italic;display:flex;align-items:center;gap:6px}.wager-locked-note b{color:var(--td);font-style:normal;font-weight:600}
+.qe .qe-score{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;font-size:13px}
+.qe .qe-score .qs-pts{display:inline-flex;align-items:center;gap:4px;background:var(--gl);color:var(--gr);font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px}
+.qe .qe-score .qs-pts.zero{background:var(--rl);color:var(--rd)}
+.qe .qe-score .qs-pts.humility{background:rgba(123,111,174,.12);color:var(--pu)}
+.qe .qe-score .qs-msg{color:var(--tm);font-size:12px}
+.sb{padding:0}
+.split{display:flex;min-height:480px}
+.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:20px;font-weight:700;color:var(--wh);line-height:1.25}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:480px}
+.sp-r::-webkit-scrollbar{width:3px}.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}
+.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
+.prose{font-size:15.5px;color:var(--tm);line-height:1.78}.prose strong{color:var(--td);font-weight:600}.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}.prose em{font-style:italic}
+.gloss{border-bottom:1px dotted var(--or);cursor:help;font-weight:600;color:inherit}
+#gloss-tip{position:fixed;background:#1a1620;color:#F5F2ED;font-size:12px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:6px;border:1px solid rgba(232,129,58,.4);box-shadow:0 8px 28px rgba(0,0,0,.55);max-width:300px;width:max-content;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none;z-index:9999;text-align:left;font-family:inherit}
+#gloss-tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+#gloss-tip::after{content:'';position:absolute;left:14px;top:100%;width:0;height:0;border:6px solid transparent;border-top-color:rgba(232,129,58,.5)}
+#gloss-tip.below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:rgba(232,129,58,.5)}
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}.co em{font-style:italic;font-weight:500;color:var(--or)}.co strong{font-weight:600}
+.xp{margin:4px 0}
+.xh{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card);border:none;border-radius:6px;padding:12px 16px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--td);text-align:left;transition:background .1s}.xh:hover{background:#e5e5e5}
+.xa{font-size:13px;color:var(--mu);transition:transform .18s;margin-left:8px}.xa.op{transform:rotate(90deg);color:var(--or)}
+.xb{display:none;padding:14px 16px;background:var(--ow);border-radius:0 0 6px 6px;font-size:14px;color:var(--tm);line-height:1.7}.xb.op{display:block}.xb strong{color:var(--td);font-weight:600}
+.qw{margin:6px 0}.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}
+.qo.ok{border-color:var(--gr);background:var(--gl)}.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55}.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block}.qe strong{color:var(--td)}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .2s ease both}
+.slide.on .sp-r>*:nth-child(1){animation-delay:.03s}.slide.on .sp-r>*:nth-child(2){animation-delay:.06s}.slide.on .sp-r>*:nth-child(3){animation-delay:.09s}.slide.on .sp-r>*:nth-child(4){animation-delay:.12s}.slide.on .sp-r>*:nth-child(5){animation-delay:.15s}.slide.on .sp-r>*:nth-child(6){animation-delay:.18s}
+.wstory{margin:6px 0;border-radius:8px;overflow:hidden;border:1px solid rgba(123,111,174,.25);background:linear-gradient(170deg,#fbf9ff,#fff);transition:all .2s;width:100%;text-align:left;cursor:pointer;font-family:inherit;padding:0;display:block}
+.wstory:hover:not(.op){border-color:rgba(123,111,174,.45);transform:translateX(2px);box-shadow:0 4px 14px rgba(123,111,174,.1)}.wstory.op{border-color:rgba(123,111,174,.45)}
+.wstory-h{display:flex;align-items:center;width:100%;background:transparent;padding:13px 16px;gap:12px}
+.wstory-icon{flex-shrink:0;width:34px;height:34px;background:rgba(123,111,174,.12);border:1px solid rgba(123,111,174,.3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.wstory-meta{flex:1;min-width:0}.wstory-tag{font-size:9px;font-weight:800;letter-spacing:2.5px;color:var(--pu);text-transform:uppercase;margin-bottom:2px}
+.wstory-title{font-size:14px;font-weight:700;color:var(--td);line-height:1.35}
+.wstory-arrow{color:var(--pu);font-size:14px;flex-shrink:0;transition:transform .2s}.wstory.op .wstory-arrow{transform:rotate(90deg)}
+.wstory-body{display:none;padding:6px 18px 18px;background:#fbf9ff;border-top:1px dashed rgba(123,111,174,.2)}.wstory.op .wstory-body{display:block;animation:ws-fade .25s ease}
+@keyframes ws-fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.wstory-text{font-size:14px;color:var(--tm);line-height:1.7}.wstory-text strong{color:var(--td)}
+.wstory-conclusion{margin-top:14px;padding:11px 14px;background:rgba(123,111,174,.07);border-radius:6px;font-size:13px;line-height:1.55;color:var(--td);font-weight:600}
+.bpcard{margin:6px 0;border-radius:8px;overflow:hidden;border:1px solid rgba(46,173,107,.3);background:linear-gradient(170deg,#f6fff9,#fff)}
+.bpcard-h{padding:13px 16px;display:flex;align-items:center;gap:12px}
+.bpcard-icon{flex-shrink:0;width:34px;height:34px;background:rgba(46,173,107,.12);border:1px solid rgba(46,173,107,.3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.bpcard-tag{font-size:9px;font-weight:800;letter-spacing:2.5px;color:var(--gr);text-transform:uppercase;margin-bottom:2px}
+.bpcard-title{font-size:14px;font-weight:700;color:var(--td);line-height:1.35}
+.bpcard-body{padding:6px 18px 18px;font-size:14px;color:var(--tm);line-height:1.7}.bpcard-body strong{color:var(--td)}
+.breather{display:flex;flex-direction:column;align-items:center;padding:18px 24px 10px;min-height:480px;gap:12px}
+.breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
+.breather-caption{text-align:center;padding:4px 0 2px;max-width:640px}.breather-caption p{font-size:14px;line-height:1.6}.breather-caption strong{font-weight:700}
+.bg-warm{background:linear-gradient(170deg,#1e1a15,#1a1a1a,#1a1520)}.bg-warm .breather-caption p{color:rgba(255,255,255,.6)}.bg-warm .breather-caption strong{color:var(--or)}
+.bg-navy{background:linear-gradient(170deg,#12141e,#151822,#141520)}.bg-navy .breather-caption p{color:rgba(255,255,255,.6)}.bg-navy .breather-caption strong{color:var(--or)}
+.bg-earth{background:linear-gradient(170deg,#181a14,#1a1a1a,#15181a)}.bg-earth .breather-caption p{color:rgba(255,255,255,.6)}.bg-earth .breather-caption strong{color:var(--or)}
+.sum-list{counter-reset:snum}
+.sum-item{counter-increment:snum;display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd);font-size:14px;color:var(--tm);line-height:1.65;flex-wrap:nowrap}
+.sum-item-text{flex:1;min-width:0}
+.sum-item:last-child{border-bottom:none}
+.sum-item::before{content:counter(snum,decimal-leading-zero);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:800;color:var(--or);flex-shrink:0;padding-top:2px}
+.sum-item strong{color:var(--td);font-weight:600}
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.rg-card{background:var(--ow);border:1px solid var(--bd);border-radius:8px;padding:14px 16px}
+.rg-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);margin-bottom:6px}
+.rg-value{font-size:24px;font-weight:800;color:var(--td);font-family:'JetBrains Mono',monospace}.rg-value.or{color:var(--or)}.rg-value.gr{color:var(--gr)}
+#retake-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#retake-modal.on{display:flex;animation:rm-fade .25s ease}
+.retake-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(217,69,69,.35);border-radius:14px;padding:32px 36px 26px;max-width:480px;width:100%;text-align:center;color:#F5F2ED;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.retake-tag{font-size:10px;letter-spacing:4px;color:#ff8888;font-weight:700;text-transform:uppercase;margin-bottom:14px}
+.retake-q{font-size:20px;line-height:1.4;font-weight:300;margin-bottom:10px;color:#F5F2ED}
+.retake-sub{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:22px}
+.retake-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn.retake-confirm{background:#ff5555;border-color:#ff5555;color:#fff;font-weight:600}.btn.retake-confirm:hover{background:#e04545}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1620;color:#F5F2ED;font-size:13px;font-weight:500;padding:10px 18px;border-radius:8px;border:1px solid rgba(46,173,107,.5);box-shadow:0 8px 28px rgba(0,0,0,.55);opacity:0;visibility:hidden;transition:opacity .25s,transform .25s,visibility .25s;z-index:9999}
+#toast.on{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}#toast.err{border-color:rgba(217,69,69,.5)}
+@media(max-width:560px){.split{flex-direction:column}.sp-l{width:100%;padding:14px 16px}.sp-r{max-height:none}.fbody{flex-direction:column;padding:30px 24px;gap:24px}.fb-visual{width:180px;height:180px}.results-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="lms-main">
+<div class="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Module 8b</span> · Operationalizing IR</span><div class="pips" id="pp0"></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Security Champions · Module 8b</div>
+      <div class="fb-tt">Operationalizing Incident Response</div>
+      <div class="fb-sb">From theory to daily practice. Alert management, triage, runbooks, and automation. Part 2 of 2.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <!-- Funnel: alerts → triage → response -->
+        <rect x="30" y="20" width="140" height="24" rx="4" fill="rgba(217,69,69,.15)" stroke="rgba(217,69,69,.35)" stroke-width="1.5"/>
+        <text x="100" y="36" text-anchor="middle" fill="#ff8888" font-size="9" font-weight="700" letter-spacing="1">1,247 ALERTS / DAY</text>
+        <line x1="60" y1="44" x2="60" y2="70" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <line x1="140" y1="44" x2="140" y2="70" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <!-- Funnel narrowing -->
+        <polygon points="55,70 145,70 120,108 80,108" fill="rgba(232,129,58,.08)" stroke="rgba(232,129,58,.35)" stroke-width="1.5"/>
+        <text x="100" y="93" text-anchor="middle" fill="var(--or)" font-size="8" font-weight="700" letter-spacing="1">TRIAGE</text>
+        <line x1="90" y1="108" x2="90" y2="130" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <line x1="110" y1="108" x2="110" y2="130" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <rect x="70" y="130" width="60" height="24" rx="4" fill="rgba(46,173,107,.15)" stroke="rgba(46,173,107,.4)" stroke-width="1.5"/>
+        <text x="100" y="146" text-anchor="middle" fill="#7ddf9e" font-size="9" font-weight="700" letter-spacing="1">23 REAL</text>
+        <!-- Animated alert dots falling -->
+        <circle cx="50" cy="15" r="3" fill="rgba(217,69,69,.5)"><animate attributeName="cy" values="10;50;10" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="3s" repeatCount="indefinite"/></circle>
+        <circle cx="80" cy="10" r="2" fill="rgba(217,69,69,.4)"><animate attributeName="cy" values="5;55;5" dur="4s" begin=".5s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="4s" begin=".5s" repeatCount="indefinite"/></circle>
+        <circle cx="130" cy="12" r="2.5" fill="rgba(217,69,69,.45)"><animate attributeName="cy" values="8;48;8" dur="3.5s" begin="1s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="3.5s" begin="1s" repeatCount="indefinite"/></circle>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">Cover</span><div class="snav"><button class="btn pri" onclick="go(1)">Begin →</button></div></div>
+</div>
+
+<!-- ═══ S1 · The alert problem ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Alert management</span><div class="pips" id="pp1"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The alert problem</div></div><div class="sp-r">
+    <div class="prose">A mature monitoring setup generates hundreds or thousands of alerts per day. Most are noise — expected behavior, known patterns, transient spikes that resolve on their own.</div>
+    <div class="prose">The danger isn't too few alerts. It's <strong>too many</strong>. When every alert looks the same, the real ones disappear into the flood. This is <span class="gloss" data-def="Alert fatigue — the psychological effect of receiving so many alerts that responders begin to ignore or dismiss them without investigation. The most dangerous alerts are the ones that look like all the others.">alert fatigue</span>, and it's the number one reason real incidents get missed.</div>
+    <div class="co">If your team ignores alerts because there are too many, the monitoring system is working <em>against</em> you. More coverage with no triage produces less security, not more.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">02 / 25 · Alerts</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S2 · False positive reduction ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Alert management</span><div class="pips" id="pp2"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Reducing false positives</div></div><div class="sp-r">
+    <div class="prose">False positive reduction is an ongoing process, not a one-time configuration. After every incident review, ask: which alerts fired that shouldn't have? Which patterns can be whitelisted?</div>
+    <div class="xp" id="x2a"><button class="xh" aria-expanded="false" aria-controls="x2a-p" onclick="tg('x2a')"><span class="xt">Baseline behavior first</span><span class="xa">›</span></button><div class="xb" id="x2a-p">Before tuning alerts, establish what "normal" looks like. A spike in failed logins at 9 AM Monday is normal — people forgot passwords over the weekend. The same spike at 3 AM Saturday is not. Without a baseline, every anomaly looks like an incident.</div></div>
+    <div class="xp" id="x2b"><button class="xh" aria-expanded="false" aria-controls="x2b-p" onclick="tg('x2b')"><span class="xt">The 80/20 rule for alert tuning</span><span class="xa">›</span></button><div class="xb" id="x2b-p">Track which alert rules generate the most false positives over a month. Usually 20% of your rules generate 80% of the noise. Fix those first. A single well-tuned rule change can eliminate hundreds of daily false positives.</div></div>
+    <div class="prose">The goal isn't zero false positives — that would mean missing real incidents. The goal is a <strong>manageable signal-to-noise ratio</strong> where your team can investigate every alert that fires.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">03 / 25 · Alerts</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S3 · BREATHER · Alert funnel ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · The alert funnel</span><div class="pips" id="pp3"></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div class="breather-visual">
+      <svg viewBox="0 0 520 300" width="520" height="300">
+        <!-- Layer 1: Raw alerts -->
+        <rect x="30" y="20" width="460" height="50" rx="6" fill="rgba(217,69,69,.08)" stroke="rgba(217,69,69,.3)" stroke-width="1.5"/>
+        <text x="260" y="38" text-anchor="middle" fill="#ff8888" font-size="10" font-weight="700" letter-spacing="1.5">RAW ALERTS</text>
+        <text x="260" y="56" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="9">1,247 per day · SIEM, IDS, WAF, endpoint, cloud</text>
+        <!-- Animated alert rectangles -->
+        <rect x="45" y="30" width="28" height="8" rx="2" fill="rgba(217,69,69,.3)"><animate attributeName="opacity" values=".2;.6;.2" dur="2s" repeatCount="indefinite"/></rect>
+        <rect x="80" y="30" width="20" height="8" rx="2" fill="rgba(217,69,69,.25)"><animate attributeName="opacity" values=".3;.7;.3" dur="2.5s" begin=".3s" repeatCount="indefinite"/></rect>
+        <rect x="107" y="30" width="32" height="8" rx="2" fill="rgba(217,69,69,.35)"><animate attributeName="opacity" values=".2;.5;.2" dur="1.8s" begin=".6s" repeatCount="indefinite"/></rect>
+        <!-- Arrow down -->
+        <text x="260" y="86" text-anchor="middle" fill="rgba(255,255,255,.25)" font-size="12">▼</text>
+        <!-- Layer 2: Deduplicated -->
+        <rect x="80" y="95" width="360" height="44" rx="6" fill="rgba(232,129,58,.06)" stroke="rgba(232,129,58,.3)" stroke-width="1.5"/>
+        <text x="260" y="113" text-anchor="middle" fill="var(--or)" font-size="10" font-weight="700" letter-spacing="1.5">DEDUPLICATED &amp; CORRELATED</text>
+        <text x="260" y="129" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="9">~180 unique events · grouped by source, type, timeframe</text>
+        <!-- Arrow down -->
+        <text x="260" y="155" text-anchor="middle" fill="rgba(255,255,255,.25)" font-size="12">▼</text>
+        <!-- Layer 3: Triaged -->
+        <rect x="140" y="164" width="240" height="44" rx="6" fill="rgba(74,143,212,.06)" stroke="rgba(74,143,212,.3)" stroke-width="1.5"/>
+        <text x="260" y="182" text-anchor="middle" fill="#8bb8e8" font-size="10" font-weight="700" letter-spacing="1.5">TRIAGED</text>
+        <text x="260" y="198" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="9">~45 events · filtered by known-good baselines</text>
+        <!-- Arrow down -->
+        <text x="260" y="224" text-anchor="middle" fill="rgba(255,255,255,.25)" font-size="12">▼</text>
+        <!-- Layer 4: Actionable -->
+        <rect x="190" y="233" width="140" height="44" rx="6" fill="rgba(46,173,107,.1)" stroke="rgba(46,173,107,.4)" stroke-width="1.5"/>
+        <text x="260" y="251" text-anchor="middle" fill="#7ddf9e" font-size="10" font-weight="800" letter-spacing="1.5">ACTIONABLE</text>
+        <text x="260" y="267" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="9">5–10 incidents · require human response</text>
+      </svg>
+    </div>
+    <div class="breather-caption"><p>From 1,247 raw alerts to <strong>5–10 that need a human</strong>. Each layer is a process you design.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S4 · BEST PRACTICE · Alert hygiene ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">★</span> Best Practice</span><div class="pips" id="pp4"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Treat alert rules like code</div></div><div class="sp-r">
+    <div class="bpcard">
+      <div class="bpcard-h"><div class="bpcard-icon">★</div><div><div class="bpcard-tag">Best Practice</div><div class="bpcard-title">Maintaining alert rules with the same discipline as production code</div></div></div>
+      <div class="bpcard-body">Alert rules should be version-controlled, reviewed, and tested. When you add a new alert rule, document: what it detects, what the expected false positive rate is, and who owns tuning it.<br><br>Every alert that fires should have a <strong>documented response</strong> — even if that response is "verify and close." An alert without a documented response is an alert that trains your team to ignore alerts.<br><br>Review alert rules quarterly. Delete rules that haven't fired in 90 days or that produce only false positives. Dead rules create the illusion of coverage.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">05 / 25 · Best Practice</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S5 · Triage process ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · Triage</span><div class="pips" id="pp5"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">First response: triage</div></div><div class="sp-r">
+    <div class="prose">Triage is the first-contact process: an alert fires, someone looks at it, and within minutes they decide if it's a real incident or noise.</div>
+    <div class="prose">The triage operator needs three things: <strong>context</strong> (what system, what behavior), <strong>criteria</strong> (written rules for what constitutes an incident), and <strong>authority</strong> (permission to escalate without asking for approval).</div>
+    <div class="prose">Without written criteria, triage depends on individual judgment. Individual judgment varies by experience, by shift, by how tired someone is at 3 AM. Written criteria make triage consistent regardless of who's on rotation.</div>
+    <div class="co">The <span class="gloss" data-def="Service Level Agreement — a formal commitment to respond within a defined time. Critical alerts might have a 15-minute SLA; low-severity alerts might have a 4-hour SLA.">SLA</span> clock starts when the alert fires, not when someone notices it. If your triage process adds 45 minutes before anyone looks at the alert, your effective response time includes those 45 minutes.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">06 / 25 · Triage</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S6 · On-call and rotation ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · Triage</span><div class="pips" id="pp6"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">On-call rotation</div></div><div class="sp-r">
+    <div class="prose">A 24/7 incident response capability requires an on-call rotation. The mechanics matter more than people think.</div>
+    <div class="xp" id="x6a"><button class="xh" aria-expanded="false" aria-controls="x6a-p" onclick="tg('x6a')"><span class="xt">Rotation length</span><span class="xa">›</span></button><div class="xb" id="x6a-p">One-week rotations are standard. Shorter rotations lose context; longer ones cause burnout. The handoff meeting between rotations is where most information gets lost — document the active investigations, not just the resolved ones.</div></div>
+    <div class="xp" id="x6b"><button class="xh" aria-expanded="false" aria-controls="x6b-p" onclick="tg('x6b')"><span class="xt">Escalation paths</span><span class="xa">›</span></button><div class="xb" id="x6b-p">The on-call person needs a clear escalation path: who to call if they can't resolve the issue, what's the backup if the primary escalation contact doesn't respond within 15 minutes, and when does management need to be notified. Write this down and test it quarterly.</div></div>
+    <div class="xp" id="x6c"><button class="xh" aria-expanded="false" aria-controls="x6c-p" onclick="tg('x6c')"><span class="xt">Compensating for on-call burden</span><span class="xa">›</span></button><div class="xb" id="x6c-p">On-call work is real work. Teams that don't acknowledge this with compensatory time off, reduced sprint commitments, or explicit recognition will see their best people avoid the rotation. The result: your least experienced people handle the most critical moments.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">07 / 25 · Triage</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S7 · BREATHER · Triage workflow ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Triage workflow</span><div class="pips" id="pp7"></div></div>
+  <div class="sb"><div class="breather bg-warm">
+    <div class="breather-visual">
+      <svg viewBox="0 0 520 260" width="520" height="260">
+        <!-- Step 1: Alert arrives -->
+        <rect x="10" y="30" width="110" height="60" rx="6" fill="rgba(217,69,69,.1)" stroke="rgba(217,69,69,.35)" stroke-width="1.5"/>
+        <text x="65" y="52" text-anchor="middle" fill="#ff8888" font-size="16">🔔</text>
+        <text x="65" y="70" text-anchor="middle" fill="#ff8888" font-size="9" font-weight="700" letter-spacing="1">ALERT FIRES</text>
+        <text x="65" y="82" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="8">SLA clock starts</text>
+        <!-- Arrow -->
+        <text x="133" y="62" fill="rgba(255,255,255,.25)" font-size="11">→</text>
+        <!-- Step 2: On-call reviews -->
+        <rect x="148" y="30" width="110" height="60" rx="6" fill="rgba(232,129,58,.08)" stroke="rgba(232,129,58,.35)" stroke-width="1.5"/>
+        <text x="203" y="52" text-anchor="middle" fill="var(--or)" font-size="16">👤</text>
+        <text x="203" y="70" text-anchor="middle" fill="var(--or)" font-size="9" font-weight="700" letter-spacing="1">ON-CALL</text>
+        <text x="203" y="82" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="8">Reviews within SLA</text>
+        <!-- Branch: decision -->
+        <line x1="258" y1="55" x2="290" y2="40" stroke="rgba(46,173,107,.4)" stroke-width="1.5"/>
+        <line x1="258" y1="65" x2="290" y2="80" stroke="rgba(217,69,69,.4)" stroke-width="1.5"/>
+        <!-- False positive path -->
+        <rect x="295" y="16" width="100" height="42" rx="6" fill="rgba(46,173,107,.08)" stroke="rgba(46,173,107,.3)" stroke-width="1.5"/>
+        <text x="345" y="34" text-anchor="middle" fill="#7ddf9e" font-size="9" font-weight="700" letter-spacing="1">FALSE POSITIVE</text>
+        <text x="345" y="48" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="8">Close + tune rule</text>
+        <!-- Real incident path -->
+        <rect x="295" y="68" width="100" height="42" rx="6" fill="rgba(217,69,69,.1)" stroke="rgba(217,69,69,.35)" stroke-width="1.5"/>
+        <text x="345" y="86" text-anchor="middle" fill="#ff8888" font-size="9" font-weight="700" letter-spacing="1">REAL INCIDENT</text>
+        <text x="345" y="100" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="8">Create ticket</text>
+        <!-- Arrow to escalation -->
+        <text x="408" y="90" fill="rgba(255,255,255,.25)" font-size="11">→</text>
+        <!-- Step 4: Escalate -->
+        <rect x="420" y="62" width="90" height="50" rx="6" fill="rgba(74,143,212,.08)" stroke="rgba(74,143,212,.3)" stroke-width="1.5"/>
+        <text x="465" y="80" text-anchor="middle" fill="#8bb8e8" font-size="9" font-weight="700" letter-spacing="1">ESCALATE</text>
+        <text x="465" y="94" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="8">Assign to IR team</text>
+        <text x="465" y="106" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="8">Begin containment</text>
+        <!-- Timeline -->
+        <line x1="65" y1="120" x2="465" y2="120" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+        <text x="65" y="138" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8" font-weight="600" letter-spacing="1">0 MIN</text>
+        <text x="203" y="138" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8" font-weight="600" letter-spacing="1">≤ SLA</text>
+        <text x="345" y="138" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8" font-weight="600" letter-spacing="1">DECISION</text>
+        <text x="465" y="138" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8" font-weight="600" letter-spacing="1">RESPONSE</text>
+      </svg>
+    </div>
+    <div class="breather-caption"><p>Every alert follows the same path. <strong>Written criteria</strong> at the decision point keep triage consistent.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S8 · Runbooks vs playbooks ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Runbooks &amp; Playbooks</span><div class="pips" id="pp8"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Runbooks vs playbooks</div></div><div class="sp-r">
+    <div class="prose">These terms are often used interchangeably, but they solve different problems.</div>
+    <div class="prose">A <strong>runbook</strong> is a step-by-step procedure for a specific, known scenario. "If X happens, do Y, then Z." No judgment required. A junior operator at 3 AM should be able to follow it and produce the correct result.</div>
+    <div class="prose">A <strong>playbook</strong> is a broader strategy for a category of incidents. "For ransomware incidents, the priorities are: isolate affected systems, preserve evidence, assess scope, then begin recovery." It requires judgment about which specific steps apply to this particular case.</div>
+    <div class="co"><strong>Start with runbooks.</strong> For your top 5 incident types, write the exact steps. Playbooks emerge naturally as you accumulate runbooks and notice patterns across them.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">09 / 25 · Runbooks</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S9 · Writing effective runbooks ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Runbooks &amp; Playbooks</span><div class="pips" id="pp9"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Writing runbooks that work at 3 AM</div></div><div class="sp-r">
+    <div class="prose">The test for a runbook is simple: can someone who has never seen this incident type before follow it successfully at 3 AM, under pressure, with no one to ask?</div>
+    <div class="prose">If the answer is no, the runbook isn't finished.</div>
+    <div class="xp" id="x9a"><button class="xh" aria-expanded="false" aria-controls="x9a-p" onclick="tg('x9a')"><span class="xt">Concrete over abstract</span><span class="xa">›</span></button><div class="xb" id="x9a-p">Bad: "Verify the affected systems." Good: "Run <code>kubectl get pods -n production | grep CrashLoopBackOff</code> and note the pod names." Every step should include the exact command, the expected output, and what to do if the output doesn't match.</div></div>
+    <div class="xp" id="x9b"><button class="xh" aria-expanded="false" aria-controls="x9b-p" onclick="tg('x9b')"><span class="xt">Include the rollback</span><span class="xa">›</span></button><div class="xb" id="x9b-p">Every containment step should include its reversal. If step 3 is "block IP range X at the firewall," the runbook should say how to unblock it when containment ends. Containment actions without documented reversals become permanent configuration drift.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">10 / 25 · Runbooks</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S10 · BREATHER · Runbook anatomy ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Runbook anatomy</span><div class="pips" id="pp10"></div></div>
+  <div class="sb"><div class="breather bg-earth">
+    <div class="breather-visual">
+      <svg viewBox="0 0 480 280" width="480" height="280">
+        <!-- Runbook document outline -->
+        <rect x="90" y="10" width="300" height="260" rx="8" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+        <!-- Title -->
+        <rect x="110" y="24" width="180" height="14" rx="3" fill="rgba(232,129,58,.25)"/>
+        <text x="200" y="35" text-anchor="middle" fill="var(--or)" font-size="9" font-weight="800" letter-spacing="1">RUNBOOK: BRUTE FORCE</text>
+        <!-- Section 1: Trigger -->
+        <text x="116" y="58" fill="rgba(255,255,255,.5)" font-size="8" font-weight="700" letter-spacing="1">TRIGGER</text>
+        <rect x="116" y="62" width="254" height="24" rx="4" fill="rgba(217,69,69,.08)" stroke="rgba(217,69,69,.2)" stroke-width="1"/>
+        <text x="124" y="77" fill="rgba(255,255,255,.5)" font-size="8" font-family="JetBrains Mono,monospace">&gt;100 failed logins / 10min / single account</text>
+        <!-- Section 2: Steps -->
+        <text x="116" y="104" fill="rgba(255,255,255,.5)" font-size="8" font-weight="700" letter-spacing="1">STEPS</text>
+        <g>
+          <rect x="116" y="110" width="254" height="20" rx="3" fill="rgba(74,143,212,.06)" stroke="rgba(74,143,212,.2)" stroke-width="1"/>
+          <text x="130" y="124" fill="#8bb8e8" font-size="8" font-weight="700">01</text>
+          <text x="150" y="124" fill="rgba(255,255,255,.55)" font-size="8">Lock account immediately</text>
+        </g>
+        <g>
+          <rect x="116" y="134" width="254" height="20" rx="3" fill="rgba(74,143,212,.06)" stroke="rgba(74,143,212,.2)" stroke-width="1"/>
+          <text x="130" y="148" fill="#8bb8e8" font-size="8" font-weight="700">02</text>
+          <text x="150" y="148" fill="rgba(255,255,255,.55)" font-size="8">Check if login succeeded before lockout</text>
+        </g>
+        <g>
+          <rect x="116" y="158" width="254" height="20" rx="3" fill="rgba(74,143,212,.06)" stroke="rgba(74,143,212,.2)" stroke-width="1"/>
+          <text x="130" y="172" fill="#8bb8e8" font-size="8" font-weight="700">03</text>
+          <text x="150" y="172" fill="rgba(255,255,255,.55)" font-size="8">Block source IPs at WAF</text>
+        </g>
+        <!-- Section 3: Rollback -->
+        <text x="116" y="198" fill="rgba(255,255,255,.5)" font-size="8" font-weight="700" letter-spacing="1">ROLLBACK</text>
+        <rect x="116" y="204" width="254" height="20" rx="3" fill="rgba(46,173,107,.06)" stroke="rgba(46,173,107,.2)" stroke-width="1"/>
+        <text x="124" y="218" fill="rgba(46,173,107,.7)" font-size="8" font-family="JetBrains Mono,monospace">↩ Unlock account + remove IP blocks</text>
+        <!-- Section 4: Escalation -->
+        <text x="116" y="242" fill="rgba(255,255,255,.5)" font-size="8" font-weight="700" letter-spacing="1">ESCALATE IF</text>
+        <rect x="116" y="248" width="254" height="14" rx="3" fill="rgba(232,129,58,.06)" stroke="rgba(232,129,58,.2)" stroke-width="1"/>
+        <text x="124" y="259" fill="rgba(232,129,58,.7)" font-size="8">Login succeeded → full account compromise runbook</text>
+      </svg>
+    </div>
+    <div class="breather-caption"><p>Trigger, steps, rollback, escalation. <strong>Every runbook has the same four sections.</strong></p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S11 · QUIZ: alert management ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag">Knowledge check · Alert management</span><div class="pips" id="pp11"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q1"><div class="qq">Your SIEM generates 2,000 alerts per day. Your team investigates about 50 and closes the rest without review. A post-mortem reveals a real breach was in the uninvestigated pile for 3 days. What's the most effective first step?</div>
+      <button class="qo" onclick="pk('q1',0)">A) Hire more analysts to review all 2,000 alerts</button>
+      <button class="qo" onclick="pk('q1',1)">B) Identify the 20% of rules generating 80% of false positives and tune them first</button>
+      <button class="qo" onclick="pk('q1',2)">C) Reduce monitoring coverage to only the most critical systems</button>
+      <button class="qo" onclick="pk('q1',3)">D) Implement AI-based alert correlation to auto-close low-risk alerts</button>
+      <div class="qe" id="q1-e"><strong>B.</strong> Tuning the noisiest rules is the highest-leverage first step. It reduces volume immediately, improves signal-to-noise ratio, and makes the remaining alerts more actionable. Hiring more people (A) doesn't fix the underlying noise problem. Reducing coverage (C) creates blind spots. AI correlation (D) can help later, but without clean rules it automates bad decisions.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">12 / 25 · Quiz</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S12 · Communication channels ═══ -->
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · Communication</span><div class="pips" id="pp12"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Where information flows during an incident</div></div><div class="sp-r">
+    <div class="prose">During an incident, information fragmentation is the most common process failure. Updates in Slack, decisions in email, status calls that not everyone attends, a shared doc that three people update simultaneously.</div>
+    <div class="prose">Define <strong>one primary channel</strong> before the incident happens. All updates, decisions, and status changes go there. Secondary channels can exist for deep technical discussion, but the primary channel is the source of truth.</div>
+    <div class="xp" id="x12a"><button class="xh" aria-expanded="false" aria-controls="x12a-p" onclick="tg('x12a')"><span class="xt">The dedicated incident channel pattern</span><span class="xa">›</span></button><div class="xb" id="x12a-p">Create a new Slack/Teams channel for each major incident: <code>#inc-2026-05-ransomware</code>. Pin the incident summary at the top. All participants join the channel. When the incident closes, the channel becomes an archive — a complete timeline of what happened, who decided what, and when.</div></div>
+    <div class="xp" id="x12b"><button class="xh" aria-expanded="false" aria-controls="x12b-p" onclick="tg('x12b')"><span class="xt">When your primary channel is compromised</span><span class="xa">›</span></button><div class="xb" id="x12b-p">If your company's Slack or email is the compromised system, you need a pre-arranged fallback: a Signal group, personal phone numbers for key people, or a physical meeting point. Document this in a printed card that team members keep at home.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">13 / 25 · Communication</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S13 · BREATHER · Communication hierarchy ═══ -->
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Communication hierarchy</span><div class="pips" id="pp13"></div></div>
+  <div class="sb"><div class="breather bg-navy">
+    <div class="breather-visual">
+      <svg viewBox="0 0 480 250" width="480" height="250">
+        <!-- Primary channel -->
+        <rect x="140" y="15" width="200" height="50" rx="8" fill="rgba(232,129,58,.1)" stroke="rgba(232,129,58,.4)" stroke-width="2"/>
+        <text x="240" y="35" text-anchor="middle" fill="var(--or)" font-size="10" font-weight="800" letter-spacing="1.5">PRIMARY CHANNEL</text>
+        <text x="240" y="52" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="8">#inc-2026-05-ransomware</text>
+        <!-- Lines down to sub-channels -->
+        <line x1="190" y1="65" x2="100" y2="100" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+        <line x1="240" y1="65" x2="240" y2="100" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+        <line x1="290" y1="65" x2="380" y2="100" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+        <!-- Tech channel -->
+        <rect x="30" y="100" width="140" height="42" rx="6" fill="rgba(74,143,212,.06)" stroke="rgba(74,143,212,.25)" stroke-width="1.5"/>
+        <text x="100" y="118" text-anchor="middle" fill="#8bb8e8" font-size="9" font-weight="700" letter-spacing="1">TECH DISCUSSION</text>
+        <text x="100" y="132" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8">Deep debugging</text>
+        <!-- Mgmt channel -->
+        <rect x="170" y="100" width="140" height="42" rx="6" fill="rgba(123,111,174,.06)" stroke="rgba(123,111,174,.25)" stroke-width="1.5"/>
+        <text x="240" y="118" text-anchor="middle" fill="rgba(123,111,174,.8)" font-size="9" font-weight="700" letter-spacing="1">MGMT UPDATES</text>
+        <text x="240" y="132" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8">Business impact</text>
+        <!-- External channel -->
+        <rect x="310" y="100" width="140" height="42" rx="6" fill="rgba(46,173,107,.06)" stroke="rgba(46,173,107,.25)" stroke-width="1.5"/>
+        <text x="380" y="118" text-anchor="middle" fill="#7ddf9e" font-size="9" font-weight="700" letter-spacing="1">EXTERNAL COMMS</text>
+        <text x="380" y="132" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8">Customers, regulators</text>
+        <!-- Arrow back up -->
+        <text x="100" y="160" text-anchor="middle" fill="rgba(255,255,255,.2)" font-size="10">↑ decisions flow back to primary</text>
+        <!-- Fallback -->
+        <rect x="140" y="185" width="200" height="42" rx="8" fill="rgba(217,69,69,.06)" stroke="rgba(217,69,69,.25)" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="240" y="203" text-anchor="middle" fill="#ff8888" font-size="9" font-weight="700" letter-spacing="1">FALLBACK CHANNEL</text>
+        <text x="240" y="218" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8">Signal group / phone tree / in-person</text>
+      </svg>
+    </div>
+    <div class="breather-caption"><p>One source of truth. Secondary channels feed into it. <strong>Fallback defined before you need it.</strong></p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S14 · Automation ═══ -->
+<div class="slide" id="s14">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Automation</span><div class="pips" id="pp14"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What to automate, what to keep human</div></div><div class="sp-r">
+    <div class="prose">Automation in incident response follows a clear hierarchy: automate the <strong>detection</strong>, automate the <strong>enrichment</strong>, semi-automate the <strong>containment</strong>, and keep the <strong>decision</strong> human.</div>
+    <div class="prose">Detection automation is your monitoring and alerting — already automated in most organizations. Enrichment automation gathers context: who owns the affected system, what's the recent change history, is the source IP known-bad.</div>
+    <div class="prose">Containment automation is where it gets nuanced. Automatic account lockout on brute force? Usually safe to automate. Automatic network isolation of a production server? That needs human approval — the blast radius is too high.</div>
+    <div class="co">The rule: <strong>automate actions that are safe to get wrong.</strong> Locking an account incorrectly is a 5-minute fix. Isolating the wrong production server is a revenue-impacting outage.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">15 / 25 · Automation</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S15 · SOAR and integration ═══ -->
+<div class="slide" id="s15">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Automation</span><div class="pips" id="pp15"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">SOAR: connecting the tools</div></div><div class="sp-r">
+    <div class="prose"><span class="gloss" data-def="Security Orchestration, Automation, and Response — a platform that connects security tools (SIEM, firewall, ticketing, threat intel) and automates workflows between them.">SOAR</span> platforms connect your monitoring, ticketing, and response tools into automated workflows. An alert fires → a ticket is created → threat intelligence is queried → enrichment data is attached → the on-call person receives a notification with full context.</div>
+    <div class="prose">Without SOAR, the on-call person does all of this manually: open the SIEM, check the IP reputation, look up the asset owner, create a ticket, copy the details. This takes 15–20 minutes per alert. With SOAR, it takes seconds.</div>
+    <div class="xp" id="x15a"><button class="xh" aria-expanded="false" aria-controls="x15a-p" onclick="tg('x15a')"><span class="xt">Start simple</span><span class="xa">›</span></button><div class="xb" id="x15a-p">You don't need a full SOAR platform to start automating. A Python script that queries your SIEM API and creates a Jira ticket with enrichment data is a perfectly valid first step. Build the workflow manually first, then automate the steps that are repetitive and low-risk.</div></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">16 / 25 · Automation</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn pri" onclick="go(16)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S16 · BREATHER · Automation layers ═══ -->
+<div class="slide" id="s16">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Automation layers</span><div class="pips" id="pp16"></div></div>
+  <div class="sb"><div class="breather bg-earth">
+    <div class="breather-visual">
+      <svg viewBox="0 0 500 260" width="500" height="260">
+        <!-- Layer 1: Detection - fully auto -->
+        <rect x="30" y="20" width="440" height="44" rx="6" fill="rgba(46,173,107,.08)" stroke="rgba(46,173,107,.35)" stroke-width="1.5"/>
+        <text x="50" y="38" fill="#7ddf9e" font-size="10" font-weight="800" letter-spacing="1">DETECTION</text>
+        <text x="50" y="52" fill="rgba(255,255,255,.35)" font-size="8">SIEM rules, IDS signatures, anomaly detection</text>
+        <rect x="370" y="28" width="86" height="24" rx="12" fill="rgba(46,173,107,.2)" stroke="rgba(46,173,107,.4)" stroke-width="1"/>
+        <text x="413" y="44" text-anchor="middle" fill="#7ddf9e" font-size="8" font-weight="700" letter-spacing="1">AUTOMATED</text>
+        <!-- Layer 2: Enrichment - fully auto -->
+        <rect x="30" y="74" width="440" height="44" rx="6" fill="rgba(46,173,107,.06)" stroke="rgba(46,173,107,.25)" stroke-width="1.5"/>
+        <text x="50" y="92" fill="#7ddf9e" font-size="10" font-weight="800" letter-spacing="1">ENRICHMENT</text>
+        <text x="50" y="106" fill="rgba(255,255,255,.35)" font-size="8">IP reputation, asset owner, recent changes, threat intel</text>
+        <rect x="370" y="82" width="86" height="24" rx="12" fill="rgba(46,173,107,.2)" stroke="rgba(46,173,107,.4)" stroke-width="1"/>
+        <text x="413" y="98" text-anchor="middle" fill="#7ddf9e" font-size="8" font-weight="700" letter-spacing="1">AUTOMATED</text>
+        <!-- Layer 3: Containment - semi-auto -->
+        <rect x="30" y="128" width="440" height="44" rx="6" fill="rgba(232,129,58,.06)" stroke="rgba(232,129,58,.3)" stroke-width="1.5"/>
+        <text x="50" y="146" fill="var(--or)" font-size="10" font-weight="800" letter-spacing="1">CONTAINMENT</text>
+        <text x="50" y="160" fill="rgba(255,255,255,.35)" font-size="8">Account lockout, IP blocking, network isolation</text>
+        <rect x="354" y="136" width="102" height="24" rx="12" fill="rgba(232,129,58,.15)" stroke="rgba(232,129,58,.35)" stroke-width="1"/>
+        <text x="405" y="152" text-anchor="middle" fill="var(--or)" font-size="8" font-weight="700" letter-spacing="1">SEMI-AUTO</text>
+        <!-- Layer 4: Decision - human -->
+        <rect x="30" y="182" width="440" height="44" rx="6" fill="rgba(74,143,212,.06)" stroke="rgba(74,143,212,.25)" stroke-width="1.5"/>
+        <text x="50" y="200" fill="#8bb8e8" font-size="10" font-weight="800" letter-spacing="1">DECISION</text>
+        <text x="50" y="214" fill="rgba(255,255,255,.35)" font-size="8">Severity classification, scope assessment, business impact</text>
+        <rect x="370" y="190" width="86" height="24" rx="12" fill="rgba(74,143,212,.15)" stroke="rgba(74,143,212,.3)" stroke-width="1"/>
+        <text x="413" y="206" text-anchor="middle" fill="#8bb8e8" font-size="8" font-weight="700" letter-spacing="1">HUMAN</text>
+        <!-- Side annotation -->
+        <text x="250" y="252" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="9" font-weight="600" letter-spacing="1">SAFE TO GET WRONG → AUTOMATE · HIGH BLAST RADIUS → HUMAN</text>
+      </svg>
+    </div>
+    <div class="breather-caption"><p>Automate what's <strong>safe to get wrong</strong>. Keep humans on decisions with <strong>high blast radius</strong>.</p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S17 · WAR STORY: alert storm ═══ -->
+<div class="slide" id="s17">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Real case</span><div class="pips" id="pp17"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">When the automation fails</div></div><div class="sp-r">
+    <div class="prose">A fintech company had a well-designed SOAR workflow: brute force detection → automatic account lockout → ticket creation → notification.</div>
+    <button class="wstory" id="ws1" onclick="tgw('ws1')">
+      <span class="wstory-h">
+        <span class="wstory-icon">🏦</span>
+        <span class="wstory-meta">
+          <span class="wstory-tag">From the field · automation gone wrong</span>
+          <span class="wstory-title">The attacker triggered 400 lockouts in 10 minutes — by design</span>
+        </span>
+        <span class="wstory-arrow">›</span>
+      </span>
+      <span class="wstory-body">
+        <div class="wstory-text">An attacker deliberately triggered the brute force detection across <strong>400 customer accounts</strong> simultaneously. The automation faithfully locked all 400 accounts. The customers couldn't access the platform. The support team was overwhelmed.</div>
+        <div class="wstory-text" style="margin-top:8px">The attacker's real target was the <strong>three accounts they had already compromised</strong> using credentials from a separate data breach. With the support team distracted by 400 lockout complaints, the attacker had hours of unmonitored access to the three compromised accounts.</div>
+        <div class="wstory-conclusion">The automation was correct — it did exactly what it was designed to do. But the attacker used the automation as a weapon. Rate-limiting the automation (max 10 lockouts per minute) and flagging unusual volumes for human review would have caught this.</div>
+      </span>
+    </button>
+  </div></div></div>
+  <div class="sf"><span class="shint">18 / 25 · War story</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S18 · BEST PRACTICE · Tabletop exercises ═══ -->
+<div class="slide" id="s18">
+  <div class="sh"><span class="stag"><span class="hl">★</span> Best Practice</span><div class="pips" id="pp18"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Test the process, not the tools</div></div><div class="sp-r">
+    <div class="bpcard">
+      <div class="bpcard-h"><div class="bpcard-icon">★</div><div><div class="bpcard-tag">Best Practice</div><div class="bpcard-title">Running tabletop exercises quarterly to test your IR process</div></div></div>
+      <div class="bpcard-body">A tabletop exercise is a simulated incident where the team walks through their response process without touching real systems. The facilitator presents a scenario, the team responds as they would in a real incident, and gaps become visible.<br><br>Common discoveries: the escalation contact list is outdated, the runbook references a tool the team no longer uses, nobody knows the process for external communication, the backup restoration was never tested.<br><br><strong>Run one per quarter. 60–90 minutes. No preparation required from participants.</strong> The facilitator prepares the scenario. The team brings their actual process.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">19 / 25 · Best Practice</span><div class="snav"><button class="btn" onclick="go(17)">← Back</button><button class="btn pri" onclick="go(19)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S19 · BEST PRACTICE · Metrics ═══ -->
+<div class="slide" id="s19">
+  <div class="sh"><span class="stag"><span class="hl">★</span> Best Practice</span><div class="pips" id="pp19"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Measuring what matters</div></div><div class="sp-r">
+    <div class="bpcard">
+      <div class="bpcard-h"><div class="bpcard-icon">★</div><div><div class="bpcard-tag">Best Practice</div><div class="bpcard-title">Tracking four IR metrics that actually drive improvement</div></div></div>
+      <div class="bpcard-body"><strong>MTTD — Mean Time to Detect.</strong> How long from when the incident started to when you knew about it. Drives investment in monitoring.<br><br><strong>MTTR — Mean Time to Respond.</strong> How long from detection to first containment action. Drives investment in triage process and runbooks.<br><br><strong>False Positive Rate.</strong> What percentage of triaged alerts turn out to be non-incidents. Drives alert tuning priorities.<br><br><strong>Recurrence Rate.</strong> What percentage of incidents are repeat types. Drives lessons-learned effectiveness. If the same incident type recurs, your post-incident improvements aren't working.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">20 / 25 · Best Practice</span><div class="snav"><button class="btn" onclick="go(18)">← Back</button><button class="btn pri" onclick="go(20)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S20 · BREATHER · Metrics dashboard ═══ -->
+<div class="slide" id="s20">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · IR metrics</span><div class="pips" id="pp20"></div></div>
+  <div class="sb"><div class="breather bg-warm">
+    <div class="breather-visual">
+      <svg viewBox="0 0 500 240" width="500" height="240">
+        <!-- Four metric cards -->
+        <!-- MTTD -->
+        <rect x="20" y="20" width="220" height="90" rx="8" fill="rgba(217,69,69,.06)" stroke="rgba(217,69,69,.25)" stroke-width="1.5"/>
+        <text x="40" y="42" fill="rgba(255,255,255,.4)" font-size="8" font-weight="700" letter-spacing="1.5">MTTD · MEAN TIME TO DETECT</text>
+        <text x="40" y="68" fill="#ff8888" font-size="22" font-weight="800" font-family="JetBrains Mono,monospace">4.2h</text>
+        <text x="100" y="68" fill="rgba(255,255,255,.3)" font-size="9">→ target: &lt;1h</text>
+        <text x="40" y="86" fill="rgba(255,255,255,.3)" font-size="8">Invest in: monitoring coverage</text>
+        <!-- Trend line -->
+        <polyline points="40,96 70,92 100,88 130,90 160,82 190,78 220,74" fill="none" stroke="rgba(217,69,69,.4)" stroke-width="1.5"/>
+        <!-- MTTR -->
+        <rect x="260" y="20" width="220" height="90" rx="8" fill="rgba(232,129,58,.06)" stroke="rgba(232,129,58,.25)" stroke-width="1.5"/>
+        <text x="280" y="42" fill="rgba(255,255,255,.4)" font-size="8" font-weight="700" letter-spacing="1.5">MTTR · MEAN TIME TO RESPOND</text>
+        <text x="280" y="68" fill="var(--or)" font-size="22" font-weight="800" font-family="JetBrains Mono,monospace">38m</text>
+        <text x="330" y="68" fill="rgba(255,255,255,.3)" font-size="9">→ target: &lt;15m</text>
+        <text x="280" y="86" fill="rgba(255,255,255,.3)" font-size="8">Invest in: triage + runbooks</text>
+        <polyline points="280,96 310,94 340,88 370,85 400,80 430,76 460,72" fill="none" stroke="rgba(232,129,58,.4)" stroke-width="1.5"/>
+        <!-- False Positive Rate -->
+        <rect x="20" y="130" width="220" height="90" rx="8" fill="rgba(74,143,212,.06)" stroke="rgba(74,143,212,.25)" stroke-width="1.5"/>
+        <text x="40" y="152" fill="rgba(255,255,255,.4)" font-size="8" font-weight="700" letter-spacing="1.5">FALSE POSITIVE RATE</text>
+        <text x="40" y="178" fill="#8bb8e8" font-size="22" font-weight="800" font-family="JetBrains Mono,monospace">72%</text>
+        <text x="100" y="178" fill="rgba(255,255,255,.3)" font-size="9">→ target: &lt;30%</text>
+        <text x="40" y="196" fill="rgba(255,255,255,.3)" font-size="8">Invest in: alert tuning</text>
+        <polyline points="40,206 70,204 100,198 130,192 160,186 190,184 220,180" fill="none" stroke="rgba(74,143,212,.4)" stroke-width="1.5"/>
+        <!-- Recurrence Rate -->
+        <rect x="260" y="130" width="220" height="90" rx="8" fill="rgba(46,173,107,.06)" stroke="rgba(46,173,107,.25)" stroke-width="1.5"/>
+        <text x="280" y="152" fill="rgba(255,255,255,.4)" font-size="8" font-weight="700" letter-spacing="1.5">RECURRENCE RATE</text>
+        <text x="280" y="178" fill="#7ddf9e" font-size="22" font-weight="800" font-family="JetBrains Mono,monospace">18%</text>
+        <text x="340" y="178" fill="rgba(255,255,255,.3)" font-size="9">→ target: &lt;5%</text>
+        <text x="280" y="196" fill="rgba(255,255,255,.3)" font-size="8">Invest in: lessons learned</text>
+        <polyline points="280,206 310,200 340,196 370,190 400,186 430,184 460,180" fill="none" stroke="rgba(46,173,107,.4)" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="breather-caption"><p>Each metric points to a specific investment. <strong>Measure what drives improvement, not what's easy to count.</strong></p></div>
+  </div></div>
+  <div class="sf"><span class="shint">Time to think</span><div class="snav"><button class="btn" onclick="go(19)">← Back</button><button class="btn pri" onclick="go(21)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S21 · QUIZ: automation ═══ -->
+<div class="slide" id="s21">
+  <div class="sh"><span class="stag">Knowledge check · Automation</span><div class="pips" id="pp21"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
+    <div class="qw" id="q2"><div class="qq">Your team is deciding which IR actions to automate first. Which of the following is the safest candidate for full automation?</div>
+      <button class="qo" onclick="pk('q2',0)">A) Isolating a production database from the network</button>
+      <button class="qo" onclick="pk('q2',1)">B) Sending executive notification for critical incidents</button>
+      <button class="qo" onclick="pk('q2',2)">C) Enriching alerts with IP reputation and asset owner data</button>
+      <button class="qo" onclick="pk('q2',3)">D) Shutting down a compromised container cluster</button>
+      <div class="qe" id="q2-e"><strong>C — Enrichment.</strong> Enrichment adds information to an alert without changing any system state. If the enrichment data is wrong, no damage occurs — someone just gets inaccurate context. Database isolation (A) and cluster shutdown (D) have high blast radius. Executive notification (B) is safe but low value — the real win is automating the data gathering, not the notification.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">22 / 25 · Quiz</span><div class="snav"><button class="btn" onclick="go(20)">← Back</button><button class="btn pri" onclick="go(22)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S22 · Summary ═══ -->
+<div class="slide" id="s22">
+  <div class="sh"><span class="stag"><span class="hl">Summary</span> · Part 2</span><div class="pips" id="pp22"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What you covered</div></div><div class="sp-r">
+    <div class="sum-list">
+      <div class="sum-item"><span class="sum-item-text"><strong>Alert fatigue</strong> is the number one reason real incidents get missed. Tune the noisiest 20% of rules first to reduce 80% of the noise.</span></div>
+      <div class="sum-item"><span class="sum-item-text"><strong>Triage</strong> requires written criteria, defined SLAs, and clear escalation paths. The on-call person should never have to improvise the process.</span></div>
+      <div class="sum-item"><span class="sum-item-text"><strong>Runbooks</strong> are step-by-step procedures for known scenarios. They include trigger, steps, rollback, and escalation. <strong>Playbooks</strong> are broader strategies that emerge from accumulated runbooks.</span></div>
+      <div class="sum-item"><span class="sum-item-text"><strong>Automate what's safe to get wrong.</strong> Detection and enrichment are fully automatable. Containment is semi-auto. Decisions stay human.</span></div>
+      <div class="sum-item"><span class="sum-item-text">Track <strong>MTTD, MTTR, false positive rate, and recurrence rate.</strong> Each metric points to a specific investment area.</span></div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">23 / 25 · Summary</span><div class="snav"><button class="btn" onclick="go(21)">← Back</button><button class="btn pri" onclick="go(23)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S23 · SCORE GRID ═══ -->
+<div class="slide" id="s23">
+  <div class="sh"><span class="stag"><span class="hl">Results</span> · Your score</span><div class="pips" id="pp23"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Your results</div></div><div class="sp-r">
+    <div class="prose">Here's how you did across this module.</div>
+    <div class="results-grid" id="resultsGrid">
+      <div class="rg-card"><div class="rg-label">Total XP</div><div class="rg-value or" id="rg-xp">0</div></div>
+      <div class="rg-card"><div class="rg-label">Rank</div><div class="rg-value" id="rg-rank">RECRUIT</div></div>
+      <div class="rg-card"><div class="rg-label">Best streak</div><div class="rg-value gr" id="rg-streak">0</div></div>
+      <div class="rg-card"><div class="rg-label">Reflections</div><div class="rg-value" id="rg-reflect">0</div></div>
+    </div>
+    <div class="prose" style="font-size:13px;color:var(--mu)">Not happy with your score? You can retake the module to improve.</div>
+    <div style="margin-top:8px"><button class="btn" style="border-color:rgba(217,69,69,.4);color:#ff8888;background:rgba(217,69,69,.06)" onclick="openRetake()">↺ Retake module</button></div>
+  </div></div></div>
+  <div class="sf"><span class="shint">24 / 25 · Results</span><div class="snav"><button class="btn" onclick="go(22)">← Back</button><button class="btn pri" onclick="go(24)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S24 · CLOSING ═══ -->
+<div class="slide" id="s24">
+  <div class="sh"><span class="stag"><span class="hl">Module 8</span> · Complete</span><div class="pips" id="pp24"></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Module 8 · Complete</div>
+      <div class="fb-tt">Both parts done.</div>
+      <div class="fb-sb">You now have the full incident response picture: the PICERL cycle from Part 1, and the operational processes — alert management, triage, runbooks, automation, and metrics — from Part 2. The next time an alert fires, you'll know not just what to do, but why the process is designed that way.</div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 200 200" width="220" height="220">
+        <!-- Shield with checkmark -->
+        <path d="M100,25 L160,55 L160,110 C160,150 130,175 100,190 C70,175 40,150 40,110 L40,55 Z" fill="none" stroke="rgba(46,173,107,.35)" stroke-width="2"/>
+        <path d="M100,40 L148,65 L148,108 C148,142 124,163 100,176 C76,163 52,142 52,108 L52,65 Z" fill="rgba(46,173,107,.08)"/>
+        <polyline points="78,105 94,121 124,88" fill="none" stroke="#7ddf9e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+          <animate attributeName="stroke-dasharray" from="0 100" to="80 100" dur="1s" begin=".5s" fill="freeze"/>
+        </polyline>
+        <text x="100" y="155" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8" font-weight="700" letter-spacing="2">MODULE COMPLETE</text>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">25 / 25 · Complete</span><div class="snav"><button class="btn" onclick="go(23)">← Back</button></div></div>
+</div>
+
+</div><!-- end .deck -->
+
+<!-- ═══ RETAKE MODAL ═══ -->
+<div id="retake-modal">
+  <div class="retake-card">
+    <div class="retake-tag">Retake module</div>
+    <div class="retake-q">Reset all progress and start over?</div>
+    <div class="retake-sub">Your XP, streak, quiz answers, and wagers will be cleared. This cannot be undone.</div>
+    <div class="retake-actions">
+      <button class="btn" onclick="closeRetake()">Cancel</button>
+      <button class="btn retake-confirm" onclick="doRetake()">Reset &amp; restart</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REFLECT MODAL ═══ -->
+<div id="reflect-modal">
+  <div class="rm-card">
+    <button class="rm-close" onclick="closeReflect()">×</button>
+    <div class="rm-tag">Reflect</div>
+    <div class="rm-q" id="rm-q"></div>
+    <div class="rm-sub" id="rm-sub"></div>
+    <div class="rm-actions"><button class="btn pri" onclick="closeReflect()">Got it →</button></div>
+  </div>
+</div>
+
+<!-- Toast + Glossary tooltip -->
+<div id="toast"></div>
+<div id="gloss-tip"></div>
+
+<script>
+const T=25;let c=0;
+
+const STORAGE_KEY='sc_m8b_ir_v1';
+const RANKS=[
+  {min:0,name:'RECRUIT'},
+  {min:8,name:'APPRENTICE'},
+  {min:18,name:'CHAMPION'},
+  {min:32,name:'CAPTAIN'},
+  {min:50,name:'LEGEND'}
+];
+const DEFAULT_STATE={xp:0,streak:0,bestStreak:0,answers:{},wagers:{},reflections:[]};
+let state={...DEFAULT_STATE,answers:{},wagers:{},reflections:[]};
+
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const s=JSON.parse(raw);state={...DEFAULT_STATE,...s,answers:s.answers||{},wagers:s.wagers||{},reflections:s.reflections||[]}}}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+function rankFor(xp){let r=RANKS[0];for(const x of RANKS){if(xp>=x.min)r=x}return r}
+
+function renderChips(){
+  const r=rankFor(state.xp);
+  document.querySelectorAll('.scorechip').forEach(chip=>{
+    chip.querySelector('.sc-rank').textContent=r.name[0];
+    chip.querySelector('.sc-rank').title=r.name;
+    chip.querySelector('.sc-xp').innerHTML=`<b>${state.xp}</b> XP`;
+    const sk=chip.querySelector('.sc-streak');
+    if(state.streak>=2){sk.classList.add('live');sk.innerHTML=`<span class="sc-flame">🔥</span> ${state.streak}`}
+    else{sk.classList.remove('live');sk.innerHTML=`<span style="opacity:.5">·</span> ${r.name}`}
+  });
+}
+function bumpChips(){document.querySelectorAll('.scorechip').forEach(c=>{c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')})}
+
+/* ── Expose on window for inline onclick ── */
+window.go=go;window.tg=tg;window.tgw=tgw;window.pk=pk;
+window.openRetake=openRetake;window.closeRetake=closeRetake;window.doRetake=doRetake;
+window.openReflect=openReflect;window.closeReflect=closeReflect;
+
+function go(n){
+  if(n<0||n>=T)return;
+  document.getElementById('s'+c).classList.remove('on');
+  c=n;
+  const slide=document.getElementById('s'+n);
+  // Reset CSS animations
+  const animated=slide.querySelectorAll('.breather *, .fb-visual *, [class*="rg-"], .scene, .scene *');
+  animated.forEach(el=>{const a=el.style.animation;el.style.animation='none';el.offsetHeight;el.style.animation=a||''});
+  slide.classList.add('on');
+  const r=slide.querySelector('.sp-r');if(r)r.scrollTop=0;
+  document.querySelectorAll('.pips').forEach(p=>bp(p));
+  window.scrollTo(0,0);
+  if(n===23)populateResults();
+}
+function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(c-1)}});
+function tg(id){const el=document.getElementById(id),b=el.querySelector('.xb'),a=el.querySelector('.xa');b.classList.toggle('op');if(a)a.classList.toggle('op')}
+function tgw(id){const el=document.getElementById(id);if(el)el.classList.toggle('op')}
+
+const ans={q1:1,q2:2};
+
+const WAGERS=[
+  {key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},
+  {key:'pretty',mult:2,name:'Pretty sure',sub:'×2 if right · 1 if wrong'},
+  {key:'guess',mult:1,name:'Just guessing',sub:'×1 either way'}
+];
+function buildWagerUI(qw){
+  const qq=qw.querySelector('.qq');if(!qq)return;
+  const qid=qw.id;
+  const w=document.createElement('div');
+  w.className='wager';w.dataset.qid=qid;
+  w.innerHTML=`<div class="wager-lab">How confident are you?</div>
+    <div class="wager-row">${WAGERS.map(g=>`<button class="wager-btn" data-w="${g.key}" data-m="${g.mult}"><div class="wb-top"><span class="wb-mult">×${g.mult}</span><span class="wb-name">${g.name}</span></div><div class="wb-sub">${g.sub}</div></button>`).join('')}</div>`;
+  qq.parentNode.insertBefore(w,qq.nextSibling);
+  w.querySelectorAll('.wager-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      if(w.classList.contains('locked'))return;
+      w.querySelectorAll('.wager-btn').forEach(b=>b.classList.remove('pk'));
+      btn.classList.add('pk');
+      state.wagers[qid]=parseInt(btn.dataset.m,10);
+      saveState();
+    };
+  });
+  if(state.wagers[qid]){
+    const b=w.querySelector(`.wager-btn[data-m="${state.wagers[qid]}"]`);
+    if(b)b.classList.add('pk');
+  }
+}
+function lockWager(qid){
+  const w=document.querySelector(`.wager[data-qid="${qid}"]`);
+  if(!w)return;
+  w.classList.add('locked');
+  w.querySelectorAll('.wager-btn').forEach(b=>b.disabled=true);
+  const mult=state.wagers[qid]||1;
+  const wname=WAGERS.find(g=>g.mult===mult)?.name||'Just guessing';
+  w.innerHTML=`<div class="wager-locked-note">🎯 You wagered <b>${wname}</b> (×${mult})</div>`;
+}
+
+function pk(q,i){
+  const w=document.getElementById(q),o=w.querySelectorAll('.qo');
+  if(o[0].classList.contains('pk'))return;
+  if(!state.wagers[q])state.wagers[q]=1;
+  const mult=state.wagers[q];
+  const k=ans[q];
+  const correct=(i===k);
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});
+  let pts=0,kind='zero',msg='';
+  if(correct){
+    pts=mult*3;
+    state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak;
+    kind='';
+    if(mult===3)msg=`Confident and correct. <b>+${pts} XP</b>${state.streak>=2?` · 🔥 ${state.streak} streak`:''}`;
+    else if(mult===2)msg=`Right call. <b>+${pts} XP</b>`;
+    else msg=`Lucky guess — still counts. <b>+${pts} XP</b>`;
+  }else{
+    if(mult===3){pts=0;kind='zero';msg=`Confidence didn't pay off here. <b>+0 XP</b> · streak reset.`}
+    else if(mult===2){pts=1;kind='humility';msg=`Humility bonus — knowing you might be wrong is half the skill. <b>+1 XP</b>`}
+    else{pts=1;kind='humility';msg=`Honest guess — keep going. <b>+1 XP</b>`}
+    state.streak=0;
+  }
+  state.xp+=pts;
+  state.answers[q]={picked:i,correct,wager:mult,points:pts};
+  saveState();renderChips();bumpChips();lockWager(q);
+  const e=document.getElementById(q+'-e');
+  e.classList.add('sh');
+  if(!e.querySelector('.qe-score')){
+    const s=document.createElement('div');s.className='qe-score';
+    s.innerHTML=`<span class="qs-pts ${kind}">${pts>0?'+':''}${pts} XP</span><span class="qs-msg">${msg}</span>`;
+    e.appendChild(s);
+  }
+}
+
+function injectChips(){
+  document.querySelectorAll('.sh').forEach(sh=>{
+    const stag=sh.querySelector('.stag');
+    const pips=sh.querySelector('.pips');
+    if(!stag||!pips)return;
+    const right=document.createElement('div');right.className='sh-right';right.style.cssText='display:flex;align-items:center;gap:6px;flex-shrink:0';
+    pips.parentNode.insertBefore(right,pips);right.appendChild(pips);
+    const chip=document.createElement('div');chip.className='scorechip';chip.title='Your XP and streak';
+    chip.innerHTML=`<span class="sc-rank">R</span><span class="sc-xp"><b>0</b> XP</span><span class="sc-streak"><span style="opacity:.5">·</span> RECRUIT</span>`;
+    right.insertBefore(chip,pips);
+  });
+}
+
+function populateResults(){
+  const r=rankFor(state.xp);
+  const xpEl=document.getElementById('rg-xp');if(xpEl)xpEl.textContent=state.xp;
+  const rkEl=document.getElementById('rg-rank');if(rkEl)rkEl.textContent=r.name;
+  const stEl=document.getElementById('rg-streak');if(stEl)stEl.textContent=state.bestStreak;
+  const rfEl=document.getElementById('rg-reflect');if(rfEl)rfEl.textContent=state.reflections?state.reflections.length:0;
+}
+
+function openRetake(){document.getElementById('retake-modal').classList.add('on')}
+function closeRetake(){document.getElementById('retake-modal').classList.remove('on')}
+function doRetake(){localStorage.removeItem(STORAGE_KEY);location.reload()}
+
+const REFLECT_PROMPTS={};
+function openReflect(key){
+  const p=REFLECT_PROMPTS[key];if(!p)return;
+  document.getElementById('rm-q').innerHTML=p.q;
+  document.getElementById('rm-sub').textContent=p.sub;
+  document.getElementById('reflect-modal').classList.add('on');
+  if(state.reflections&&!state.reflections.includes(key)){
+    state.reflections.push(key);
+    state.xp+=2;saveState();renderChips();bumpChips();
+  }
+}
+function closeReflect(){document.getElementById('reflect-modal').classList.remove('on')}
+document.getElementById('reflect-modal').addEventListener('click',e=>{if(e.target.id==='reflect-modal')closeReflect()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.getElementById('reflect-modal').classList.contains('on'))closeReflect();if(document.getElementById('retake-modal').classList.contains('on'))closeRetake()}});
+
+/* ── Glossary tooltip system ── */
+const gt=document.getElementById('gloss-tip');
+document.addEventListener('mouseover',e=>{
+  const g=e.target.closest('.gloss');
+  if(!g||!g.dataset.def)return;
+  gt.textContent=g.dataset.def;
+  gt.classList.add('on');
+  const r=g.getBoundingClientRect();
+  let top=r.top-gt.offsetHeight-10;
+  let cls='';
+  if(top<8){top=r.bottom+10;cls='below'}
+  gt.className='on'+(cls?' '+cls:'');
+  gt.style.top=top+'px';
+  gt.style.left=Math.max(8,Math.min(r.left,window.innerWidth-gt.offsetWidth-8))+'px';
+});
+document.addEventListener('mouseout',e=>{
+  if(e.target.closest('.gloss'))gt.className='';
+});
+
+/* ── Init ── */
+loadState();
+injectChips();
+document.querySelectorAll('.qw').forEach(buildWagerUI);
+Object.keys(state.answers).forEach(q=>{
+  const a=state.answers[q];
+  const qw=document.getElementById(q);if(!qw)return;
+  const o=qw.querySelectorAll('.qo'),k=ans[q];
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===a.picked&&j!==k)x.classList.add('no')});
+  const e=document.getElementById(q+'-e');if(e){e.classList.add('sh');if(!e.querySelector('.qe-score')){const s=document.createElement('div');s.className='qe-score';s.innerHTML=`<span class="qs-pts ${a.points===0?'zero':(a.correct?'':'humility')}">+${a.points} XP</span><span class="qs-msg">Already answered. ${a.correct?'Correct.':'Try the retake to improve.'}</span>`;e.appendChild(s)}}
+  lockWager(q);
+});
+renderChips();
+document.querySelectorAll('.pips').forEach(p=>bp(p));
+</script>
+</main>
+</body>
+</html>
