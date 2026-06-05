@@ -166,6 +166,78 @@ canvas#bg{position:fixed;inset:0;z-index:0}
 .guy.thinking .gs-mood::after{content:'Thinking...'}
 .guy.happy .gs-label{color:var(--gr)}
 .guy.happy .gs-mood::after{content:'Here you go!'}
+.guy.typing-user .gs-label{color:var(--or)}
+.guy.typing-user .gs-mood::after{content:'Listening...'}
+.guy.bored .gs-label{color:var(--mu)}
+.guy.bored .gs-mood::after{content:'Still here...'}
+.guy.sad .gs-label{color:#D94545}
+.guy.sad .gs-mood::after{content:'Oops...'}
+.guy.curious .gs-label{color:var(--or)}
+.guy.curious .gs-mood::after{content:'Hmm, let\27s see...'}
+.guy.nod .gs-label{color:var(--gr)}
+.guy.nod .gs-mood::after{content:'There you go!'}
+.guy.proud .gs-label{color:var(--gr)}
+.guy.proud .gs-mood::after{content:'Great job!'}
+
+/* ═══ TYPING-USER: lean forward, eyes toward chat ═══ */
+.guy.typing-user{animation:float-lean 2s ease-in-out infinite}
+@keyframes float-lean{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(-3deg)}}
+.guy.typing-user .eye-pupil{transform:translate(-3px,0)}
+.guy.typing-user .antenna-dot{animation:fast-blink .4s ease-in-out infinite!important}
+@keyframes fast-blink{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ═══ BORED: yawn + foot tap ═══ */
+.guy.bored{animation:float-bored 5s ease-in-out infinite}
+@keyframes float-bored{0%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}60%{transform:translateY(-2px)}}
+.guy.bored .eye-lid{animation:sleepy-blink 3s ease-in-out infinite!important}
+@keyframes sleepy-blink{0%,30%,100%{transform:scaleY(0)}35%,90%{transform:scaleY(.7)}}
+.guy.bored .eye-pupil{transform:translate(0,2px)}
+.guy.bored .mouth-normal{opacity:0}
+.guy.bored .mouth-yawn{opacity:1}
+.guy.bored .zzz{opacity:1}
+.guy.bored .foot-l{animation:tap-foot 1s ease-in-out infinite}
+@keyframes tap-foot{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+/* ═══ SAD: eyes down, slump ═══ */
+.guy.sad{animation:none;transform:translateY(4px)}
+.guy.sad .eye-pupil{transform:translate(0,3px)}
+.guy.sad .eye-lid{animation:none!important;transform:scaleY(.4)}
+.guy.sad .mouth-normal{opacity:0}
+.guy.sad .mouth-sad{opacity:1}
+.guy.sad .sweat-drop{opacity:1}
+
+/* ═══ CURIOUS: squint + head tilt ═══ */
+.guy.curious .guy-body{animation:tilt .4s ease forwards}
+@keyframes tilt{to{transform:rotate(4deg)}}
+.guy.curious .eye-lid{animation:none!important;transform:scaleY(.35)}
+.guy.curious .eye-pupil{transform:translate(0,-1px)}
+
+/* ═══ NOD: nodding ═══ */
+.guy.nod .guy-body{animation:nod-move .8s ease}
+@keyframes nod-move{0%{transform:translateY(0)}20%{transform:translateY(4px)}40%{transform:translateY(0)}55%{transform:translateY(3px)}70%{transform:translateY(0)}85%{transform:translateY(2px)}100%{transform:translateY(0)}}
+
+/* ═══ PROUD: jump + sparkles ═══ */
+.guy.proud .guy-body{animation:proud-jump .6s ease}
+@keyframes proud-jump{0%{transform:translateY(0)}25%{transform:translateY(-14px)}50%{transform:translateY(0)}70%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+.guy.proud .happy-eye{opacity:1}
+.guy.proud .eye-pupil{opacity:0}
+.guy.proud .eye-lid{animation:none;transform:scaleY(1)}
+.guy.proud .mouth-normal{opacity:0}
+.guy.proud .mouth-happy{opacity:1}
+.guy.proud .head-sparkles{animation:sparkle-burst .8s ease-out forwards}
+.guy.proud .hsp{animation:hsp-fly .7s ease-out forwards}
+
+/* ═══ Extra SVG elements ═══ */
+.mouth-yawn,.mouth-sad,.sweat-drop,.zzz{opacity:0;transition:opacity .3s}
+.zzz{position:absolute;top:8%;right:12%;font-size:18px;animation:zzz-float 2s ease-in-out infinite;pointer-events:none}
+@keyframes zzz-float{0%,100%{transform:translateY(0) rotate(-5deg);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(-16px) rotate(5deg);opacity:0}}
+
+/* ═══ CLICK ZONES ═══ */
+.click-zone{cursor:pointer;opacity:0;fill:transparent;transition:opacity .1s}
+.click-zone:hover{opacity:.08;fill:var(--or)}
+.shield-glow{opacity:0;transition:opacity .4s}
+.shield-glow.on{opacity:1;animation:shield-pulse .8s ease-out}
+@keyframes shield-pulse{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
 
 /* Eye tracking */
 .eye-pupil{transition:transform .15s ease}
@@ -326,6 +398,9 @@ canvas#bg{position:fixed;inset:0;z-index:0}
         <div class="hsp"></div><div class="hsp"></div><div class="hsp"></div>
       </div>
 
+      <!-- Zzz for bored state -->
+      <div class="zzz">💤</div>
+
       <!-- THE CHARACTER -->
       <svg class="guy-body" viewBox="0 0 200 280" fill="none">
         <!-- Headset antenna -->
@@ -366,6 +441,13 @@ canvas#bg{position:fixed;inset:0;z-index:0}
         <g id="mouth" transform="translate(100,88)">
           <path class="mouth-normal" d="M-8,0 Q0,6 8,0" stroke="var(--or)" stroke-width="2" stroke-linecap="round" fill="none" opacity=".8"/>
           <path class="mouth-happy" d="M-10,-1 Q0,10 10,-1" stroke="var(--or)" stroke-width="2.5" stroke-linecap="round" fill="rgba(232,129,58,.15)" opacity="0"/>
+          <ellipse class="mouth-yawn" cx="0" cy="3" rx="5" ry="6" fill="#111520" stroke="var(--or)" stroke-width="1" opacity="0"/>
+          <path class="mouth-sad" d="M-7,4 Q0,-2 7,4" stroke="var(--or)" stroke-width="2" stroke-linecap="round" fill="none" opacity="0"/>
+        </g>
+
+        <!-- Sweat drop (visible on sad) -->
+        <g class="sweat-drop" transform="translate(140,58)" opacity="0">
+          <path d="M0,0 Q3,6 0,10 Q-3,6 0,0Z" fill="rgba(100,180,255,.6)"/>
         </g>
 
         <!-- Headset ear pieces -->
@@ -410,10 +492,21 @@ canvas#bg{position:fixed;inset:0;z-index:0}
         <rect x="78" y="205" width="16" height="35" rx="8" fill="#2a2d38"/>
         <rect x="106" y="205" width="16" height="35" rx="8" fill="#2a2d38"/>
         <!-- Boots -->
-        <ellipse cx="86" cy="244" rx="14" ry="8" fill="#1e2028"/>
+        <g class="foot-l">
+          <ellipse cx="86" cy="244" rx="14" ry="8" fill="#1e2028"/>
+          <ellipse cx="86" cy="244" rx="14" ry="8" fill="var(--or)" opacity=".1"/>
+        </g>
         <ellipse cx="114" cy="244" rx="14" ry="8" fill="#1e2028"/>
-        <ellipse cx="86" cy="244" rx="14" ry="8" fill="var(--or)" opacity=".1"/>
         <ellipse cx="114" cy="244" rx="14" ry="8" fill="var(--or)" opacity=".1"/>
+
+        <!-- Shield glow overlay -->
+        <circle class="shield-glow" cx="100" cy="152" r="24" fill="rgba(232,129,58,.3)" opacity="0"/>
+
+        <!-- Click zones (invisible) -->
+        <rect class="click-zone" data-part="shield" x="80" y="130" width="40" height="40" rx="6"/>
+        <rect class="click-zone" data-part="head" x="48" y="24" width="104" height="96" rx="20"/>
+        <circle class="click-zone" data-part="antenna" cx="100" cy="8" r="12"/>
+        <rect class="click-zone" data-part="headset" x="28" y="56" width="30" height="24" rx="6"/>
 
         <defs>
           <linearGradient id="headGrad" x1="0" y1="0" x2="0" y2="1">
@@ -476,25 +569,66 @@ const guy=document.getElementById('guy');
 const speech=document.getElementById('speech');
 const gsLabel=document.getElementById('gsLabel');
 const gsMood=document.getElementById('gsMood');
-let mt=null;
+let mt=null, idleTimer=null, typingTimer=null;
 
 const moods={
   idle:{label:'STATUS',mood:'Ready to help ✦',speech:''},
-  thinking:{label:'PROCESSING',mood:'Thinking…',speech:'Let me check the modules…'},
-  happy:{label:'DONE',mood:'Here you go! ✓',speech:''}
+  thinking:{label:'PROCESSING',mood:'Thinking…',speech:'Checking the modules…'},
+  happy:{label:'DONE',mood:'Here you go! ✓',speech:''},
+  'typing-user':{label:'LISTENING',mood:'Go on, I\'m listening…',speech:''},
+  bored:{label:'IDLE',mood:'Still here… 💤',speech:''},
+  sad:{label:'ERROR',mood:'Something broke…',speech:''},
+  curious:{label:'QUIZ TIME',mood:'Think carefully… 🤔',speech:''},
+  nod:{label:'EXPLAINED',mood:'Got it? ✓',speech:''},
+  proud:{label:'AWESOME',mood:'Nailed it! 🎉',speech:''}
 };
 
 function setGuy(state,dur){
   guy.className='guy '+state;
-  const m=moods[state];
+  const m=moods[state]||moods.idle;
   gsLabel.textContent=m.label;
   gsMood.textContent=m.mood;
   if(m.speech){speech.textContent=m.speech;speech.classList.add('on')}
   else{speech.classList.remove('on')}
   if(mt)clearTimeout(mt);
-  if(dur)mt=setTimeout(()=>setGuy('idle'),dur);
+  if(dur)mt=setTimeout(()=>{setGuy('idle');startIdleTimer()},dur);
+  if(state!=='bored')resetIdleTimer();
 }
+
+function startIdleTimer(){
+  if(idleTimer)clearTimeout(idleTimer);
+  idleTimer=setTimeout(()=>{if(!busy&&guy.classList.contains('idle'))setGuy('bored')},30000);
+}
+function resetIdleTimer(){
+  if(idleTimer)clearTimeout(idleTimer);
+  if(!busy)startIdleTimer();
+}
+
+function onUserType(){
+  if(busy)return;
+  setGuy('typing-user');
+  if(typingTimer)clearTimeout(typingTimer);
+  typingTimer=setTimeout(()=>{if(!busy)setGuy('idle')},2000);
+}
+
+function detectReaction(text){
+  const l=text.toLowerCase();
+  if(l.includes('which stride')||l.includes('what stride')||l.includes('quiz')||
+     l.includes('question:')||l.match(/which\s+(owasp|letter|threat|category)/)||l.includes('what do you think')){
+    return 'curious';
+  }
+  if(l.includes('correct!')||l.includes('right!')||l.includes('nailed')||
+     l.includes('exactly!')||l.includes('well done')||l.includes('great job')||l.includes('perfect!')){
+    return 'proud';
+  }
+  if(text.length>300&&!text.trim().endsWith('?')){
+    return 'nod';
+  }
+  return 'happy';
+}
+
 setGuy('idle');
+startIdleTimer();
 
 /* ═══ CHAT ═══ */
 const API='https://billowing-band-4751.vmorgun2912.workers.dev/';
@@ -504,12 +638,15 @@ const sendBtn=document.getElementById('sendBtn');
 const sugsEl=document.getElementById('sugs');
 let history=[],busy=false;
 
-inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,100)+'px'});
+inp.addEventListener('input',()=>{
+  inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,100)+'px';
+  onUserType();
+});
 inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
 
 function addMsg(role,text){
   const d=document.createElement('div');d.className='msg '+role;
-  d.innerHTML=`<div class="bub">${fmt(text)}</div>`;
+  d.innerHTML='<div class="bub">'+fmt(text)+'</div>';
   chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;
 }
 function addTyping(){
@@ -517,7 +654,7 @@ function addTyping(){
   d.innerHTML='<div class="bub"><div class="dots"><span></span><span></span><span></span></div></div>';
   chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;
 }
-function rmTyping(){document.getElementById('typing')?.remove()}
+function rmTyping(){const t=document.getElementById('typing');if(t)t.remove()}
 
 function fmt(t){
   return t.replace(/```(\w*)\n([\s\S]*?)```/g,'<pre><code>$2</code></pre>')
@@ -544,23 +681,60 @@ async function send(){
   try{
     const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})});
     const data=await res.json();rmTyping();
-    if(data.content?.length){
-      const reply=data.content.map(c=>c.text||'').join('\n');
-      setGuy('happy',2500);
+    if(data.content&&data.content.length){
+      const reply=data.content.map(function(c){return c.text||''}).join('\n');
+      const reaction=detectReaction(reply);
+      setGuy(reaction,3000);
       addMsg('bot',reply);
       history.push({role:'assistant',content:reply});
     }else{
-      setGuy('idle');
-      addMsg('bot','⚠ '+(data.error?.message||'Something went wrong.'));
+      setGuy('sad',3000);
+      addMsg('bot','⚠ '+(data.error&&data.error.message?data.error.message:'Something went wrong.'));
     }
-  }catch(err){rmTyping();setGuy('idle');addMsg('bot','⚠ '+err.message)}
+  }catch(err){
+    rmTyping();
+    setGuy('sad',3000);
+    addMsg('bot','⚠ '+err.message);
+  }
   busy=false;sendBtn.disabled=false;
 }
 
-guy.addEventListener('click',()=>{if(!busy)fortune()});
+/* ═══ BODY PART CLICKS ═══ */
+var PART_REACTIONS={
+  shield:function(){
+    var sg=document.querySelector('.shield-glow');
+    if(sg){sg.classList.add('on');setTimeout(function(){sg.classList.remove('on')},800)}
+    speech.textContent='Shield activated! 🛡';speech.classList.add('on');
+    setTimeout(function(){speech.classList.remove('on')},1500);
+  },
+  head:function(){fortune()},
+  antenna:function(){
+    var dot=document.querySelector('.antenna-dot');
+    if(dot){dot.style.fill='#2EAD6B';setTimeout(function(){dot.style.fill=''},1200)}
+    speech.textContent='Signal received! 📡';speech.classList.add('on');
+    setTimeout(function(){speech.classList.remove('on')},1500);
+  },
+  headset:function(){
+    speech.textContent='*beep boop* 🎧';speech.classList.add('on');
+    setTimeout(function(){speech.classList.remove('on')},1500);
+    setGuy('happy',1200);
+  }
+};
+
+document.querySelectorAll('.click-zone').forEach(function(z){
+  z.addEventListener('click',function(e){
+    e.stopPropagation();
+    var fn=PART_REACTIONS[z.dataset.part];
+    if(fn&&!busy)fn();
+  });
+});
+
+guy.addEventListener('click',function(e){
+  if(!busy&&!e.target.closest('.click-zone'))fortune();
+});
 
 /* ═══ CYBER FORTUNES ═══ */
-const FORTUNES = [
+var FORTUNES = [
   "Your staging server has default credentials.\nThe stars have spoken. 🌟",
   "A hardcoded API key in your repo\nseeks your attention. 🔑",
   "STRIDE predicts: someone will forget\ninput validation today.",
@@ -582,19 +756,16 @@ const FORTUNES = [
   "Mobile app tip: certificate pinning.\nYour future self will thank you. 📱",
   "\"We're too small to be a target\"\n— last words before every breach report."
 ];
-let lastFortune = -1;
+var lastFortune = -1;
 
 function fortune() {
   setGuy('happy', 2500);
-  const ft = document.getElementById('fortuneText');
-  // Pick random but not the same as last
-  let idx;
+  var ft = document.getElementById('fortuneText');
+  var idx;
   do { idx = Math.floor(Math.random() * FORTUNES.length); } while (idx === lastFortune && FORTUNES.length > 1);
   lastFortune = idx;
-
   ft.className = 'fortune-text';
   ft.textContent = FORTUNES[idx];
-  // Force reflow to restart animation
   void ft.offsetWidth;
   ft.className = 'fortune-text show';
 }
