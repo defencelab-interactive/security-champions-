@@ -9,413 +9,365 @@
 <style>
 :root {
   --bk: #1A1A1A;
-  --wh: #FFF;
+  --bk2: #111;
   --card: #242424;
-  --card-hover: #2a2a2a;
   --bd: #333;
   --or: #E8813A;
   --od: #C76B2A;
   --ol: rgba(232,129,58,.12);
   --gr: #2EAD6B;
-  --gl: rgba(46,173,107,.12);
+  --wh: #fff;
   --tm: #ccc;
   --mu: #888;
-  --user-bg: rgba(232,129,58,.1);
-  --user-bd: rgba(232,129,58,.25);
-  --bot-bg: #242424;
-  --bot-bd: #333;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; }
+html, body { height: 100%; }
 body {
   font-family: 'DM Sans', system-ui, sans-serif;
-  background: var(--bk);
+  background: var(--bk2);
   color: var(--wh);
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   -webkit-font-smoothing: antialiased;
 }
 
-/* ─── Header ─── */
-.header {
-  padding: 12px 20px;
+/* ─── Background pattern ─── */
+.bg {
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(232,129,58,.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(46,173,107,.03) 0%, transparent 50%),
+    linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+}
+
+/* ─── Chat container ─── */
+.chat-box {
+  position: relative; z-index: 1;
+  width: 440px;
+  max-width: calc(100vw - 32px);
+  height: 620px;
+  max-height: calc(100vh - 40px);
+  background: var(--bk);
+  border-radius: 20px;
+  border: 1px solid var(--bd);
+  box-shadow: 0 24px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(232,129,58,.08);
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  overflow: hidden;
+  animation: pop-in .4s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(.95) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ─── Header ─── */
+.hdr {
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, var(--bk) 0%, #1e1a16 100%);
   border-bottom: 1px solid var(--bd);
   flex-shrink: 0;
 }
-.header-shield {
-  width: 32px; height: 32px;
-  background: var(--or);
-  border-radius: 8px;
+.hdr-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--or), var(--od));
+  border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(232,129,58,.3);
 }
-.header-shield svg { width: 18px; height: 18px; }
-.header-title {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: .3px;
-}
-.header-sub {
-  font-size: 11px;
-  color: var(--mu);
-  letter-spacing: .5px;
-}
-.header-status {
-  margin-left: auto;
-  display: flex; align-items: center; gap: 6px;
-  font-size: 11px; color: var(--gr);
-  font-weight: 600;
-}
-.header-status::before {
-  content: '';
-  width: 6px; height: 6px;
-  border-radius: 50%;
+.hdr-icon svg { width: 22px; height: 22px; }
+.hdr-text { flex: 1; }
+.hdr-title { font-size: 15px; font-weight: 700; }
+.hdr-sub { font-size: 11px; color: var(--mu); margin-top: 1px; }
+.hdr-dot {
+  width: 8px; height: 8px; border-radius: 50%;
   background: var(--gr);
-  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(46,173,107,.5);
+  animation: glow 2s ease-in-out infinite;
 }
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .4; }
-}
+@keyframes glow { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
 
-/* ─── Chat area ─── */
-.chat-area {
+/* ─── Messages ─── */
+.msgs {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 16px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   scrollbar-width: thin;
   scrollbar-color: var(--bd) transparent;
 }
-.chat-area::-webkit-scrollbar { width: 4px; }
-.chat-area::-webkit-scrollbar-thumb { background: var(--bd); border-radius: 2px; }
+.msgs::-webkit-scrollbar { width: 3px; }
+.msgs::-webkit-scrollbar-thumb { background: var(--bd); border-radius: 2px; }
 
-/* ─── Messages ─── */
-.msg {
-  display: flex;
-  gap: 10px;
-  max-width: 85%;
-  animation: msg-in .3s ease-out;
-}
-@keyframes msg-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.msg.user { align-self: flex-end; flex-direction: row-reverse; }
-.msg.bot { align-self: flex-start; }
+.msg { display: flex; gap: 8px; animation: fade-up .25s ease-out; }
+@keyframes fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.msg.user { flex-direction: row-reverse; }
 
-.msg-avatar {
-  width: 28px; height: 28px;
-  border-radius: 8px;
-  flex-shrink: 0;
+.ava {
+  width: 28px; height: 28px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700;
+  font-size: 14px; flex-shrink: 0; margin-top: 2px;
 }
-.msg.bot .msg-avatar { background: var(--or); color: var(--bk); }
-.msg.user .msg-avatar { background: var(--bd); color: var(--mu); }
+.msg.bot .ava { background: var(--or); }
+.msg.user .ava { background: #333; font-size: 12px; color: var(--mu); }
 
-.msg-bubble {
-  padding: 12px 16px;
-  border-radius: 12px;
+.bub {
+  max-width: 82%;
+  padding: 10px 14px;
   font-size: 14px;
-  line-height: 1.65;
-  color: var(--wh);
+  line-height: 1.6;
+  border-radius: 14px;
 }
-.msg.bot .msg-bubble {
-  background: var(--bot-bg);
-  border: 1px solid var(--bot-bd);
+.msg.bot .bub {
+  background: var(--card);
+  border: 1px solid var(--bd);
   border-top-left-radius: 4px;
 }
-.msg.user .msg-bubble {
-  background: var(--user-bg);
-  border: 1px solid var(--user-bd);
+.msg.user .bub {
+  background: var(--ol);
+  border: 1px solid rgba(232,129,58,.2);
   border-top-right-radius: 4px;
 }
-.msg-bubble p { margin-bottom: 8px; }
-.msg-bubble p:last-child { margin-bottom: 0; }
-.msg-bubble code {
-  background: rgba(255,255,255,.08);
-  padding: 1px 5px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-family: 'DM Mono', monospace;
+.bub p { margin-bottom: 6px; }
+.bub p:last-child { margin-bottom: 0; }
+.bub strong { color: var(--or); font-weight: 700; }
+.bub em { color: var(--or); font-style: normal; }
+.bub code {
+  background: rgba(255,255,255,.07);
+  padding: 1px 5px; border-radius: 4px;
+  font-size: 12px;
 }
-.msg-bubble pre {
-  background: rgba(0,0,0,.3);
-  padding: 12px;
-  border-radius: 8px;
-  overflow-x: auto;
-  margin: 8px 0;
-  font-size: 13px;
-  line-height: 1.5;
+.bub pre {
+  background: rgba(0,0,0,.35);
+  padding: 10px; border-radius: 8px;
+  overflow-x: auto; margin: 6px 0;
+  font-size: 12px; line-height: 1.5;
 }
-.msg-bubble strong { color: var(--or); font-weight: 700; }
-.msg-bubble em { color: var(--or); font-style: normal; }
-.msg-bubble ul, .msg-bubble ol { padding-left: 20px; margin: 6px 0; }
-.msg-bubble li { margin-bottom: 4px; }
+.bub ul, .bub ol { padding-left: 18px; margin: 4px 0; }
+.bub li { margin-bottom: 3px; }
 
-/* Typing indicator */
-.typing { display: flex; gap: 4px; padding: 8px 0; }
-.typing span {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--or);
-  opacity: .4;
-  animation: blink 1.2s ease-in-out infinite;
+/* Typing */
+.dots { display: flex; gap: 4px; padding: 4px 0; }
+.dots span {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--or); opacity: .35;
+  animation: dot 1.2s ease-in-out infinite;
 }
-.typing span:nth-child(2) { animation-delay: .2s; }
-.typing span:nth-child(3) { animation-delay: .4s; }
-@keyframes blink {
-  0%, 100% { opacity: .4; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.2); }
-}
+.dots span:nth-child(2) { animation-delay: .2s; }
+.dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes dot { 0%,100% { opacity:.35; transform:scale(1); } 50% { opacity:1; transform:scale(1.3); } }
 
 /* ─── Suggestions ─── */
-.suggestions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 0 16px 8px;
+.sugs {
+  padding: 4px 16px 8px;
+  display: flex; flex-wrap: wrap; gap: 5px;
   flex-shrink: 0;
 }
-.sug-btn {
+.sug {
   background: var(--card);
   border: 1px solid var(--bd);
   color: var(--tm);
-  padding: 7px 14px;
-  border-radius: 20px;
+  padding: 6px 12px;
+  border-radius: 18px;
   font-family: inherit;
-  font-size: 12px;
+  font-size: 11px;
   cursor: pointer;
   transition: all .15s;
-  white-space: nowrap;
 }
-.sug-btn:hover {
+.sug:hover {
   background: var(--ol);
   border-color: var(--or);
   color: var(--or);
 }
 
-/* ─── Input area ─── */
-.input-area {
+/* ─── Input ─── */
+.inp-area {
   padding: 12px 16px 16px;
   border-top: 1px solid var(--bd);
-  display: flex;
-  gap: 8px;
+  display: flex; gap: 8px;
   flex-shrink: 0;
   background: var(--bk);
 }
-.input-field {
+.inp {
   flex: 1;
   background: var(--card);
   border: 1px solid var(--bd);
-  border-radius: 10px;
-  padding: 10px 16px;
+  border-radius: 12px;
+  padding: 10px 14px;
   color: var(--wh);
   font-family: inherit;
   font-size: 14px;
   outline: none;
   resize: none;
   min-height: 42px;
-  max-height: 120px;
+  max-height: 100px;
   line-height: 1.5;
   transition: border-color .15s;
 }
-.input-field::placeholder { color: var(--mu); }
-.input-field:focus { border-color: var(--or); }
-.send-btn {
+.inp::placeholder { color: var(--mu); }
+.inp:focus { border-color: var(--or); }
+.send {
   width: 42px; height: 42px;
   background: var(--or);
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all .15s;
   flex-shrink: 0;
 }
-.send-btn:hover { background: var(--od); }
-.send-btn:disabled { opacity: .4; cursor: not-allowed; }
-.send-btn svg { width: 18px; height: 18px; fill: var(--bk); }
+.send:hover { background: var(--od); transform: scale(1.05); }
+.send:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+.send svg { width: 18px; height: 18px; fill: #fff; }
 
-/* ─── Module badge in messages ─── */
-.module-ref {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--ol);
-  color: var(--or);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 10px;
-  letter-spacing: .3px;
+/* ─── Branding ─── */
+.brand {
+  text-align: center;
+  padding: 6px;
+  font-size: 10px;
+  color: rgba(255,255,255,.2);
+  letter-spacing: .5px;
+  flex-shrink: 0;
 }
+.brand a { color: rgba(232,129,58,.4); text-decoration: none; }
 
 /* ─── Mobile ─── */
-@media (max-width: 600px) {
-  .msg { max-width: 92%; }
-  .header-sub { display: none; }
-  .suggestions { padding: 0 12px 6px; }
+@media (max-width: 480px) {
+  body { align-items: stretch; justify-content: stretch; }
+  .chat-box {
+    width: 100%; max-width: 100%;
+    height: 100%; max-height: 100%;
+    border-radius: 0; border: none;
+  }
 }
 </style>
 </head>
 <body>
+<div class="bg"></div>
 
-<div class="header">
-  <div class="header-shield">
-    <svg viewBox="0 0 18 20" fill="none"><path d="M9,1 L16,4 L16,12 L9,18 L2,12 L2,4 Z" fill="#fff"/><path d="M6,10 L8,12 L12,7" stroke="#E8813A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<div class="chat-box">
+  <div class="hdr">
+    <div class="hdr-icon">
+      <svg viewBox="0 0 18 20" fill="none"><path d="M9,1 L16,4 L16,12 L9,18 L2,12 L2,4 Z" fill="#fff"/><path d="M6,10 L8,12 L12,7" stroke="#E8813A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="hdr-text">
+      <div class="hdr-title">Learning Buddy</div>
+      <div class="hdr-sub">Security Champions Course</div>
+    </div>
+    <div class="hdr-dot"></div>
   </div>
-  <div>
-    <div class="header-title">Security Champions · Learning Buddy</div>
-    <div class="header-sub">Ask questions about the course modules</div>
+
+  <div class="msgs" id="chat"></div>
+
+  <div class="sugs" id="sugs">
+    <button class="sug" onclick="askSug(this)">What is a Security Champion?</button>
+    <button class="sug" onclick="askSug(this)">Explain STRIDE</button>
+    <button class="sug" onclick="askSug(this)">Quiz me on OWASP</button>
+    <button class="sug" onclick="askSug(this)">Supply chain basics</button>
   </div>
-  <div class="header-status">Online</div>
-</div>
 
-<div class="chat-area" id="chat"></div>
-
-<div class="suggestions" id="suggestions">
-  <button class="sug-btn" onclick="sendSuggestion(this)">What is a Security Champion?</button>
-  <button class="sug-btn" onclick="sendSuggestion(this)">Explain STRIDE threat modeling</button>
-  <button class="sug-btn" onclick="sendSuggestion(this)">Quiz me on OWASP Top 10</button>
-  <button class="sug-btn" onclick="sendSuggestion(this)">How to start an IR playbook?</button>
-</div>
-
-<div class="input-area">
-  <textarea class="input-field" id="input" placeholder="Ask anything about the course…" rows="1"></textarea>
-  <button class="send-btn" id="sendBtn" onclick="send()">
-    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-  </button>
+  <div class="inp-area">
+    <textarea class="inp" id="inp" placeholder="Ask anything…" rows="1"></textarea>
+    <button class="send" id="sendBtn" onclick="send()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+  <div class="brand">Powered by <a href="https://defencelab-interactive.github.io/security-champions-/">DefenceLab Interactive</a></div>
 </div>
 
 <script>
-const WORKER_URL = 'https://billowing-band-4751.vmorgun2912.workers.dev/';
+const API = 'https://billowing-band-4751.vmorgun2912.workers.dev/';
 const chat = document.getElementById('chat');
-const input = document.getElementById('input');
+const inp = document.getElementById('inp');
 const sendBtn = document.getElementById('sendBtn');
-const sugBox = document.getElementById('suggestions');
+const sugs = document.getElementById('sugs');
 let history = [];
-let sending = false;
+let busy = false;
 
-// Auto-resize textarea
-input.addEventListener('input', () => {
-  input.style.height = 'auto';
-  input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+inp.addEventListener('input', () => {
+  inp.style.height = 'auto';
+  inp.style.height = Math.min(inp.scrollHeight, 100) + 'px';
 });
-input.addEventListener('keydown', e => {
+inp.addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
 });
 
-function addMessage(role, text) {
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-  const avatar = document.createElement('div');
-  avatar.className = 'msg-avatar';
-  avatar.textContent = role === 'bot' ? '🛡' : '→';
-  const bubble = document.createElement('div');
-  bubble.className = 'msg-bubble';
-  bubble.innerHTML = formatMarkdown(text);
-  div.appendChild(avatar);
-  div.appendChild(bubble);
-  chat.appendChild(div);
+function addMsg(role, text) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + role;
+  d.innerHTML = `<div class="ava">${role === 'bot' ? '🛡' : '→'}</div><div class="bub">${fmt(text)}</div>`;
+  chat.appendChild(d);
   chat.scrollTop = chat.scrollHeight;
-  return div;
 }
 
 function addTyping() {
-  const div = document.createElement('div');
-  div.className = 'msg bot';
-  div.id = 'typing';
-  div.innerHTML = `
-    <div class="msg-avatar">🛡</div>
-    <div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>
-  `;
-  chat.appendChild(div);
+  const d = document.createElement('div');
+  d.className = 'msg bot'; d.id = 'typing';
+  d.innerHTML = '<div class="ava">🛡</div><div class="bub"><div class="dots"><span></span><span></span><span></span></div></div>';
+  chat.appendChild(d);
   chat.scrollTop = chat.scrollHeight;
 }
+function rmTyping() { document.getElementById('typing')?.remove(); }
 
-function removeTyping() {
-  const t = document.getElementById('typing');
-  if (t) t.remove();
-}
-
-function formatMarkdown(text) {
-  return text
+function fmt(t) {
+  return t
     .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/^- (.+)/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+    .replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>')
     .replace(/\n\n/g, '</p><p>')
     .replace(/\n/g, '<br>')
-    .replace(/^/, '<p>').replace(/$/, '</p>')
-    .replace(/<ul><\/p>/g, '<ul>')
-    .replace(/<p><\/ul>/g, '</ul>');
+    .replace(/^/, '<p>').replace(/$/, '</p>');
 }
 
-function sendSuggestion(btn) {
-  input.value = btn.textContent;
-  send();
-}
+function askSug(btn) { inp.value = btn.textContent; send(); }
 
 async function send() {
-  const text = input.value.trim();
-  if (!text || sending) return;
-  sending = true;
-  sendBtn.disabled = true;
-  sugBox.style.display = 'none';
+  const text = inp.value.trim();
+  if (!text || busy) return;
+  busy = true; sendBtn.disabled = true;
+  sugs.style.display = 'none';
 
-  addMessage('user', text);
+  addMsg('user', text);
   history.push({ role: 'user', content: text });
-  input.value = '';
-  input.style.height = 'auto';
-
+  inp.value = ''; inp.style.height = 'auto';
   addTyping();
 
   try {
-    const res = await fetch(WORKER_URL, {
+    const res = await fetch(API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: history })
     });
-
     const data = await res.json();
-    removeTyping();
+    rmTyping();
 
-    if (data.error) {
-      addMessage('bot', '⚠ Something went wrong. Please try again.\n\n`' + (data.error.message || data.error) + '`');
-    } else if (data.content && data.content.length > 0) {
+    if (data.content?.length) {
       const reply = data.content.map(c => c.text || '').join('\n');
-      addMessage('bot', reply);
+      addMsg('bot', reply);
       history.push({ role: 'assistant', content: reply });
     } else {
-      addMessage('bot', '⚠ No response received. Please try again.');
+      addMsg('bot', '⚠ ' + (data.error?.message || 'Something went wrong. Try again.'));
     }
   } catch (err) {
-    removeTyping();
-    addMessage('bot', '⚠ Connection error. Check your network and try again.\n\n`' + err.message + '`');
+    rmTyping();
+    addMsg('bot', '⚠ Connection error: `' + err.message + '`');
   }
-
-  sending = false;
-  sendBtn.disabled = false;
+  busy = false; sendBtn.disabled = false;
 }
 
-// Welcome message
-addMessage('bot',
-  "**Welcome to Security Champions Learning Buddy!** 🛡\n\n" +
-  "I'm here to help you understand the course material across all 9 modules — from the Security Champion role to mobile security.\n\n" +
-  "You can ask me to:\n" +
-  "- **Explain** any concept from the course\n" +
-  "- **Quiz** you on a specific topic\n" +
-  "- **Give examples** of real-world scenarios\n" +
-  "- **Compare** approaches (e.g. STRIDE vs PASTA)\n\n" +
-  "Pick a suggestion below or type your question!"
+addMsg('bot',
+  "**Hey! I'm your Security Champions Learning Buddy** 🛡\n\n" +
+  "Ask me anything about the 9 course modules — I'll explain concepts, give examples, and quiz you when you're ready.\n\n" +
+  "Pick a topic below or type your question!"
 );
 </script>
 </body>
