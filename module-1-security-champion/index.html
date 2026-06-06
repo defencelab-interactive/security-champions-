@@ -214,33 +214,36 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (window.self !== window.top) {
       style.textContent += 'html,body{height:100%!important;overflow:hidden!important;margin:0!important;background:#1A1A1A!important}.lms-main{width:1200px!important;height:675px!important;overflow:hidden!important;transform-origin:top left!important;opacity:0!important;transition:opacity .2s!important}.lms-main.scaled{opacity:1!important}.deck{height:100%!important;padding:0!important;max-width:100%!important}.slide.on{height:100%!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}.sb{flex:1!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;min-height:0!important}.split{flex:1!important;min-height:0!important;overflow:hidden!important}.sp-l{padding:36px 32px!important}.sp-l .sp-t{font-size:30px!important}.sp-l.narrow .sp-t{font-size:24px!important}.sp-r{flex:1!important;min-height:0!important;overflow-y:auto!important;padding:36px 48px!important;gap:20px!important}.prose{font-size:22px!important;line-height:1.8!important}.xh{font-size:19px!important;padding:16px 24px!important}.xb{font-size:19px!important;padding:20px 24px!important}.xb-q{font-size:18px!important}.qq{font-size:24px!important}.qo{font-size:19px!important;padding:16px 22px!important;margin-bottom:8px!important}.qe{font-size:19px!important;padding:18px 22px!important}.co{font-size:19px!important;padding:18px 24px!important}.wager{padding:16px 22px!important}.wb-name{font-size:18px!important}.wb-sub{font-size:15px!important}.wager-btn{padding:12px 16px!important}.fbody{flex:1!important;min-height:0!important;overflow:hidden!important;padding:56px 96px!important;gap:72px!important}.fb-tg{font-size:16px!important}.fb-tt{font-size:clamp(42px,5.5vw,64px)!important}.fb-sb{font-size:22px!important}.fb-visual{width:300px!important;height:300px!important}.breather{flex:1!important;min-height:0!important;overflow:hidden!important}.breather-caption p{font-size:20px!important}.manifesto-wrap{flex:1!important;min-height:0!important;overflow-y:auto!important}.sh,.sf{flex-shrink:0!important}';
 
+      function isFS(){return !!(document.fullscreenElement||document.webkitFullscreenElement)}
+
       function scaleToFit(){
         var m=document.querySelector('.lms-main');
         if(!m)return;
-        if(document.fullscreenElement||document.webkitFullscreenElement){
+        if(isFS()){
           m.style.setProperty('transform','none','important');
-          m.style.setProperty('width','100%','important');
-          m.style.setProperty('height','100%','important');
+          m.style.setProperty('width','100vw','important');
+          m.style.setProperty('height','100vh','important');
           m.style.setProperty('margin-left','0','important');
           m.style.setProperty('margin-top','0','important');
           m.style.setProperty('opacity','1','important');
           m.classList.add('scaled');
           return;
         }
+        m.style.setProperty('width','1200px','important');
+        m.style.setProperty('height','675px','important');
         var sx=window.innerWidth/1200;
         var sy=window.innerHeight/675;
         var s=Math.min(sx,sy,1);
         m.style.setProperty('transform','scale('+s+')','important');
-        m.style.setProperty('width','1200px','important');
-        m.style.setProperty('height','675px','important');
         m.style.setProperty('margin-left','0','important');
         m.style.setProperty('margin-top','0','important');
         m.style.setProperty('opacity','1','important');
         m.classList.add('scaled');
       }
-      window.addEventListener('resize',scaleToFit);
-      document.addEventListener('fullscreenchange',scaleToFit);
-      document.addEventListener('webkitfullscreenchange',scaleToFit);
+
+      window.addEventListener('resize',function(){setTimeout(scaleToFit,50)});
+      document.addEventListener('fullscreenchange',function(){setTimeout(scaleToFit,50)});
+      document.addEventListener('webkitfullscreenchange',function(){setTimeout(scaleToFit,50)});
       scaleToFit();
       setTimeout(scaleToFit,100);
       setTimeout(scaleToFit,500);
