@@ -231,8 +231,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         var sy=window.innerHeight/675;
         var s=Math.min(sx,sy,1);
         m.style.setProperty('transform','scale('+s+')','important');
-        m.style.setProperty('margin-left',Math.max(0,(window.innerWidth-1200*s)/2)+'px','important');
-        m.style.setProperty('margin-top',Math.max(0,(window.innerHeight-675*s)/2)+'px','important');
+        m.style.setProperty('width','1200px','important');
+        m.style.setProperty('height','675px','important');
+        m.style.setProperty('margin-left','0','important');
+        m.style.setProperty('margin-top','0','important');
+        m.style.setProperty('opacity','1','important');
         m.classList.add('scaled');
       }
       window.addEventListener('resize',scaleToFit);
