@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if(!m)return;
         var sx=window.innerWidth/1200;
         var sy=window.innerHeight/675;
-        var s=Math.min(sx,sy);
+        var s=Math.min(sx,sy,1);
         m.style.transform='scale('+s+')';
         m.style.marginLeft=((window.innerWidth-1200*s)/2)+'px';
         m.style.marginTop=((window.innerHeight-675*s)/2)+'px';
