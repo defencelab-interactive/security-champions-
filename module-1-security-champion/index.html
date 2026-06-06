@@ -306,5 +306,42 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   </script>
 
+<script>
+// iframe adaptation
+if (window.self !== window.top) {
+  document.documentElement.classList.add('in-iframe');
+}
+</script>
+<style>
+.in-iframe, .in-iframe body {
+  height: auto !important;
+  overflow: visible !important;
+  overflow-x: hidden !important;
+}
+.in-iframe .lms-main {
+  overflow: visible !important;
+  height: auto !important;
+}
+.in-iframe .slide.on {
+  min-height: 0 !important;
+  height: auto !important;
+}
+.in-iframe .split {
+  min-height: 0 !important;
+  height: auto !important;
+}
+.in-iframe .fbody {
+  min-height: 0 !important;
+  padding: 32px 40px !important;
+}
+.in-iframe .breather {
+  min-height: 0 !important;
+}
+.in-iframe .sp-r {
+  max-height: none !important;
+  overflow: visible !important;
+}
+</style>
+
 </body>
 </html>
