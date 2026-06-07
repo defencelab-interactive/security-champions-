@@ -127,6 +127,32 @@ canvas#bg{position:fixed;inset:0;z-index:0}
 .guy-stage.peek .question-marks{opacity:1}
 .guy-stage.peek .guy-status{display:none}
 .guy-stage.peek .guy-shadow{display:none}
+.guy-stage.peek .peek-label{opacity:1}
+
+.peek-label{
+  position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+  white-space:nowrap;
+  font-size:15px;font-weight:600;font-style:italic;
+  color:var(--or);
+  text-shadow:0 0 20px rgba(232,129,58,.3);
+  opacity:0;transition:opacity .4s;
+  pointer-events:none;
+  animation:peek-label-pulse 2s ease-in-out infinite;
+}
+@keyframes peek-label-pulse{0%,100%{opacity:.7;transform:translateX(-50%) translateY(0)}50%{opacity:1;transform:translateX(-50%) translateY(-4px)}}
+
+/* Peek floating label above head */
+.peek-label{
+  display:none;
+  text-align:center;
+  font-size:16px;font-weight:600;font-style:italic;
+  color:var(--or);
+  text-shadow:0 0 20px rgba(232,129,58,.3);
+  animation:peek-pulse 2s ease-in-out infinite;
+  margin-bottom:8px;
+}
+.guy-stage.peek .peek-label{display:block}
+@keyframes peek-pulse{0%,100%{opacity:.7}50%{opacity:1}}
 
 /* Floating question marks */
 .question-marks{
@@ -357,12 +383,6 @@ canvas#bg{position:fixed;inset:0;z-index:0}
   animation:none;
 }
 .fortune-text.show{animation:fortune-rise 6s ease-out forwards}
-.fortune-text.peek-show{
-  color:var(--or);font-size:18px;
-  text-shadow:0 0 20px rgba(232,129,58,.3);
-  opacity:1;animation:peek-pulse 2s ease-in-out infinite;
-}
-@keyframes peek-pulse{0%,100%{opacity:.7}50%{opacity:1}}
 @keyframes fortune-rise{
   0%{opacity:0;transform:translateY(24px) scale(.85);filter:blur(6px)}
   10%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
@@ -438,6 +458,7 @@ canvas#bg{position:fixed;inset:0;z-index:0}
     </div>
 
     <div class="guy-stage" id="guyStage">
+      <div class="peek-label">Let me pick something for you! 👀</div>
       <div class="guy idle" id="guy">
       <!-- Orbiting icons -->
       <div class="orbit">
@@ -677,9 +698,6 @@ function startIdleTimer(){
       setGuy(stage.state);
       guyStage.className='guy-stage'+(stage.move?' '+stage.move:'');
       if(stage.action==='suggest'){
-        // Show peek text above mascot
-        fortuneText.className='fortune-text peek-show';
-        fortuneText.textContent='Let me pick something for you! 👀';
         peekActionTimer=setTimeout(function(){
           if(!busy&&guyStage.classList.contains('peek')){
             var btns=Array.from(document.querySelectorAll('.sug'));
