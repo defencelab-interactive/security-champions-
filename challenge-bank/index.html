@@ -12,17 +12,17 @@
 html,body{height:100%;overflow:hidden}
 body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
 .lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
-.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
-.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
-.slide.on{display:flex;animation:slide-in .35s cubic-bezier(.2,.6,.2,1) both}
+.deck{width:100%;margin:0 auto;padding:0;display:flex;flex-direction:column;min-height:100%}
+.slide{display:none;flex-direction:column;background:var(--wh);overflow:hidden}
+.slide.on{display:flex;flex:1;animation:slide-in .35s cubic-bezier(.2,.6,.2,1) both}
 @keyframes slide-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.slide.on{animation:none}*,*::before,*::after{animation-duration:.001s!important;transition-duration:.01s!important}}
 
-.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0}
 .sh .sh-right{display:flex;align-items:center;gap:8px}
 .stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}
 .stag .hl{color:var(--or)}
-.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
 .snav{display:flex;gap:8px}
 .btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
@@ -47,15 +47,15 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 @keyframes flame-flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.1) rotate(2deg)}}
 @media(max-width:560px){.scorechip .sc-streak{display:none}.scorechip{margin-left:6px;padding:3px 8px 3px 4px}}
 
-.sb{padding:0}
-.split{display:flex;min-height:480px}
+.sb{padding:0;flex:1;display:flex;flex-direction:column}
+.split{display:flex;flex:1;min-height:0}
 .sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
 .sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
 .sp-l .sp-t{font-size:18px;font-weight:700;color:var(--wh);line-height:1.25}
 .sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
 .sp-l .sp-mod{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--or);font-weight:700;margin-bottom:8px}
 .sp-l .sp-type{display:inline-block;margin-top:8px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:600;padding:3px 8px;border:1px solid rgba(255,255,255,.1);border-radius:4px}
-.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:560px}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;min-height:0}
 .sp-r::-webkit-scrollbar{width:3px}
 .sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
 
@@ -159,7 +159,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .ms-opt.correct .ms-check{border-color:var(--gr);background:var(--gr);color:#fff}
 
 /* Cover */
-.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;flex:1;min-height:0;position:relative;overflow:hidden}
 .fb-content{flex:1;z-index:1}
 .fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
 .fb-tt{font-size:36px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
