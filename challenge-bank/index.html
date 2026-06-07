@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Champ's Challenge Bank · Security Champions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#1A1A1A;--wh:#FFF;--ow:#F5F5F5;--card:#F0F0F0;--bd:#E0E0E0;--td:#1A1A1A;--tm:#4A4A4A;--mu:#888;--or:#E8813A;--ol:rgba(232,129,58,.12);--od:#C76B2A;--gr:#2EAD6B;--gl:rgba(46,173,107,.12);--rd:#D94545;--rl:rgba(217,69,69,.10);--bl:#4A8FD4;--pu:#7B6FAE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(--td);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+.lms-main{flex:1;overflow-y:auto;width:100%;scrollbar-width:thin}
+.deck{width:100%;max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.slide{display:none;flex-direction:column;background:var(--wh);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.slide.on{display:flex;animation:slide-in .35s cubic-bezier(.2,.6,.2,1) both}
+@keyframes slide-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.slide.on{animation:none}*,*::before,*::after{animation-duration:.001s!important;transition-duration:.01s!important}}
+
+.sh{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh .sh-right{display:flex;align-items:center;gap:8px}
+.stag{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase}
+.stag .hl{color:var(--or)}
+.sf{background:var(--bk);padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.shint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.snav{display:flex;gap:8px}
+.btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn.pri{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}
+.btn.pri:hover{background:var(--od)}
+
+.pips{display:flex;gap:3px;align-items:center;flex-wrap:wrap;max-width:320px;justify-content:flex-end}
+.pip{width:6px;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer;border:none;padding:0;transition:all .15s}
+.pip.on{background:var(--or);transform:scaleY(1.8)}
+.pip.done{background:var(--gr)}
+
+.scorechip{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:4px 10px 4px 6px;margin-left:10px;font-family:inherit;cursor:default;transition:all .2s}
+.scorechip.bump{animation:sc-bump .5s ease}
+@keyframes sc-bump{0%{transform:scale(1)}30%{transform:scale(1.12);background:rgba(232,129,58,.18);border-color:rgba(232,129,58,.4)}100%{transform:scale(1)}}
+.scorechip .sc-rank{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--or);font-size:10px;font-weight:800;color:#1A1A1A;letter-spacing:.5px}
+.scorechip .sc-xp{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.5px}
+.scorechip .sc-xp b{color:var(--or)}
+.scorechip .sc-streak{font-size:10px;color:rgba(255,255,255,.5);font-weight:600;display:flex;align-items:center;gap:2px;border-left:1px solid rgba(255,255,255,.1);padding-left:8px}
+.scorechip .sc-streak.live{color:#FFB36B}
+.scorechip .sc-streak.live .sc-flame{filter:drop-shadow(0 0 4px rgba(255,150,80,.6));animation:flame-flick .8s ease-in-out infinite}
+@keyframes flame-flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.1) rotate(2deg)}}
+@media(max-width:560px){.scorechip .sc-streak{display:none}.scorechip{margin-left:6px;padding:3px 8px 3px 4px}}
+
+.sb{padding:0}
+.split{display:flex;min-height:480px}
+.sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
+.sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
+.sp-l .sp-t{font-size:18px;font-weight:700;color:var(--wh);line-height:1.25}
+.sp-l .sp-s{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sp-l .sp-mod{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--or);font-weight:700;margin-bottom:8px}
+.sp-l .sp-type{display:inline-block;margin-top:8px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:600;padding:3px 8px;border:1px solid rgba(255,255,255,.1);border-radius:4px}
+.sp-r{flex:1;background:var(--wh);padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:560px}
+.sp-r::-webkit-scrollbar{width:3px}
+.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.slide.on .sp-r>*{animation:fi .2s ease both}
+.slide.on .sp-r>*:nth-child(1){animation-delay:.03s}
+.slide.on .sp-r>*:nth-child(2){animation-delay:.06s}
+.slide.on .sp-r>*:nth-child(3){animation-delay:.09s}
+.slide.on .sp-r>*:nth-child(4){animation-delay:.12s}
+.slide.on .sp-r>*:nth-child(5){animation-delay:.15s}
+.slide.on .sp-r>*:nth-child(6){animation-delay:.18s}
+
+/* Prose */
+.prose{font-size:15px;color:var(--tm);line-height:1.78}
+.prose strong{color:var(--td);font-weight:600}
+.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
+
+/* Callout */
+.co{border-left:3px solid var(--or);padding:12px 16px;background:var(--ol);font-size:14.5px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}
+.co strong{font-weight:600}
+.co em{font-style:italic;font-weight:500;color:var(--or)}
+
+/* Expand */
+.xp{margin:4px 0}
+.xh{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card);border:none;border-radius:6px;padding:12px 16px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--td);text-align:left;transition:background .1s}
+.xh:hover{background:#e5e5e5}
+.xa{font-size:13px;color:var(--mu);transition:transform .18s;margin-left:8px}.xa.op{transform:rotate(90deg);color:var(--or)}
+.xb{display:none;padding:14px 16px;background:var(--ow);border-radius:0 0 6px 6px;font-size:14px;color:var(--tm);line-height:1.7}
+.xb.op{display:block}.xb strong{color:var(--td);font-weight:600}
+.xb code{background:var(--card);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* Code block */
+.codeblock{background:#07090e;border-radius:8px;padding:16px 18px;overflow-x:auto;margin:4px 0}
+.codeblock pre{margin:0;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;color:#c9d1d9;white-space:pre;tab-size:2}
+.codeblock .kw{color:#ff7b72}.codeblock .str{color:#a5d6ff}.codeblock .cm{color:#8b949e;font-style:italic}
+.codeblock .fn{color:#d2a8ff}.codeblock .num{color:#79c0ff}.codeblock .op{color:#ff7b72}
+.codeblock .tag{color:#7ee787}.codeblock .attr{color:#79c0ff}.codeblock .val{color:#a5d6ff}
+
+/* Quiz */
+.qw{margin:6px 0}
+.qq{font-size:16px;font-weight:700;color:var(--td);margin-bottom:12px;line-height:1.4}
+.qo{display:block;width:100%;background:var(--card);border:2px solid transparent;border-radius:7px;padding:11px 14px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--td);text-align:left;transition:all .12s}
+.qo:hover:not(.pk){border-color:var(--or);background:var(--ol)}
+.qo.ok{border-color:var(--gr);background:var(--gl)}
+.qo.no{border-color:var(--rd);background:var(--rl);opacity:.55}
+.qo.pk{cursor:default}
+.qe{display:none;margin-top:8px;padding:12px 16px;background:var(--ow);border-radius:7px;font-size:14px;color:var(--tm);line-height:1.65}.qe.sh{display:block}.qe strong{color:var(--td)}
+
+/* Matching / classification */
+.match-pool{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.match-item{padding:8px 14px;background:var(--card);border:2px solid transparent;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:all .12s;user-select:none}
+.match-item:hover{border-color:var(--or);background:var(--ol)}
+.match-item.placed{opacity:.4;cursor:default;pointer-events:none}
+.match-bucket{min-height:48px;border:2px dashed var(--bd);border-radius:8px;padding:10px 12px;margin:4px 0;transition:all .15s}
+.match-bucket.over{border-color:var(--or);background:var(--ol)}
+.match-bucket-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);margin-bottom:6px}
+.match-bucket-items{display:flex;flex-wrap:wrap;gap:4px;min-height:24px}
+.match-placed{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:var(--ol);border:1px solid rgba(232,129,58,.3);border-radius:5px;font-size:12px;font-weight:600;color:var(--td)}
+.match-placed .mp-x{cursor:pointer;color:var(--mu);font-size:14px;line-height:1}
+.match-placed .mp-x:hover{color:var(--rd)}
+.match-placed.correct{background:var(--gl);border-color:rgba(46,173,107,.3)}
+.match-placed.wrong{background:var(--rl);border-color:rgba(217,69,69,.3)}
+
+.match-check{margin-top:10px;padding:8px 18px;background:var(--or);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background .12s}
+.match-check:hover{background:var(--od)}
+.match-check:disabled{opacity:.4;cursor:default}
+
+/* Sequence / ordering */
+.seq-slot{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border:2px solid transparent;border-radius:7px;margin-bottom:5px;cursor:pointer;transition:all .12s;user-select:none}
+.seq-slot:hover{border-color:var(--or);background:var(--ol)}
+.seq-slot.selected{border-color:var(--or);background:var(--ol)}
+.seq-slot.placed{cursor:default}
+.seq-num{width:24px;height:24px;border-radius:50%;background:var(--bd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.seq-slot.placed .seq-num{background:var(--or);color:#fff}
+.seq-slot.correct{border-color:var(--gr);background:var(--gl)}
+.seq-slot.correct .seq-num{background:var(--gr)}
+.seq-slot.wrong{border-color:var(--rd);background:var(--rl)}
+.seq-slot.wrong .seq-num{background:var(--rd);color:#fff}
+.seq-text{font-size:13px;font-weight:500;color:var(--td);flex:1}
+.seq-clear{font-size:11px;color:var(--or);cursor:pointer;border:none;background:none;font-family:inherit;font-weight:600;padding:4px 8px}
+
+/* Writing / textarea */
+.write-area{width:100%;min-height:120px;border:2px solid var(--bd);border-radius:8px;padding:14px 16px;font-family:'DM Sans',system-ui,sans-serif;font-size:14px;line-height:1.65;color:var(--td);resize:vertical;transition:border-color .15s;background:#fff}
+.write-area:focus{outline:none;border-color:var(--or)}
+.write-area::placeholder{color:var(--mu)}
+
+/* Scenario reveal btn */
+.reveal-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:var(--card);border:2px solid var(--bd);border-radius:7px;font-family:inherit;font-size:13px;font-weight:600;color:var(--td);cursor:pointer;transition:all .12s}
+.reveal-btn:hover{border-color:var(--or);background:var(--ol);color:var(--or)}
+.reveal-btn.revealed{border-color:var(--gr);background:var(--gl);color:var(--gr);cursor:default}
+
+/* Multi-select checkboxes */
+.ms-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--card);border:2px solid transparent;border-radius:7px;margin-bottom:5px;cursor:pointer;transition:all .12s;font-size:14px;color:var(--td);line-height:1.4}
+.ms-opt:hover:not(.locked){border-color:var(--or);background:var(--ol)}
+.ms-opt.selected{border-color:var(--or);background:var(--ol)}
+.ms-opt.locked{cursor:default}
+.ms-opt.correct{border-color:var(--gr);background:var(--gl)}
+.ms-opt.wrong{border-color:var(--rd);background:var(--rl);opacity:.6}
+.ms-check{width:18px;height:18px;border:2px solid var(--bd);border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .12s;font-size:11px;color:transparent}
+.ms-opt.selected .ms-check{border-color:var(--or);background:var(--or);color:#fff}
+.ms-opt.correct .ms-check{border-color:var(--gr);background:var(--gr);color:#fff}
+
+/* Cover */
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
+.fb-content{flex:1;z-index:1}
+.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
+.fb-tt{font-size:36px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-visual{flex-shrink:0;width:200px;height:200px;display:flex;align-items:center;justify-content:center;z-index:1}
+
+/* Module tag chips */
+.mod-chip{display:inline-block;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.mod-1{background:rgba(232,129,58,.15);color:var(--or)}
+.mod-2{background:rgba(74,143,212,.15);color:var(--bl)}
+.mod-3{background:rgba(217,69,69,.12);color:var(--rd)}
+.mod-4{background:rgba(123,111,174,.12);color:var(--pu)}
+.mod-5{background:rgba(46,173,107,.12);color:var(--gr)}
+.mod-6{background:rgba(255,179,107,.15);color:#C87830}
+.mod-7{background:rgba(74,143,212,.12);color:#3A7FBF}
+.mod-8{background:rgba(217,69,69,.1);color:#C03535}
+.mod-9{background:rgba(123,111,174,.1);color:#6B5F9E}
+.mod-x{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+
+/* Toast */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:#1c1820;color:#F5F2ED;padding:10px 20px;border-radius:8px;border:1px solid rgba(232,129,58,.4);font-size:13px;font-weight:500;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Score summary */
+.score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:10px 0}
+.score-card{background:var(--card);border-radius:8px;padding:14px 16px;text-align:center}
+.score-card .sc-val{font-size:28px;font-weight:700;color:var(--td)}
+.score-card .sc-lab{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-top:4px}
+.score-card.highlight{background:var(--ol);border:1px solid rgba(232,129,58,.3)}
+.score-card.highlight .sc-val{color:var(--or)}
+
+/* Fullscreen */
+.fs-btn{background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.fs-btn:hover{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3)}
+.fs-btn.active{color:var(--or);border-color:rgba(232,129,58,.4)}
+
+/* Exercise help dropdown */
+.exercise-help{margin:6px 0}
+.exercise-help summary{font-size:12px;font-weight:600;color:var(--mu);cursor:pointer;padding:6px 10px;background:var(--card);border-radius:6px;list-style:none;display:flex;align-items:center;gap:6px;transition:background .1s}
+.exercise-help summary::-webkit-details-marker{display:none}
+.exercise-help summary:hover{background:#e5e5e5}
+.exercise-help .help-body{padding:8px 12px;font-size:12px;color:var(--tm);line-height:1.8}
+.exercise-help .help-step{display:flex;align-items:center;gap:6px}
+
+/* Write hint */
+.write-hint{font-size:12px;color:var(--mu);line-height:1.5;margin-bottom:6px}
+.write-hint strong{color:var(--tm)}
+
+/* Write actions row */
+.write-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* Check with Champ button */
+.champ-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:var(--or);border:2px solid var(--or);border-radius:7px;font-family:inherit;font-size:13px;font-weight:600;color:#fff;cursor:pointer;transition:all .12s}
+.champ-btn:hover:not(:disabled){background:var(--od);border-color:var(--od)}
+.champ-btn:disabled{opacity:.4;cursor:default}
+.champ-btn.loading{pointer-events:none;opacity:.7}
+@keyframes dots{0%{content:''}33%{content:'.'}66%{content:'..'}100%{content:'...'}}
+.champ-btn.loading .champ-dots::after{content:'';animation:dots 1.2s steps(4,end) infinite}
+
+/* Champ feedback card */
+.champ-feedback{display:none;margin:8px 0 4px;padding:14px 18px;background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:10px;color:#F5F2ED;font-size:13.5px;line-height:1.7;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.champ-feedback.on{display:block;animation:fi .3s ease both}
+.champ-feedback .cf-header{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--or);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.champ-feedback .cf-body{white-space:pre-line}
+.champ-feedback .cf-body strong{color:#fff;font-weight:600}
+.champ-feedback .cf-err{color:rgba(255,255,255,.5);font-style:italic}
+
+
+/* Mobile matching select & tags */
+.match-mobile-select{width:100%;padding:10px 14px;border:2px solid var(--or);border-radius:7px;background:var(--ol);color:var(--td);font-family:inherit;font-size:14px;font-weight:600;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%23E8813A' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer}
+.match-mobile-select:focus{outline:none;border-color:var(--od)}
+.match-mobile-placed{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.match-mobile-tag{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:var(--ol);border:1px solid rgba(232,129,58,.3);border-radius:5px;font-size:11px;font-weight:600}
+.match-mobile-tag .mt-bucket{color:var(--or);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.match-mobile-tag .mt-x{cursor:pointer;color:var(--mu);margin-left:4px}
+.match-mobile-tag .mt-x:hover{color:var(--rd)}
+.match-mobile-tag.correct{background:var(--gl);border-color:rgba(46,173,107,.3)}
+.match-mobile-tag.wrong{background:var(--rl);border-color:rgba(217,69,69,.3)}
+
+/* Mobile matching: hide on desktop */
+.match-mobile-ui{display:none}
+
+@media(max-width:680px){
+  .split{flex-direction:column}
+  .sp-l{width:100%;padding:16px 20px;min-height:auto}
+  .sp-l::after{display:none}
+  .sp-r{max-height:none;padding:18px 20px}
+  .fbody{flex-direction:column;padding:32px 24px;gap:24px}
+  .fb-tt{font-size:26px}
+  .score-grid{grid-template-columns:1fr}
+  /* Mobile matching */
+  .match-bucket-grid-desktop{display:none}
+  .match-mobile-ui{display:block!important}
+  .match-pool{flex-direction:column}
+  .match-item{width:100%}
+  .seq-text{font-size:12px}
+}
+
+/* Exercise help dropdown */
+.exercise-help{margin:6px 0}
+.exercise-help summary{font-size:12px;font-weight:600;color:var(--mu);cursor:pointer;padding:6px 10px;background:var(--card);border-radius:6px;list-style:none;display:flex;align-items:center;gap:6px;transition:background .1s}
+.exercise-help summary::-webkit-details-marker{display:none}
+.exercise-help summary:hover{background:#e5e5e5}
+.exercise-help .help-body{padding:8px 12px;font-size:12px;color:var(--tm);line-height:1.8}
+.exercise-help .help-step{display:flex;align-items:center;gap:6px}
+
+/* Write hint */
+.write-hint{font-size:12px;color:var(--mu);line-height:1.5;margin-bottom:6px}
+.write-hint strong{color:var(--tm)}
+
+/* Write actions row */
+.write-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* Check with Champ button */
+.champ-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:var(--or);border:2px solid var(--or);border-radius:7px;font-family:inherit;font-size:13px;font-weight:600;color:#fff;cursor:pointer;transition:all .12s}
+.champ-btn:hover:not(:disabled){background:var(--od);border-color:var(--od)}
+.champ-btn:disabled{opacity:.4;cursor:default}
+.champ-btn.loading{pointer-events:none;opacity:.7}
+@keyframes dots{0%{content:''}33%{content:'.'}66%{content:'..'}100%{content:'...'}}
+.champ-btn.loading .champ-dots::after{content:'';animation:dots 1.2s steps(4,end) infinite}
+
+/* Champ feedback card */
+.champ-feedback{display:none;margin:8px 0 4px;padding:14px 18px;background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:10px;color:#F5F2ED;font-size:13.5px;line-height:1.7;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.champ-feedback.on{display:block;animation:fi .3s ease both}
+.champ-feedback .cf-header{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--or);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.champ-feedback .cf-body{white-space:pre-line}
+.champ-feedback .cf-body strong{color:#fff;font-weight:600}
+.champ-feedback .cf-err{color:rgba(255,255,255,.5);font-style:italic}
+</style>
+</head>
+<body>
+<div class="lms-main">
+<div class="deck" id="deck">
+
+<!-- ═══ S0 · COVER ═══ -->
+<div class="slide on" id="s0">
+  <div class="sh"><span class="stag"><span class="hl">Security Champions</span> · Challenge Bank</span><div class="sh-right"><div class="pips" id="pp0"></div></div></div>
+  <div class="sb"><div class="fbody">
+    <div class="fb-content">
+      <div class="fb-tg">Practice Arena</div>
+      <div class="fb-tt">Champ's Challenge Bank</div>
+      <div class="fb-sb">27 exercises across all 9 modules. Code reviews, scenarios, matching, sequencing, and writing challenges. Each one tests a skill you'll use in production — not trivia you'll forget tomorrow.</div>
+      <div style="margin-top:20px;font-size:13px;color:rgba(255,255,255,.4);line-height:1.7">
+        <strong style="color:rgba(255,255,255,.65)">How it works:</strong> Exercises appear in module order. Answer, reveal, learn. Your score tracks across all 27 challenges.
+      </div>
+    </div>
+    <div class="fb-visual">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="100,10 178,55 178,145 100,190 22,145 22,55" fill="none" stroke="#E8813A" stroke-width="4"/>
+        <polygon points="100,40 148,68 148,132 100,160 52,132 52,68" fill="rgba(232,129,58,.1)" stroke="#E8813A" stroke-width="2"/>
+        <path d="M 72,100 L 92,120 L 128,80" fill="none" stroke="#E8813A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">Cover</span><div class="snav"><button class="btn pri" onclick="go(1)">Begin →</button></div></div>
+</div>
+
+<!-- ═══ #1 · MATCHING · "What's your lane?" ═══ -->
+<div class="slide" id="s1">
+  <div class="sh"><span class="stag"><span class="hl">#1</span> · Module 1 — Champion</span><div class="sh-right"><div class="pips" id="pp1"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 1</div>
+    <div class="sp-t">What's your lane?</div>
+    <div class="sp-type">Matching</div>
+  </div><div class="sp-r">
+    <div class="prose">A production outage happens. Classify each task — is it the <strong>Security Champion's job</strong>, or <strong>not your job</strong>?</div>
+    <details class="exercise-help"><summary>ℹ️ How to play</summary><div class="help-body"><div class="help-step">① Click an item from the pool below</div><div class="help-step">② Click the bucket where it belongs</div><div class="help-step">③ Wrong bucket? Click × on the placed item to move it back</div><div class="help-step">④ All placed → click "Check answers"</div></div></details>
+    <div id="m1-pool" class="match-pool"></div>
+    <div class="match-bucket-grid-desktop"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div>
+        <div class="match-bucket" id="m1-yes" onclick="matchDrop('m1','yes')">
+          <div class="match-bucket-label">✓ Champion's job</div>
+          <div class="match-bucket-items" id="m1-yes-items"></div>
+        </div>
+      </div>
+      <div>
+        <div class="match-bucket" id="m1-no" onclick="matchDrop('m1','no')">
+          <div class="match-bucket-label">✗ Not your job</div>
+          <div class="match-bucket-items" id="m1-no-items"></div>
+        </div>
+      </div>
+    </div></div>
+    <div class="match-mobile-ui" id="m1-mobile">
+      <select class="match-mobile-select" id="m1-select" onchange="mobileDrop('m1')">
+        <option value="" disabled selected>↓ Champion's job or not?</option>
+        <option value="yes">✓ Champion's job</option>
+        <option value="no">✗ Not your job</option>
+      </select>
+      <div class="match-mobile-placed" id="m1-mobile-placed"></div>
+    </div>
+    <button class="match-check" id="m1-check" onclick="checkMatch('m1')" disabled>Check answers</button>
+    <div class="qe" id="m1-e"><strong>Champion's job: b, d, f.</strong> Not yours: a (IR lead), c (developer), e (security team). The Champion doesn't own security — they embed it. Their superpower is asking the right question at the right moment: "did we think about this?" in design, "should we test this?" in review, "let's add this to the backlog" in planning. If you're doing someone else's job, you're not doing yours.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#1 / 27</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #2 · MATCHING · "SAMM domains" ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">#2</span> · Module 1 — Champion</span><div class="sh-right"><div class="pips" id="pp2"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 1</div>
+    <div class="sp-t">SAMM domains</div>
+    <div class="sp-type">Matching</div>
+  </div><div class="sp-r">
+    <div class="prose">OWASP SAMM organizes security practices into 5 business functions. Match each activity to its SAMM domain.</div>
+    <details class="exercise-help"><summary>ℹ️ How to play</summary><div class="help-body"><div class="help-step">① Click an item from the pool below</div><div class="help-step">② Click the bucket where it belongs</div><div class="help-step">③ Wrong bucket? Click × on the placed item to move it back</div><div class="help-step">④ All placed → click "Check answers"</div></div></details>
+    <div id="m2-pool" class="match-pool"></div>
+    <div class="match-bucket-grid-desktop"><div style="display:grid;grid-template-columns:1fr;gap:6px">
+      <div class="match-bucket" id="m2-gov" onclick="matchDrop('m2','gov')"><div class="match-bucket-label">Governance</div><div class="match-bucket-items" id="m2-gov-items"></div></div>
+      <div class="match-bucket" id="m2-des" onclick="matchDrop('m2','des')"><div class="match-bucket-label">Design</div><div class="match-bucket-items" id="m2-des-items"></div></div>
+      <div class="match-bucket" id="m2-imp" onclick="matchDrop('m2','imp')"><div class="match-bucket-label">Implementation</div><div class="match-bucket-items" id="m2-imp-items"></div></div>
+      <div class="match-bucket" id="m2-ver" onclick="matchDrop('m2','ver')"><div class="match-bucket-label">Verification</div><div class="match-bucket-items" id="m2-ver-items"></div></div>
+      <div class="match-bucket" id="m2-ops" onclick="matchDrop('m2','ops')"><div class="match-bucket-label">Operations</div><div class="match-bucket-items" id="m2-ops-items"></div></div>
+    </div></div>
+    <div class="match-mobile-ui" id="m2-mobile">
+      <select class="match-mobile-select" id="m2-select" onchange="mobileDrop('m2')">
+        <option value="" disabled selected>↓ Choose a domain…</option>
+        <option value="gov">Governance</option>
+        <option value="des">Design</option>
+        <option value="imp">Implementation</option>
+        <option value="ver">Verification</option>
+        <option value="ops">Operations</option>
+      </select>
+      <div class="match-mobile-placed" id="m2-mobile-placed"></div>
+    </div>
+    <button class="match-check" id="m2-check" onclick="checkMatch('m2')" disabled>Check answers</button>
+    <div class="qe" id="m2-e"><strong>(a) Design</strong> — threat modeling lives in the architecture phase. <strong>(b) Governance</strong> — training is a governance activity. <strong>(c) Operations</strong> — WAF management is operational security. <strong>(d) Verification</strong> — pentesting validates security controls. <strong>(e) Governance</strong> — vendor SLAs are policy decisions. SAMM helps Champions map their activities to business functions — so when a PM asks "what do you actually do?" you have a framework, not a vague answer.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#2 / 27</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #3 · DIAGRAM · "Spot the trust boundary" ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag"><span class="hl">#3</span> · Module 2 — SDLC</span><div class="sh-right"><div class="pips" id="pp3"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 2</div>
+    <div class="sp-t">Spot the trust boundary</div>
+    <div class="sp-type">Diagram analysis</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre>User Browser  →  API Gateway  →  Auth Service  →  Database
+  [untrusted]      [semi]         [trusted]      [trusted]
+                     ↕
+              Payment Provider
+                 [external]</pre></div>
+    <div class="qw" id="q3">
+      <div class="qq">How many arrows cross between DIFFERENT trust levels?</div>
+      <button class="qo" onclick="pk('q3',0)">A) 1 — between user and API</button>
+      <button class="qo" onclick="pk('q3',1)">B) 2 — user→API and API→Payment</button>
+      <button class="qo" onclick="pk('q3',2)">C) 3 — user→API, API→Payment, API→DB</button>
+      <button class="qo" onclick="pk('q3',3)">D) 4 — every arrow is a boundary</button>
+      <div class="qe" id="q3-e"><strong>C — Three boundaries.</strong> (1) User→API Gateway (untrusted→semi), (2) API→Payment Provider (internal→external), (3) API→Database (semi→trusted). The API→Auth connection is NOT a boundary IF both are mutually authenticated within the same VPC at the same trust level. The skill isn't counting arrows — it's asking "what's the trust level on each side?"</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#3 / 27</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #4 · SCENARIO · "Shift-left gone wrong" ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">#4</span> · Module 2 — SDLC</span><div class="sh-right"><div class="pips" id="pp4"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 2</div>
+    <div class="sp-t">Shift-left gone wrong</div>
+    <div class="sp-type">Scenario</div>
+  </div><div class="sp-r">
+    <div class="co">Your team added SAST scanning to the CI pipeline. First run: <strong>247 findings</strong>. Team is overwhelmed, developers start adding <code>// nosec</code> comments to suppress warnings. Velocity drops 30%.</div>
+    <div class="prose">As Security Champion, what's your move?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q4" oninput="onWriteInput('q4')" placeholder="Think it through before revealing the answer..." rows="4"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q4" onclick="checkWithChamp('q4')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q4"></div>
+    <div class="qe" id="q4-e"><strong>Triage first</strong> — classify by severity, suppress true false positives with documented reasons, create tickets only for critical/high. Set a baseline: new code must pass clean, legacy debt gets a separate backlog. The golden rule: don't block the dev workflow. 247 findings at once is a wall, not a gate.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#4 / 27</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #5 · MATCHING · "The four layers" ═══ -->
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag"><span class="hl">#5</span> · Module 2 — SDLC</span><div class="sh-right"><div class="pips" id="pp5"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 2</div>
+    <div class="sp-t">The four layers</div>
+    <div class="sp-type">Matching</div>
+  </div><div class="sp-r">
+    <div class="prose">Classify each requirement by its layer in the security requirements taxonomy.</div>
+    <details class="exercise-help"><summary>ℹ️ How to play</summary><div class="help-body"><div class="help-step">① Click an item from the pool below</div><div class="help-step">② Click the bucket where it belongs</div><div class="help-step">③ Wrong bucket? Click × on the placed item to move it back</div><div class="help-step">④ All placed → click "Check answers"</div></div></details>
+    <div id="m5-pool" class="match-pool"></div>
+    <div class="match-bucket-grid-desktop"><div style="display:grid;grid-template-columns:1fr;gap:6px">
+      <div class="match-bucket" id="m5-l1" onclick="matchDrop('m5','l1')"><div class="match-bucket-label">Layer 1 — Business requirements</div><div class="match-bucket-items" id="m5-l1-items"></div></div>
+      <div class="match-bucket" id="m5-l2" onclick="matchDrop('m5','l2')"><div class="match-bucket-label">Layer 2 — Secure functional</div><div class="match-bucket-items" id="m5-l2-items"></div></div>
+      <div class="match-bucket" id="m5-l3" onclick="matchDrop('m5','l3')"><div class="match-bucket-label">Layer 3 — Functional security</div><div class="match-bucket-items" id="m5-l3-items"></div></div>
+      <div class="match-bucket" id="m5-l4" onclick="matchDrop('m5','l4')"><div class="match-bucket-label">Layer 4 — Dev &amp; ops</div><div class="match-bucket-items" id="m5-l4-items"></div></div>
+    </div></div>
+    <div class="match-mobile-ui" id="m5-mobile">
+      <select class="match-mobile-select" id="m5-select" onchange="mobileDrop('m5')">
+        <option value="" disabled selected>↓ Choose a layer…</option>
+        <option value="l1">Layer 1 — Business</option>
+        <option value="l2">Layer 2 — Secure functional</option>
+        <option value="l3">Layer 3 — Functional security</option>
+        <option value="l4">Layer 4 — Dev &amp; ops</option>
+      </select>
+      <div class="match-mobile-placed" id="m5-mobile-placed"></div>
+    </div>
+    <button class="match-check" id="m5-check" onclick="checkMatch('m5')" disabled>Check answers</button>
+    <div class="qe" id="m5-e"><strong>(a) Layer 3</strong> — MFA is a security feature. <strong>(b) Layer 1</strong> — what the product does. <strong>(c) Layer 4</strong> — build pipeline control. <strong>(d) Layer 2</strong> — security property of a business function. The taxonomy helps Champions speak the PM's language: Layer 1 and 2 go in the PRD, Layer 3 and 4 go in technical specs.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#5 / 27</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #6 · CODE REVIEW · "The modern injection" ═══ -->
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">#6</span> · Module 3 — OWASP</span><div class="sh-right"><div class="pips" id="pp6"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 3</div>
+    <div class="sp-t">The modern injection</div>
+    <div class="sp-type">Code review</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre><span class="fn">app</span>.<span class="fn">post</span>(<span class="str">'/search'</span>, (req, res) => {
+  db.<span class="fn">collection</span>(<span class="str">'users'</span>).<span class="fn">find</span>({ 
+    username: req.body.username,
+    password: req.body.password 
+  });
+});</pre></div>
+    <div class="prose">What happens if the attacker sends this as the password?<br><code>{ "$gt": "" }</code></div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q6" oninput="onWriteInput('q6')" placeholder="Describe the vulnerability and how the attacker exploits it..." rows="3"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q6" onclick="checkWithChamp('q6')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q6"></div>
+    <div class="qe" id="q6-e"><strong>NoSQL Injection — A03:2021.</strong> The MongoDB query becomes <code>{ username: "admin", password: { "$gt": "" } }</code> which matches any non-empty password — the attacker logs in as admin without knowing the password. Fix: (1) Validate input types explicitly (<code>if (typeof password !== 'string') reject</code>). (2) Use a schema validator like Joi or Zod. (3) Use <code>$eq</code> operator explicitly. Classic SQL injection is caught by ORMs — NoSQL injection is the vector mid-level devs encounter today.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#6 / 27</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #7 · CODE REVIEW · "The helpful error" ═══ -->
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">#7</span> · Module 3 — OWASP</span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 3</div>
+    <div class="sp-t">The helpful error</div>
+    <div class="sp-type">Code review</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre><span class="fn">app</span>.<span class="fn">post</span>(<span class="str">'/login'</span>, (req, res) => {
+  <span class="kw">const</span> user = db.<span class="fn">findUser</span>(req.body.email);
+  <span class="kw">if</span> (!user) {
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ 
+      error: <span class="str">`No account found for ${req.body.email}`</span>
+    });
+  }
+  <span class="kw">if</span> (!bcrypt.<span class="fn">compare</span>(req.body.password, user.hash)) {
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ 
+      error: <span class="str">'Incorrect password for this account'</span>
+    });
+  }
+});</pre></div>
+    <div class="prose">This code has <strong>TWO</strong> security issues. Can you spot both?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q7" oninput="onWriteInput('q7')" placeholder="Name both security issues..." rows="3"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q7" onclick="checkWithChamp('q7')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q7"></div>
+    <div class="qe" id="q7-e"><strong>(1) User enumeration</strong> — different error messages for "user not found" vs "wrong password" let attackers confirm which emails exist. Fix: use a generic "Invalid credentials" for both. <strong>(2) The email is reflected back</strong> in the response — potential XSS if rendered in a frontend, and it confirms the email to an attacker.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#7 / 27</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #8 · SCENARIO · "The abandoned dependency" ═══ -->
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag"><span class="hl">#8</span> · Module 3 — OWASP</span><div class="sh-right"><div class="pips" id="pp8"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 3</div>
+    <div class="sp-t">The abandoned dependency</div>
+    <div class="sp-type">Scenario</div>
+  </div><div class="sp-r">
+    <div class="co">Your project uses a popular npm package (<strong>12k GitHub stars</strong>) for PDF generation. You notice: last commit <strong>14 months ago</strong>, <strong>3 open CVEs</strong> all unpatched, maintainer's last activity: <strong>8 months ago</strong>.</div>
+    <div class="prose">What's your recommendation to the team?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q8" oninput="onWriteInput('q8')" placeholder="What would you recommend?" rows="4"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q8" onclick="checkWithChamp('q8')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q8"></div>
+    <div class="qe" id="q8-e"><strong>A06:2021 — Vulnerable and Outdated Components.</strong> Options: (1) Find an actively maintained alternative, (2) Fork and patch the CVEs yourself (only if critical), (3) If neither is feasible, document the risk, restrict the package's permissions, and add monitoring. "It has 12k stars" is not a security argument.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#8 / 27</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #9 · STRIDE · "Classify the threat" ═══ -->
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag"><span class="hl">#9</span> · Module 4 — Threat Modeling</span><div class="sh-right"><div class="pips" id="pp9"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 4</div>
+    <div class="sp-t">Classify the threat</div>
+    <div class="sp-type">STRIDE</div>
+  </div><div class="sp-r">
+    <div class="co">A user modifies the <code>is_admin: true</code> field in their JWT token payload. The server accepts it without signature verification.</div>
+    <div class="qw" id="q9">
+      <div class="qq">Which STRIDE category?</div>
+      <button class="qo" onclick="pk('q9',0)">A) Spoofing</button>
+      <button class="qo" onclick="pk('q9',1)">B) Tampering</button>
+      <button class="qo" onclick="pk('q9',2)">C) Elevation of privilege</button>
+      <button class="qo" onclick="pk('q9',3)">D) Both B and C</button>
+      <div class="qe" id="q9-e"><strong>D — Both Tampering AND Elevation of Privilege.</strong> Data is modified in transit (Tampering), AND the user gains admin rights they shouldn't have (Elevation). In practice, many real threats map to multiple STRIDE categories. The critical failure: the server doesn't verify the JWT signature.</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#9 / 27</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #10 · SCENARIO · "The missing diagram" ═══ -->
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">#10</span> · Module 4 — Threat Modeling</span><div class="sh-right"><div class="pips" id="pp10"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 4</div>
+    <div class="sp-t">The missing diagram</div>
+    <div class="sp-type">Scenario</div>
+  </div><div class="sp-r">
+    <div class="co">Sprint planning. A new feature: <strong>"Allow users to export their data as CSV via email."</strong> The PM says it's simple — just a button and an email. No threat model needed.</div>
+    <div class="prose">As Champion, give <strong>THREE</strong> reasons this needs a threat model.</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q10" oninput="onWriteInput('q10')" placeholder="List three reasons..." rows="4"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q10" onclick="checkWithChamp('q10')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q10"></div>
+    <div class="qe" id="q10-e"><strong>(1) New trust boundary:</strong> the email service is external — data leaves your perimeter. <strong>(2) PII exposure:</strong> CSV contains user data, email is not encrypted at rest. <strong>(3) Abuse vector:</strong> an attacker could trigger mass exports to flood the email service (DoS) or enumerate users. "Simple" features often have the most hidden threat surface.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#10 / 27</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #11 · DREAD · "Prioritize these threats" ═══ -->
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">#11</span> · Module 4 — Threat Modeling</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 4</div>
+    <div class="sp-t">Prioritize these threats</div>
+    <div class="sp-type">Ranking</div>
+  </div><div class="sp-r">
+    <div class="prose">You ran STRIDE on a payment API and found three threats. <strong>Rank them by DREAD score</strong> (highest risk first). Click in order.</div>
+    <details class="exercise-help"><summary>ℹ️ How to play</summary><div class="help-body"><div class="help-step">① Click items in the correct order (1st, 2nd, 3rd…)</div><div class="help-step">② Click a numbered item to remove it</div><div class="help-step">③ "Reset" clears all selections</div><div class="help-step">④ All numbered → click "Check order"</div></div></details>
+    <div id="seq11" class="seq-container"></div>
+    <button class="match-check" id="seq11-check" onclick="checkSeq('seq11')" disabled>Check order</button>
+    <div class="qe" id="seq11-e"><strong>One defensible ranking: B → A → C.</strong> (B) Admin panel exposure has highest Damage + Exploitability. (A) No rate limiting is high Reproducibility but moderate Damage. (C) Truncated card numbers are low risk by PCI standards. BUT: your team might rank differently. The skill is defending your ranking with DREAD criteria, not memorizing one order.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#11 / 27</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #12 · CODE REVIEW · "The Dockerfile" ═══ -->
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag"><span class="hl">#12</span> · Module 5 — Supply Chain</span><div class="sh-right"><div class="pips" id="pp12"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 5</div>
+    <div class="sp-t">The Dockerfile</div>
+    <div class="sp-type">Code review</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre><span class="kw">FROM</span> node:latest
+<span class="kw">COPY</span> . /app
+<span class="kw">WORKDIR</span> /app
+<span class="kw">RUN</span> npm install
+<span class="kw">RUN</span> npm run build
+<span class="kw">USER</span> root
+<span class="kw">EXPOSE</span> <span class="num">3000</span>
+<span class="kw">CMD</span> [<span class="str">"node"</span>, <span class="str">"server.js"</span>]</pre></div>
+    <div class="prose">Find <strong>THREE</strong> security issues in this Dockerfile.</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q12" oninput="onWriteInput('q12')" placeholder="List the three issues you found..." rows="3"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q12" onclick="checkWithChamp('q12')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q12"></div>
+    <div class="qe" id="q12-e"><strong>(1) <code>FROM node:latest</code></strong> — unpinned tag, could pull a compromised image. Pin to a specific digest. <strong>(2) <code>USER root</code></strong> — container runs as root. Use a non-root user. <strong>(3) <code>COPY . /app</code></strong> copies everything including .env, .git, node_modules. Use <code>.dockerignore</code>. Bonus: no multi-stage build — build dependencies ship to production.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#12 / 27</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #13 · SCENARIO · "The lockfile conflict" ═══ -->
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag"><span class="hl">#13</span> · Module 5 — Supply Chain</span><div class="sh-right"><div class="pips" id="pp13"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 5</div>
+    <div class="sp-t">The lockfile conflict</div>
+    <div class="sp-type">Scenario</div>
+  </div><div class="sp-r">
+    <div class="co">Monday morning. A PR updates <code>package-lock.json</code> with <strong>47 changed packages</strong>. The developer says: "Just ran npm update, everything passes tests."</div>
+    <div class="prose">As Champion, what do you check before approving?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q13" oninput="onWriteInput('q13')" placeholder="What's your review checklist?" rows="4"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q13" onclick="checkWithChamp('q13')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q13"></div>
+    <div class="qe" id="q13-e"><strong>(1)</strong> Were any major versions bumped? <strong>(2)</strong> Run <code>npm audit</code> on the new lockfile — does it introduce new vulnerabilities? <strong>(3)</strong> Check changelogs for top-level dependencies. <strong>(4)</strong> Was this intentional or a side effect of <code>npm update</code> pulling transitive deps? "Tests pass" is necessary but not sufficient.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#13 / 27</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #14 · CODE REVIEW · "Spot the secret" ═══ -->
+<div class="slide" id="s14">
+  <div class="sh"><span class="stag"><span class="hl">#14</span> · Module 6 — Secrets</span><div class="sh-right"><div class="pips" id="pp14"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 6</div>
+    <div class="sp-t">Spot the secret</div>
+    <div class="sp-type">Code review</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre><span class="kw">import</span> boto3
+
+client = boto3.<span class="fn">client</span>(
+    <span class="str">'s3'</span>,
+    aws_access_key_id=<span class="str">'AKIAIOSFODNN7EXAMPLE'</span>,
+    aws_secret_access_key=<span class="str">'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</span>,
+    region_name=<span class="str">'us-east-1'</span>
+)</pre></div>
+    <div class="prose">What's wrong here and what's the fix?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q14" oninput="onWriteInput('q14')" placeholder="Describe the problem and suggest a fix..." rows="3"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q14" onclick="checkWithChamp('q14')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q14"></div>
+    <div class="qe" id="q14-e"><strong>Hardcoded AWS credentials in source code.</strong> If this repo is public (or gets leaked), anyone has access to your S3. Fix: use IAM roles (for EC2/Lambda), environment variables, or AWS Secrets Manager. Never commit credentials — add pre-commit hooks to catch them (e.g., git-secrets, trufflehog).</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#14 / 27</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #15 · SCENARIO · "The rotation that wasn't" ═══ -->
+<div class="slide" id="s15">
+  <div class="sh"><span class="stag"><span class="hl">#15</span> · Module 6 — Secrets</span><div class="sh-right"><div class="pips" id="pp15"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 6</div>
+    <div class="sp-t">The rotation that wasn't</div>
+    <div class="sp-type">Scenario</div>
+  </div><div class="sp-r">
+    <div class="co">Your team uses a shared API key for a third-party payment service. It was created <strong>2 years ago</strong>. Three people who had access have since <strong>left the company</strong>. Nobody knows who else has it saved locally.</div>
+    <div class="prose">What's your action plan?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q15" oninput="onWriteInput('q15')" placeholder="Write your action plan..." rows="4"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q15" onclick="checkWithChamp('q15')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q15"></div>
+    <div class="qe" id="q15-e"><strong>(1) Assume compromise.</strong> Pull usage logs — look for unexpected IPs/regions/times. <strong>(2) Rotate</strong> — generate new key, update all services, invalidate old one. <strong>(3) Audit</strong> — review logs for unusual patterns during exposure window. <strong>(4) Move to a vault</strong> (HashiCorp Vault, AWS Secrets Manager). <strong>(5) Set automatic rotation policy</strong> (90 days max). <strong>(6)</strong> New key accessed through vault only, never shared directly.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#15 / 27</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn pri" onclick="go(16)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #16 · CODE REVIEW · "The generous CORS" ═══ -->
+<div class="slide" id="s16">
+  <div class="sh"><span class="stag"><span class="hl">#16</span> · Module 7 — Config</span><div class="sh-right"><div class="pips" id="pp16"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 7</div>
+    <div class="sp-t">The generous CORS</div>
+    <div class="sp-type">Code review</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre><span class="fn">app</span>.<span class="fn">use</span>(<span class="fn">cors</span>({
+  origin: <span class="str">'*'</span>,
+  credentials: <span class="kw">true</span>,
+  methods: [<span class="str">'GET'</span>, <span class="str">'POST'</span>, <span class="str">'PUT'</span>, <span class="str">'DELETE'</span>]
+}));</pre></div>
+    <div class="prose">What's the security issue?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q16" oninput="onWriteInput('q16')" placeholder="Describe the security risk..." rows="3"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q16" onclick="checkWithChamp('q16')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q16"></div>
+    <div class="qe" id="q16-e"><strong><code>origin: '*'</code> with <code>credentials: true</code></strong> is the most dangerous CORS config. It allows any website to make authenticated requests to your API — a textbook CSRF bypass. Fix: whitelist specific origins (<code>origin: ['https://yourapp.com']</code>). Never use wildcard with credentials.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#16 / 27</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #17 · SCENARIO · "The intern's access" ═══ -->
+<div class="slide" id="s17">
+  <div class="sh"><span class="stag"><span class="hl">#17</span> · Module 7 — Config</span><div class="sh-right"><div class="pips" id="pp17"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 7</div>
+    <div class="sp-t">The intern's access</div>
+    <div class="sp-type">Scenario</div>
+  </div><div class="sp-r">
+    <div class="co">A summer intern needs to debug a production issue. The team lead gives them <strong>full production database access</strong> "just for today." Three weeks later, the intern still has access.</div>
+    <div class="prose">What principle was violated and how do you fix it?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q17" oninput="onWriteInput('q17')" placeholder="Name the principle and your fix..." rows="4"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q17" onclick="checkWithChamp('q17')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q17"></div>
+    <div class="qe" id="q17-e"><strong>Principle of Least Privilege + no access expiry.</strong> Fix: (1) Create time-bound access with automatic revocation. (2) Give read-only access to a replica, not production. (3) Implement access reviews — weekly audit of who has what. (4) Use just-in-time access tools (e.g., HashiCorp Boundary) instead of permanent credentials.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#17 / 27</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #18 · SEQUENCING · "It's 2 AM" ═══ -->
+<div class="slide" id="s18">
+  <div class="sh"><span class="stag"><span class="hl">#18</span> · Module 8 — IR</span><div class="sh-right"><div class="pips" id="pp18"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 8</div>
+    <div class="sp-t">It's 2 AM and the pager goes off</div>
+    <div class="sp-type">Sequencing</div>
+  </div><div class="sp-r">
+    <div class="co">Alert: unusual spike in failed login attempts — <strong>50,000 in the last hour</strong>, targeting 200 different accounts. Some succeeded.</div>
+    <div class="prose">Put these actions in the <strong>correct order</strong>. Click them in sequence.</div>
+    <details class="exercise-help"><summary>ℹ️ How to play</summary><div class="help-body"><div class="help-step">① Click items in the correct order (1st, 2nd, 3rd…)</div><div class="help-step">② Click a numbered item to remove it</div><div class="help-step">③ "Reset" clears all selections</div><div class="help-step">④ All numbered → click "Check order"</div></div></details>
+    <div id="seq18" class="seq-container"></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="match-check" id="seq18-check" onclick="checkSeq('seq18')" disabled>Check order</button>
+      <button class="seq-clear" onclick="clearSeq('seq18')">Reset</button>
+    </div>
+    <div class="qe" id="seq18-e"><strong>Correct order: E → D → C → B → A.</strong> (1) Escalate first — you shouldn't handle this alone. (2) Preserve evidence before it's gone. (3) Understand scope before acting. (4) Contain the attack. (5) Notify users last — you need accurate info before communicating. Acting on B before C might block legitimate users.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#18 / 27</span><div class="snav"><button class="btn" onclick="go(17)">← Back</button><button class="btn pri" onclick="go(19)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #19 · WRITING · "Write the runbook" ═══ -->
+<div class="slide" id="s19">
+  <div class="sh"><span class="stag"><span class="hl">#19</span> · Module 8 — IR</span><div class="sh-right"><div class="pips" id="pp19"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 8</div>
+    <div class="sp-t">Write the runbook</div>
+    <div class="sp-type">Structured writing</div>
+  </div><div class="sp-r">
+    <div class="co" style="font-size:13px;line-height:1.6"><strong>CRITICAL:</strong> Unauthorized data export detected. 50,000 customer records accessed via internal API by service account <code>svc-analytics</code> outside business hours. Source IP: 185.22.xx.xx (non-corporate range).</div>
+    <div class="prose">Write an incident runbook with four sections: <strong>Trigger</strong>, <strong>Steps</strong> (first 5 actions), <strong>Rollback</strong>, <strong>Escalate</strong>.</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q19" oninput="onWriteInput('q19')" placeholder="TRIGGER:&#10;&#10;STEPS:&#10;1.&#10;2.&#10;3.&#10;4.&#10;5.&#10;&#10;ROLLBACK:&#10;&#10;ESCALATE:" rows="10"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q19" onclick="checkWithChamp('q19')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q19"></div>
+    <div class="qe" id="q19-e"><strong>TRIGGER:</strong> Alert fires when >10,000 records accessed by any service account outside 06:00–22:00 OR from non-corporate IP. <strong>STEPS:</strong> (1) Confirm alert not false positive. (2) Suspend svc-analytics. (3) Capture session data & preserve logs. (4) Identify all records accessed. (5) Check if credentials were rotated recently. <strong>ROLLBACK:</strong> Revoke tokens, rotate credentials, block source IP, flag records for breach notification. <strong>ESCALATE:</strong> Immediately: IR lead + SRE. Within 1 hour: CISO if confirmed exfil. Within 4 hours: Legal if PII confirmed exposed.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#19 / 27</span><div class="snav"><button class="btn" onclick="go(18)">← Back</button><button class="btn pri" onclick="go(20)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #20 · CAPSTONE · "The post-mortem blame game" ═══ -->
+<div class="slide" id="s20">
+  <div class="sh"><span class="stag"><span class="hl">#20 ⚑</span> · Module 8 — Capstone</span><div class="sh-right"><div class="pips" id="pp20"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Capstone</div>
+    <div class="sp-t">The post-mortem blame game</div>
+    <div class="sp-type">Interpersonal</div>
+  </div><div class="sp-r">
+    <div class="co">Post-mortem meeting after a data leak. The CTO asks: <strong>"Who pushed the code that caused this?"</strong> A developer looks nervous. The room goes silent.</div>
+    <div class="prose">As Security Champion, what do you say?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q20" oninput="onWriteInput('q20')" placeholder="What would you say in this room?" rows="4"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q20" onclick="checkWithChamp('q20')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q20"></div>
+    <div class="qe" id="q20-e"><strong>Redirect from blame to process:</strong> "The question isn't who, but what in our process allowed this to reach production." Blameless post-mortems produce better outcomes — people share information freely when they're not defending themselves. Focus on: what controls were missing, what would have caught it earlier, what systemic change prevents recurrence. This is the single most important interpersonal skill a Champion has — the ability to shift a room from blame to learning.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#20 / 27 · Capstone</span><div class="snav"><button class="btn" onclick="go(19)">← Back</button><button class="btn pri" onclick="go(21)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #21 · CODE REVIEW · "The trusting app" ═══ -->
+<div class="slide" id="s21">
+  <div class="sh"><span class="stag"><span class="hl">#21</span> · Module 9 — Mobile</span><div class="sh-right"><div class="pips" id="pp21"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 9</div>
+    <div class="sp-t">The trusting app</div>
+    <div class="sp-type">Code review · Android</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre><span class="kw">val</span> client = OkHttpClient.<span class="fn">Builder</span>()
+    .<span class="fn">hostnameVerifier</span> { _, _ -> <span class="kw">true</span> }
+    .<span class="fn">build</span>()</pre></div>
+    <div class="prose">What does this code do and why is it dangerous?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q21" oninput="onWriteInput('q21')" placeholder="Explain what this code does and the danger..." rows="3"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q21" onclick="checkWithChamp('q21')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q21"></div>
+    <div class="qe" id="q21-e"><strong>This disables hostname verification</strong> — the app will accept ANY SSL certificate, including a man-in-the-middle attacker's. Often added "temporarily" during development and never removed. MASVS NETWORK-1 violation. Fix: remove the custom hostnameVerifier entirely and use default verification. For dev/staging, use proper test certificates.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#21 / 27</span><div class="snav"><button class="btn" onclick="go(20)">← Back</button><button class="btn pri" onclick="go(22)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #22 · CODE REVIEW · "The local storage" ═══ -->
+<div class="slide" id="s22">
+  <div class="sh"><span class="stag"><span class="hl">#22</span> · Module 9 — Mobile</span><div class="sh-right"><div class="pips" id="pp22"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Module 9</div>
+    <div class="sp-t">The local storage</div>
+    <div class="sp-type">Code review · iOS</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre>UserDefaults.standard.<span class="fn">set</span>(authToken, forKey: <span class="str">"user_token"</span>)
+UserDefaults.standard.<span class="fn">set</span>(refreshToken, forKey: <span class="str">"refresh_token"</span>)</pre></div>
+    <div class="prose">What's the MASVS violation here?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q22" oninput="onWriteInput('q22')" placeholder="Name the violation and the correct approach..." rows="3"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q22" onclick="checkWithChamp('q22')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q22"></div>
+    <div class="qe" id="q22-e"><strong>MASVS STORAGE-1 — sensitive data stored insecurely.</strong> <code>UserDefaults</code> is a plain plist file, not encrypted, accessible to anyone with physical device access or a backup. Auth tokens must go in the iOS Keychain (<code>kSecClassGenericPassword</code>). This is the #1 mobile storage mistake developers make.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#22 / 27</span><div class="snav"><button class="btn" onclick="go(21)">← Back</button><button class="btn pri" onclick="go(23)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #23 · CODE REVIEW · "The pod from hell" ═══ -->
+<div class="slide" id="s23">
+  <div class="sh"><span class="stag"><span class="hl">#23</span> · Cross-Module</span><div class="sh-right"><div class="pips" id="pp23"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Cross-Module</div>
+    <div class="sp-t">The pod from hell</div>
+    <div class="sp-type">Code review · K8s</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre><span class="tag">apiVersion</span>: <span class="val">v1</span>
+<span class="tag">kind</span>: <span class="val">Pod</span>
+<span class="tag">metadata</span>:
+  <span class="tag">name</span>: <span class="val">payment-service</span>
+<span class="tag">spec</span>:
+  <span class="attr">hostNetwork</span>: <span class="kw">true</span>
+  <span class="tag">containers</span>:
+  - <span class="tag">name</span>: <span class="val">app</span>
+    <span class="tag">image</span>: <span class="val">mycompany/payments:latest</span>
+    <span class="tag">securityContext</span>:
+      <span class="attr">runAsUser</span>: <span class="num">0</span>
+      <span class="attr">privileged</span>: <span class="kw">true</span>
+    <span class="tag">ports</span>:
+    - <span class="attr">containerPort</span>: <span class="num">8080</span></pre></div>
+    <div class="prose">Find <strong>FOUR</strong> security issues in this pod spec.</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q23" oninput="onWriteInput('q23')" placeholder="List four security issues..." rows="4"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q23" onclick="checkWithChamp('q23')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q23"></div>
+    <div class="qe" id="q23-e"><strong>(1) <code>runAsUser: 0</code></strong> — runs as root inside the container. <strong>(2) <code>privileged: true</code></strong> — full access to host kernel, can escape container. <strong>(3) <code>hostNetwork: true</code></strong> — shares host's network namespace, bypassing network policies. <strong>(4) No resource limits</strong> — vulnerable to resource exhaustion DoS. Bonus: <code>image: latest</code> is unpinned.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#23 / 27</span><div class="snav"><button class="btn" onclick="go(22)">← Back</button><button class="btn pri" onclick="go(24)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #24 · CODE REVIEW · "The workflow that trusts too much" ═══ -->
+<div class="slide" id="s24">
+  <div class="sh"><span class="stag"><span class="hl">#24</span> · Cross-Module</span><div class="sh-right"><div class="pips" id="pp24"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Cross-Module</div>
+    <div class="sp-t">The workflow that trusts too much</div>
+    <div class="sp-type">Code review · GitHub Actions</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre><span class="tag">name</span>: <span class="val">Build and Deploy</span>
+<span class="tag">on</span>:
+  <span class="tag">pull_request_target</span>:
+    <span class="tag">types</span>: [<span class="val">opened, synchronize</span>]
+
+<span class="attr">permissions</span>: <span class="val">write-all</span>
+
+<span class="tag">jobs</span>:
+  <span class="tag">build</span>:
+    <span class="attr">runs-on</span>: <span class="val">ubuntu-latest</span>
+    <span class="tag">steps</span>:
+    - <span class="attr">uses</span>: <span class="val">actions/checkout@v4</span>
+    - <span class="attr">uses</span>: <span class="val">some-org/deploy-action@main</span>
+    - <span class="tag">name</span>: <span class="val">Deploy</span>
+      <span class="tag">env</span>:
+        <span class="attr">AWS_KEY</span>: <span class="val">${{ secrets.AWS_ACCESS_KEY }}</span>
+      <span class="tag">run</span>: <span class="val">./deploy.sh</span></pre></div>
+    <div class="prose">Find <strong>THREE</strong> security issues in this workflow.</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q24" oninput="onWriteInput('q24')" placeholder="List three issues..." rows="3"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q24" onclick="checkWithChamp('q24')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q24"></div>
+    <div class="qe" id="q24-e"><strong>(1) <code>permissions: write-all</code></strong> — violates least privilege. Scope to only what's needed. <strong>(2) <code>some-org/deploy-action@main</code></strong> — unpinned third-party action. Pin to a specific commit SHA. <strong>(3) <code>pull_request_target</code> + <code>secrets</code></strong> — this combination exposes secrets to code from forks. An attacker opens a PR, the workflow runs with repo secrets on their untrusted code.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#24 / 27</span><div class="snav"><button class="btn" onclick="go(23)">← Back</button><button class="btn pri" onclick="go(25)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #25 · CODE REVIEW · "The React trap" ═══ -->
+<div class="slide" id="s25">
+  <div class="sh"><span class="stag"><span class="hl">#25</span> · Cross-Module</span><div class="sh-right"><div class="pips" id="pp25"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Cross-Module</div>
+    <div class="sp-t">The React trap</div>
+    <div class="sp-type">Code review · Frontend</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre><span class="kw">function</span> <span class="fn">Comment</span>({ userInput }) {
+  <span class="kw">return</span> &lt;<span class="tag">div</span> <span class="attr">dangerouslySetInnerHTML</span>={{ <span class="attr">__html</span>: userInput }} /&gt;;
+}</pre></div>
+    <div class="prose">What vulnerability is this? What's the fix?</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q25" oninput="onWriteInput('q25')" placeholder="Name the vulnerability and the fix..." rows="3"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q25" onclick="checkWithChamp('q25')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q25"></div>
+    <div class="qe" id="q25-e"><strong>Stored XSS</strong> — unsanitized user input rendered as raw HTML. An attacker submits a script tag as a comment — every user who views it executes the script. Fix: (1) Use <code>{userInput}</code> without <code>dangerouslySetInnerHTML</code> — React auto-escapes by default. (2) If HTML rendering is needed, sanitize with DOMPurify. This is the #1 frontend security mistake in React apps.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#25 / 27</span><div class="snav"><button class="btn" onclick="go(24)">← Back</button><button class="btn pri" onclick="go(26)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #26 · CODE REVIEW · "The open gate" ═══ -->
+<div class="slide" id="s26">
+  <div class="sh"><span class="stag"><span class="hl">#26</span> · Cross-Module</span><div class="sh-right"><div class="pips" id="pp26"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Cross-Module</div>
+    <div class="sp-t">The open gate</div>
+    <div class="sp-type">Code review · Terraform</div>
+  </div><div class="sp-r">
+    <div class="codeblock"><pre><span class="kw">resource</span> <span class="str">"aws_security_group"</span> <span class="str">"api"</span> {
+  <span class="attr">name</span> = <span class="str">"api-server"</span>
+
+  <span class="tag">ingress</span> {
+    <span class="attr">from_port</span>   = <span class="num">0</span>
+    <span class="attr">to_port</span>     = <span class="num">65535</span>
+    <span class="attr">protocol</span>    = <span class="str">"tcp"</span>
+    <span class="attr">cidr_blocks</span> = [<span class="str">"0.0.0.0/0"</span>]
+  }
+
+  <span class="tag">egress</span> {
+    <span class="attr">from_port</span>   = <span class="num">0</span>
+    <span class="attr">to_port</span>     = <span class="num">0</span>
+    <span class="attr">protocol</span>    = <span class="str">"-1"</span>
+    <span class="attr">cidr_blocks</span> = [<span class="str">"0.0.0.0/0"</span>]
+  }
+
+  <span class="tag">tags</span> = {
+    <span class="attr">Environment</span> = <span class="str">"production"</span>
+  }
+}</pre></div>
+    <div class="prose">Find <strong>THREE</strong> security issues.</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q26" oninput="onWriteInput('q26')" placeholder="List three issues..." rows="3"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q26" onclick="checkWithChamp('q26')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q26"></div>
+    <div class="qe" id="q26-e"><strong>(1) Ingress opens ALL ports</strong> (0–65535) to the entire internet. Only expose the ports your API needs (e.g., 443). <strong>(2) Egress allows all outbound traffic</strong> — if compromised, the attacker can exfiltrate data anywhere. <strong>(3) Tagged <code>production</code></strong> — these aren't dev shortcuts. In production, every open port is attack surface. Infrastructure IS code — review it like code.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#26 / 27</span><div class="snav"><button class="btn" onclick="go(25)">← Back</button><button class="btn pri" onclick="go(27)">Next →</button></div></div>
+</div>
+
+<!-- ═══ #27 · COMMUNICATION · "Frame it for the PM" ═══ -->
+<div class="slide" id="s27">
+  <div class="sh"><span class="stag"><span class="hl">#27</span> · Cross-Module</span><div class="sh-right"><div class="pips" id="pp27"></div></div></div>
+  <div class="sb"><div class="split"><div class="sp-l">
+    <div class="sp-mod">Cross-Module</div>
+    <div class="sp-t">Frame it for the PM</div>
+    <div class="sp-type">Communication</div>
+  </div><div class="sp-r">
+    <div class="co">You discovered that a critical npm dependency handling payment routing has an unpatched <strong>RCE vulnerability</strong> (CVE score 9.8). The maintainer acknowledged it but has no timeline for a fix.</div>
+    <div class="prose">Draft a <strong>3-sentence Slack message</strong> to your PM that frames this in <strong>business impact</strong> — not CVE scores.</div>
+    <div class="write-hint">Write your answer first, then click <strong>Check with Champ</strong> for personalized AI feedback.</div>
+    <textarea class="write-area" id="ta-q27" oninput="onWriteInput('q27')" placeholder="Write your Slack message to the PM..." rows="5"></textarea>
+    <div class="write-actions"><button class="champ-btn" id="champ-q27" onclick="checkWithChamp('q27')" disabled>🤖 Check with Champ</button></div>
+    <div class="champ-feedback" id="cf-q27"></div>
+    <div class="qe" id="q27-e"><strong>Example:</strong> "Hey — the library that routes our payment transactions has a confirmed security hole that could let an attacker execute code on our servers. If exploited, we'd face payment processing downtime and potential card data exposure — both PCI compliance violations. I recommend we switch to [alternative] this sprint; I've scoped it at ~2 days of work."<br><br>Champions who frame security in dollars and downtime get budget. Champions who say "there's a 9.8 CVE in our transitive dependency" get blank stares.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">#27 / 27</span><div class="snav"><button class="btn" onclick="go(26)">← Back</button><button class="btn pri" onclick="go(28)">Finish →</button></div></div>
+</div>
+
+<!-- ═══ S28 · CLOSING ═══ -->
+<div class="slide" id="s28">
+  <div class="sh"><span class="stag"><span class="hl">Complete</span> · Challenge Bank</span><div class="sh-right"><div class="pips" id="pp28"></div></div></div>
+  <div class="sb"><div class="fbody" style="flex-direction:column;align-items:center;text-align:center;gap:28px">
+    <div class="fb-tg">Challenge Bank Complete</div>
+    <div class="fb-tt" style="max-width:700px;font-size:32px">27 exercises across 9 modules</div>
+    <div class="score-grid" id="final-scores" style="max-width:500px;width:100%">
+      <div class="score-card highlight"><div class="sc-val" id="fs-xp">0</div><div class="sc-lab">Total XP</div></div>
+      <div class="score-card"><div class="sc-val" id="fs-correct">0</div><div class="sc-lab">Correct</div></div>
+      <div class="score-card"><div class="sc-val" id="fs-streak">0</div><div class="sc-lab">Best Streak</div></div>
+    </div>
+    <div style="font-size:14px;color:rgba(255,255,255,.5);max-width:500px;line-height:1.7">Every exercise here mirrors something that happens in production. The patterns you practiced — spotting injections, classifying threats, writing runbooks, framing risk for stakeholders — these are the daily tools of a Security Champion.</div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn" onclick="go(0)">← Back to start</button>
+      <button class="btn pri" onclick="resetProgress()">Reset progress</button>
+    </div>
+  </div></div>
+  <div class="sf"><span class="shint">Complete</span><div class="snav"><button class="btn" onclick="go(27)">← Back</button></div></div>
+</div>
+
+</div><!-- /deck -->
+</div><!-- /lms-main -->
+
+<div id="toast"></div>
+
+<script>
+const T=29; // total slides
+let c=0;
+
+// ── State ──
+const SK='champ_challenge_v3';
+let state;
+function defaults(){return{xp:0,streak:0,bestStreak:0,answers:{},matchDone:{},seqDone:{},revealed:[],champFeedback:{}}}
+function loadState(){try{state=JSON.parse(localStorage.getItem(SK))||defaults()}catch(e){state=defaults()}}
+function saveState(){try{localStorage.setItem(SK,JSON.stringify(state))}catch(e){}}
+loadState();
+
+// ── Navigation ──
+function go(n){
+  if(n<0||n>=T)return;
+  document.getElementById('s'+c).classList.remove('on');
+  c=n;
+  const slide=document.getElementById('s'+n);
+  slide.classList.add('on');
+  const r=slide.querySelector('.sp-r');if(r)r.scrollTop=0;
+  document.querySelectorAll('.pips').forEach(p=>bp(p));
+  window.scrollTo(0,0);
+  if(n===28)updateFinalScores();
+}
+function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(c-1)}});
+
+// ── Expand ──
+function tg(id){const el=document.getElementById(id),b=el.querySelector('.xb'),a=el.querySelector('.xa');b.classList.toggle('op');if(a)a.classList.toggle('op')}
+
+// ── Score system ──
+const RANKS=[
+  {name:'Recruit',min:0,code:'R'},
+  {name:'Scout',min:15,code:'S'},
+  {name:'Guardian',min:40,code:'G'},
+  {name:'Sentinel',min:70,code:'N'},
+  {name:'Champion',min:100,code:'C'}
+];
+function getRank(xp){let r=RANKS[0];for(const k of RANKS)if(xp>=k.min)r=k;return r}
+function renderChips(){
+  const r=getRank(state.xp);
+  document.querySelectorAll('.scorechip').forEach(ch=>{
+    ch.querySelector('.sc-rank').textContent=r.code;
+    ch.querySelector('.sc-xp').innerHTML=`<b>${state.xp}</b> XP`;
+    const sk=ch.querySelector('.sc-streak');
+    if(state.streak>=2){sk.classList.add('live');sk.innerHTML=`<span class="sc-flame">🔥</span> ${state.streak}`}
+    else{sk.classList.remove('live');sk.innerHTML=`<span style="opacity:.5">·</span> ${r.name}`}
+  });
+}
+function bumpChips(){document.querySelectorAll('.scorechip').forEach(c=>{c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')})}
+
+// ── Quiz (multiple choice) ──
+const ans={q3:2,q9:3};
+function pk(q,i){
+  const w=document.getElementById(q),o=w.querySelectorAll('.qo');
+  if(o[0].classList.contains('pk'))return;
+  const k=ans[q];
+  const correct=(i===k);
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===i&&j!==k)x.classList.add('no')});
+  let pts=correct?5:0;
+  if(correct){state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak}else{state.streak=0}
+  state.xp+=pts;state.answers[q]={picked:i,correct,points:pts};saveState();renderChips();bumpChips();
+  const e=document.getElementById(q+'-e');e.classList.add('sh');
+  if(!e.querySelector('.qe-score')){
+    const s=document.createElement('div');s.className='qe-score';
+    s.innerHTML=`<span style="display:inline-flex;align-items:center;gap:4px;background:${correct?'var(--gl)':'var(--rl)'};color:${correct?'var(--gr)':'var(--rd)'};font-weight:800;padding:3px 9px;border-radius:12px;font-size:12px">+${pts} XP</span><span style="color:var(--tm);font-size:12px;margin-left:6px">${correct?'Correct.':'Not quite — read the reveal.'}</span>`;
+    e.appendChild(s);
+  }
+  showToast(correct?`+${pts} XP — correct`:'Not this time — check the explanation','');
+}
+
+// ── Restore quiz state ──
+Object.keys(state.answers).forEach(q=>{
+  const a=state.answers[q];const w=document.getElementById(q);if(!w)return;
+  const o=w.querySelectorAll('.qo'),k=ans[q];
+  o.forEach((x,j)=>{x.classList.add('pk');if(j===k)x.classList.add('ok');else if(j===a.picked&&j!==k)x.classList.add('no')});
+  const e=document.getElementById(q+'-e');if(e)e.classList.add('sh');
+});
+
+// ── Reveal (scenarios/code reviews) ──
+function reveal(btn,eid){
+  btn.classList.add('revealed');btn.textContent='✓ Revealed';btn.onclick=null;
+  document.getElementById(eid).classList.add('sh');
+  if(!state.revealed.includes(eid)){state.revealed.push(eid);state.xp+=2;saveState();renderChips();bumpChips();showToast('+2 XP — exercise revealed','')}
+}
+// Restore reveals
+state.revealed.forEach(eid=>{
+  const e=document.getElementById(eid);if(e)e.classList.add('sh');
+  // Find the reveal button — may be a sibling or inside a write-actions div nearby
+  let prev=e?.previousElementSibling;
+  while(prev){
+    if(prev.classList.contains('reveal-btn')){prev.classList.add('revealed');prev.textContent='✓ Revealed';prev.onclick=null;break}
+    const inner=prev.querySelector&&prev.querySelector('.reveal-btn');
+    if(inner){inner.classList.add('revealed');inner.textContent='✓ Revealed';inner.onclick=null;break}
+    prev=prev.previousElementSibling;
+  }
+});
+
+// ── Matching exercises ──
+const MATCH_DATA={
+  m1:{
+    items:[
+      {id:'a',text:'Run the incident post-mortem'},
+      {id:'b',text:'Flag missing input validation'},
+      {id:'c',text:'Write the hotfix patch'},
+      {id:'d',text:'Add security story to backlog'},
+      {id:'e',text:'Approve final security audit'},
+      {id:'f',text:'Ask "did we threat-model this?"'}
+    ],
+    buckets:['yes','no'],
+    correct:{a:'no',b:'yes',c:'no',d:'yes',e:'no',f:'yes'}
+  },
+  m2:{
+    items:[
+      {id:'a',text:'Running a threat model'},
+      {id:'b',text:'Checking secure coding training'},
+      {id:'c',text:'Reviewing WAF rules'},
+      {id:'d',text:'Verifying pentest scope'},
+      {id:'e',text:'Defining vendor security SLA'}
+    ],
+    buckets:['gov','des','imp','ver','ops'],
+    correct:{a:'des',b:'gov',c:'ops',d:'ver',e:'gov'}
+  },
+  m5:{
+    items:[
+      {id:'a',text:'Users must authenticate with MFA'},
+      {id:'b',text:'Application must process payments'},
+      {id:'c',text:'All builds must pass SAST scanning'},
+      {id:'d',text:'Transaction data encrypted in transit'}
+    ],
+    buckets:['l1','l2','l3','l4'],
+    correct:{a:'l3',b:'l1',c:'l4',d:'l2'}
+  }
+};
+
+let matchSelected={};
+function initMatch(mid){
+  const d=MATCH_DATA[mid];if(!d)return;
+  const pool=document.getElementById(mid+'-pool');
+  pool.innerHTML='';
+  matchSelected[mid]=null;
+  d.items.forEach(item=>{
+    const el=document.createElement('div');
+    el.className='match-item';el.dataset.id=item.id;el.dataset.mid=mid;
+    el.textContent=`(${item.id}) ${item.text}`;
+    el.onclick=()=>selectMatchItem(mid,item.id,el);
+    pool.appendChild(el);
+  });
+  // Restore state
+  if(state.matchDone[mid]){
+    const done=state.matchDone[mid];
+    Object.entries(done.placements||{}).forEach(([itemId,bucket])=>{
+      const poolItem=pool.querySelector(`[data-id="${itemId}"]`);
+      if(poolItem)poolItem.classList.add('placed');
+      const bi=document.getElementById(mid+'-'+bucket+'-items');
+      if(bi){
+        const pl=document.createElement('span');
+        pl.className='match-placed'+(done.checked?(done.placements[itemId]===d.correct[itemId]?' correct':' wrong'):'');
+        pl.dataset.id=itemId;
+        pl.innerHTML=`(${itemId})${done.checked?'':'<span class="mp-x" onclick="removeMatch(\''+mid+'\',\''+itemId+'\',\''+bucket+'\')">×</span>'}`;
+        bi.appendChild(pl);
+      }
+    });
+    if(done.checked){
+      document.getElementById(mid+'-check').disabled=true;
+      document.getElementById(mid+'-check').textContent='✓ Checked';
+      document.getElementById(mid+'-e').classList.add('sh');
+    }else{
+      updateMatchCheck(mid);
+    }
+  }
+}
+
+function selectMatchItem(mid,id,el){
+  if(el.classList.contains('placed'))return;
+  document.querySelectorAll(`#${mid}-pool .match-item`).forEach(x=>x.style.borderColor='');
+  el.style.borderColor='var(--or)';
+  matchSelected[mid]=id;
+}
+
+function matchDrop(mid,bucket){
+  const id=matchSelected[mid];if(!id)return;
+  const pool=document.getElementById(mid+'-pool');
+  const poolItem=pool.querySelector(`[data-id="${id}"]`);
+  if(!poolItem||poolItem.classList.contains('placed'))return;
+  poolItem.classList.add('placed');poolItem.style.borderColor='';
+  const bi=document.getElementById(mid+'-'+bucket+'-items');
+  const pl=document.createElement('span');pl.className='match-placed';pl.dataset.id=id;
+  pl.innerHTML=`(${id})<span class="mp-x" onclick="removeMatch('${mid}','${id}','${bucket}')">×</span>`;
+  bi.appendChild(pl);
+  matchSelected[mid]=null;
+  // Save placement
+  if(!state.matchDone[mid])state.matchDone[mid]={placements:{},checked:false};
+  state.matchDone[mid].placements[id]=bucket;saveState();
+  updateMatchCheck(mid);
+}
+
+function removeMatch(mid,id,bucket){
+  if(state.matchDone[mid]?.checked)return;
+  const bi=document.getElementById(mid+'-'+bucket+'-items');
+  const pl=bi.querySelector(`[data-id="${id}"]`);if(pl)pl.remove();
+  const pool=document.getElementById(mid+'-pool');
+  const poolItem=pool.querySelector(`[data-id="${id}"]`);
+  if(poolItem)poolItem.classList.remove('placed');
+  if(state.matchDone[mid])delete state.matchDone[mid].placements[id];
+  saveState();updateMatchCheck(mid);
+}
+
+function updateMatchCheck(mid){
+  const d=MATCH_DATA[mid];
+  const placed=state.matchDone[mid]?.placements||{};
+  const allPlaced=Object.keys(placed).length===d.items.length;
+  document.getElementById(mid+'-check').disabled=!allPlaced;
+}
+
+function checkMatch(mid){
+  const d=MATCH_DATA[mid];
+  const placements=state.matchDone[mid]?.placements||{};
+  let correct=0;
+  d.items.forEach(item=>{
+    const placed=placements[item.id];
+    const isCorrect=placed===d.correct[item.id];
+    if(isCorrect)correct++;
+    // Mark placed items
+    d.buckets.forEach(b=>{
+      const bi=document.getElementById(mid+'-'+b+'-items');
+      const pl=bi.querySelector(`[data-id="${item.id}"]`);
+      if(pl){
+        pl.classList.add(isCorrect?'correct':'wrong');
+        const x=pl.querySelector('.mp-x');if(x)x.remove();
+      }
+    });
+  });
+  const pts=Math.round((correct/d.items.length)*8);
+  state.xp+=pts;
+  if(correct===d.items.length){state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak}else{state.streak=0}
+  state.matchDone[mid].checked=true;saveState();renderChips();bumpChips();
+  document.getElementById(mid+'-check').disabled=true;
+  document.getElementById(mid+'-check').textContent=`✓ ${correct}/${d.items.length} correct · +${pts} XP`;
+  document.getElementById(mid+'-e').classList.add('sh');
+  showToast(`${correct}/${d.items.length} correct · +${pts} XP`,'');
+}
+
+// ── Sequencing exercises ──
+const SEQ_DATA={
+  seq11:{
+    items:[
+      {id:'A',text:'No rate limiting on checkout endpoint'},
+      {id:'B',text:'Admin panel accessible without VPN'},
+      {id:'C',text:'Log files contain truncated card numbers'}
+    ],
+    correct:['B','A','C'],
+    labels:['Highest risk','Medium risk','Lowest risk']
+  },
+  seq18:{
+    items:[
+      {id:'A',text:'Notify affected users to change passwords'},
+      {id:'B',text:'Block the attacking IP ranges'},
+      {id:'C',text:'Assess scope — which accounts compromised'},
+      {id:'D',text:'Preserve logs before they rotate'},
+      {id:'E',text:'Escalate to the incident response team'}
+    ],
+    correct:['E','D','C','B','A'],
+    labels:['1st','2nd','3rd','4th','5th']
+  }
+};
+let seqSelections={};
+
+function initSeq(sid){
+  const d=SEQ_DATA[sid];if(!d)return;
+  const container=document.getElementById(sid);
+  container.innerHTML='';
+  seqSelections[sid]=state.seqDone[sid]?.order||[];
+  
+  d.items.forEach(item=>{
+    const el=document.createElement('div');
+    el.className='seq-slot';el.dataset.id=item.id;el.dataset.sid=sid;
+    const idx=seqSelections[sid].indexOf(item.id);
+    const numText=idx>=0?(idx+1):'·';
+    if(idx>=0)el.classList.add('placed');
+    el.innerHTML=`<div class="seq-num">${numText}</div><div class="seq-text">${item.id}) ${item.text}</div>`;
+    el.onclick=()=>toggleSeqItem(sid,item.id);
+    container.appendChild(el);
+  });
+  
+  if(state.seqDone[sid]?.checked){
+    const correct=d.correct;
+    container.querySelectorAll('.seq-slot').forEach(sl=>{
+      sl.classList.add('placed');
+      const id=sl.dataset.id;
+      const idx=seqSelections[sid].indexOf(id);
+      const isCorrect=correct[idx]===id;
+      sl.classList.add(isCorrect?'correct':'wrong');
+      sl.onclick=null;
+    });
+    document.getElementById(sid+'-check').disabled=true;
+    document.getElementById(sid+'-check').textContent='✓ Checked';
+    document.getElementById(sid+'-e').classList.add('sh');
+  }else{
+    updateSeqCheck(sid);
+  }
+}
+
+function toggleSeqItem(sid,id){
+  if(state.seqDone[sid]?.checked)return;
+  const sel=seqSelections[sid];
+  const idx=sel.indexOf(id);
+  if(idx>=0){
+    sel.splice(idx,1);
+  }else{
+    sel.push(id);
+  }
+  // Re-render
+  const container=document.getElementById(sid);
+  container.querySelectorAll('.seq-slot').forEach(sl=>{
+    const sid2=sl.dataset.sid;
+    const iid=sl.dataset.id;
+    const i=seqSelections[sid2].indexOf(iid);
+    sl.querySelector('.seq-num').textContent=i>=0?(i+1):'·';
+    sl.classList.toggle('placed',i>=0);
+  });
+  if(!state.seqDone[sid])state.seqDone[sid]={order:[],checked:false};
+  state.seqDone[sid].order=sel;saveState();
+  updateSeqCheck(sid);
+}
+
+function clearSeq(sid){
+  if(state.seqDone[sid]?.checked)return;
+  seqSelections[sid]=[];
+  if(state.seqDone[sid])state.seqDone[sid].order=[];saveState();
+  const container=document.getElementById(sid);
+  container.querySelectorAll('.seq-slot').forEach(sl=>{
+    sl.querySelector('.seq-num').textContent='·';
+    sl.classList.remove('placed');
+  });
+  updateSeqCheck(sid);
+}
+
+function updateSeqCheck(sid){
+  const d=SEQ_DATA[sid];
+  const allPlaced=seqSelections[sid].length===d.items.length;
+  document.getElementById(sid+'-check').disabled=!allPlaced;
+}
+
+function checkSeq(sid){
+  const d=SEQ_DATA[sid];
+  const sel=seqSelections[sid];
+  let correct=0;
+  sel.forEach((id,i)=>{if(d.correct[i]===id)correct++});
+  const pts=Math.round((correct/d.items.length)*6);
+  state.xp+=pts;
+  if(correct===d.items.length){state.streak++;if(state.streak>state.bestStreak)state.bestStreak=state.streak}else{state.streak=0}
+  state.seqDone[sid]={order:sel,checked:true};saveState();renderChips();bumpChips();
+  
+  const container=document.getElementById(sid);
+  container.querySelectorAll('.seq-slot').forEach(sl=>{
+    const id=sl.dataset.id;
+    const idx=sel.indexOf(id);
+    const isCorrect=d.correct[idx]===id;
+    sl.classList.add(isCorrect?'correct':'wrong');
+    sl.onclick=null;
+  });
+  document.getElementById(sid+'-check').disabled=true;
+  document.getElementById(sid+'-check').textContent=`✓ ${correct}/${d.items.length} correct · +${pts} XP`;
+  document.getElementById(sid+'-e').classList.add('sh');
+  showToast(`${correct}/${d.items.length} correct · +${pts} XP`,'');
+}
+
+
+// ── Mobile matching ──
+function mobileDrop(mid){
+  const select=document.getElementById(mid+'-select');
+  const bucket=select.value;
+  if(!bucket)return;
+  const id=matchSelected[mid];
+  if(!id){select.value='';showToast('Select an item first, then pick a bucket');return}
+  matchDrop(mid,bucket);
+  select.value='';
+  renderMobilePlaced(mid);
+}
+
+function renderMobilePlaced(mid){
+  const container=document.getElementById(mid+'-mobile-placed');
+  if(!container)return;
+  const d=MATCH_DATA[mid];
+  const placements=state.matchDone[mid]?.placements||{};
+  const checked=state.matchDone[mid]?.checked||false;
+  container.innerHTML='';
+  Object.entries(placements).forEach(([itemId,bucket])=>{
+    const isCorrect=checked?(bucket===d.correct[itemId]):null;
+    const tag=document.createElement('span');
+    tag.className='match-mobile-tag'+(isCorrect===true?' correct':isCorrect===false?' wrong':'');
+    const bucketLabel=document.querySelector('#'+mid+'-'+bucket+' .match-bucket-label')?.textContent||bucket;
+    tag.innerHTML=`(${itemId}) → <span class="mt-bucket">${bucketLabel}</span>${checked?'':'<span class="mt-x" onclick="mobileRemove(\''+mid+'\',\''+itemId+'\',\''+bucket+'\')">×</span>'}`;
+    container.appendChild(tag);
+  });
+}
+
+function mobileRemove(mid,id,bucket){
+  removeMatch(mid,id,bucket);
+  renderMobilePlaced(mid);
+}
+
+// ── Init exercises ──
+Object.keys(MATCH_DATA).forEach(mid=>initMatch(mid));
+Object.keys(SEQ_DATA).forEach(sid=>initSeq(sid));
+
+// ── Score chips ──
+function injectChips(){
+  document.querySelectorAll('.sh').forEach(sh=>{
+    if(sh.querySelector('.scorechip'))return;
+    let right=sh.querySelector('.sh-right');
+    if(!right){right=document.createElement('div');right.className='sh-right';sh.appendChild(right)}
+    const pips=right.querySelector('.pips');
+    const chip=document.createElement('div');chip.className='scorechip';chip.title='Your XP and streak';
+    chip.innerHTML=`<span class="sc-rank">R</span><span class="sc-xp"><b>0</b> XP</span><span class="sc-streak"><span style="opacity:.5">·</span> RECRUIT</span>`;
+    if(pips)right.insertBefore(chip,pips);else right.appendChild(chip);
+  });
+}
+injectChips();
+renderChips();
+document.querySelectorAll('.pips').forEach(p=>bp(p));
+
+// ── Check with Champ — AI evaluation ──
+const EVAL_CONTEXTS={
+  q4:{
+    exerciseContext:"Scenario: SAST added to CI, 247 findings, devs adding //nosec, velocity -30%. Student must: triage by severity, set baseline for new vs legacy code, not block dev workflow.",
+    keyPoints:["triage by severity","separate new code baseline from legacy debt","don't block dev workflow","document nosec suppressions"]
+  },
+  q8:{
+    exerciseContext:"12k-star npm package, 14 months no commits, 3 unpatched CVEs, maintainer inactive 8 months. A06:2021. Student must recommend concrete action.",
+    keyPoints:["find maintained alternative","fork and patch if critical","document risk if neither feasible","stars ≠ security"]
+  },
+  q10:{
+    exerciseContext:"New feature: CSV export via email. PM says no threat model needed. Student must give 3 reasons it needs one.",
+    keyPoints:["new trust boundary (external email service)","PII in CSV + email not encrypted at rest","abuse vector (mass export DoS / user enumeration)"]
+  },
+  q12:{
+    exerciseContext:"Dockerfile with node:latest, COPY ., USER root. Student must find 3 security issues.",
+    keyPoints:["unpinned base image tag","runs as root","copies everything including .env/.git","bonus: no multi-stage build"]
+  },
+  q13:{
+    exerciseContext:"PR with 47 changed packages after npm update. Dev says tests pass. Student must list review checklist.",
+    keyPoints:["check major version bumps","run npm audit","review changelogs","intentional vs accidental transitive updates","tests pass ≠ sufficient"]
+  },
+  q15:{
+    exerciseContext:"Shared API key, 2 years old, 3 former employees had access. Student must write action plan.",
+    keyPoints:["assume compromise first — audit logs before rotating","rotate key","review usage patterns","move to secrets vault","set rotation policy","vault-only access going forward"]
+  },
+  q17:{
+    exerciseContext:"Intern given full prod DB access 'for today', still has it 3 weeks later. Student must name violated principle and fix.",
+    keyPoints:["principle of least privilege","no access expiry/auto-revocation","read-only replica not production","access reviews","just-in-time access tools"]
+  },
+  q19:{
+    exerciseContext:"Alert: 50k records accessed by svc-analytics from non-corporate IP outside business hours. Student writes runbook with 4 sections: Trigger, Steps, Rollback, Escalate.",
+    keyPoints:["trigger: specific threshold + conditions","steps: verify → suspend → preserve → identify → investigate","rollback: revoke tokens, rotate creds, block IP, flag records","escalate: tiered (IR team → CISO → Legal) with timeframes"]
+  },
+  q20:{
+    exerciseContext:"Post-mortem after data leak. CTO asks who pushed the bad code. Room goes silent. Student must redirect from blame to process.",
+    keyPoints:["redirect from 'who' to 'what in our process'","blameless post-mortem principles","focus on systemic fixes not individual fault","create safety for information sharing"],
+    gradingNote:"This is the capstone — grade on interpersonal skill, not technical accuracy."
+  },
+  q23:{
+    exerciseContext:"K8s pod spec: hostNetwork true, runAsUser 0, privileged true, no resource limits, image:latest. Student must find 4 issues.",
+    keyPoints:["runAsUser 0 (root)","privileged: true (host kernel access)","hostNetwork: true (bypasses network policies)","no resource limits (DoS)","bonus: unpinned image tag"]
+  },
+  q24:{
+    exerciseContext:"GitHub Actions: permissions write-all, unpinned 3rd party action @main, pull_request_target with secrets. Student must find 3 issues.",
+    keyPoints:["permissions: write-all violates least privilege","unpinned action — pin to commit SHA","pull_request_target + secrets exposes secrets to fork PRs"]
+  },
+  q26:{
+    exerciseContext:"Terraform security group: all TCP ports 0-65535 open to 0.0.0.0/0, unrestricted egress, tagged production. Student must find 3 issues.",
+    keyPoints:["all ports open to internet","unrestricted egress allows exfiltration","production tag means these aren't dev shortcuts"]
+  },
+  q27:{
+    exerciseContext:"RCE vulnerability (CVE 9.8) in payment routing npm dependency, no fix timeline. Student drafts 3-sentence Slack to PM using business impact, not CVE scores.",
+    keyPoints:["business impact clear (downtime, data exposure)","no jargon (no CVE score, no 'RCE')","concrete ask with effort estimate"],
+    gradingNote:"Grade on communication skill. Would a non-technical PM understand the risk, know what to do, feel urgency without panic?"
+  },
+  q6:{
+    exerciseContext:"NoSQL injection via MongoDB operator injection. Code passes req.body.password directly to find(). Attacker sends {$gt:''} as password, bypasses auth. A03:2021.",
+    keyPoints:["NoSQL injection / operator injection","query becomes {password:{$gt:''}} matching any non-empty password","attacker logs in without knowing password","fix: validate input types, use Joi/Zod, use $eq explicitly"]
+  },
+  q7:{
+    exerciseContext:"Login endpoint with two bugs: different error messages for user-not-found vs wrong-password (user enumeration), and email reflected in response (XSS + confirmation).",
+    keyPoints:["user enumeration via different error messages","fix: generic Invalid credentials for both cases","email reflected in response is XSS risk","reflection also confirms the email to attacker"]
+  },
+  q14:{
+    exerciseContext:"Python boto3 code with hardcoded AWS access key and secret key in source code.",
+    keyPoints:["hardcoded credentials in source code","if repo is public or leaked, attacker gets S3 access","fix: IAM roles, env vars, or AWS Secrets Manager","add pre-commit hooks like git-secrets or trufflehog"]
+  },
+  q16:{
+    exerciseContext:"Express CORS config with origin:'*' and credentials:true. Most dangerous CORS combination.",
+    keyPoints:["origin wildcard with credentials is CSRF bypass","any website can make authenticated requests","fix: whitelist specific origins","never use wildcard with credentials"]
+  },
+  q21:{
+    exerciseContext:"Kotlin OkHttp client with hostnameVerifier that always returns true. Disables SSL hostname verification.",
+    keyPoints:["disables hostname verification, accepts ANY certificate","enables man-in-the-middle attacks","MASVS NETWORK-1 violation","often added during dev and never removed","fix: remove custom verifier, use default"]
+  },
+  q22:{
+    exerciseContext:"Swift code storing auth tokens in UserDefaults instead of iOS Keychain.",
+    keyPoints:["MASVS STORAGE-1 violation","UserDefaults is plain plist, not encrypted","accessible with physical access or backup","tokens must go in Keychain kSecClassGenericPassword"]
+  },
+  q25:{
+    exerciseContext:"React component using dangerouslySetInnerHTML with unsanitized user input. Stored XSS.",
+    keyPoints:["stored XSS via dangerouslySetInnerHTML","attacker injects script, executes for every viewer","fix: use {userInput} without dangerouslySetInnerHTML","if HTML needed, sanitize with DOMPurify"]
+  }
+};
+
+function onWriteInput(qid){
+  const ta=document.getElementById('ta-'+qid);
+  const btn=document.getElementById('champ-'+qid);
+  if(!ta||!btn)return;
+  btn.disabled=ta.value.trim().length<30;
+}
+
+function showModelAnswer(qid){
+  const e=document.getElementById(qid+'-e');
+  if(!e||e.dataset.wrapped)return;
+  // Wrap the model answer content in an expandable
+  const content=e.innerHTML;
+  e.dataset.wrapped='1';
+  e.classList.add('sh');
+  e.innerHTML=`<div class="xp" id="xma-${qid}"><button class="xh" onclick="tg('xma-${qid}')"><span>📋 Model answer</span><span class="xa">›</span></button><div class="xb">${content}</div></div>`;
+}
+
+async function checkWithChamp(qid){
+  const ta=document.getElementById('ta-'+qid);
+  const btn=document.getElementById('champ-'+qid);
+  const fb=document.getElementById('cf-'+qid);
+  if(!ta||!btn||!fb)return;
+  const answer=ta.value.trim();
+  if(answer.length<30)return;
+
+  const ctx=EVAL_CONTEXTS[qid];
+  if(!ctx){
+    fb.innerHTML='<div class="cf-header">\U0001f916 Champ\'s feedback</div><div class="cf-body"><span class="cf-err">No grading context for this exercise.</span></div>';
+    fb.classList.add('on');return;
+  }
+
+  btn.classList.add('loading');
+  btn.innerHTML='\U0001f916 Champ is reading<span class="champ-dots"></span>';
+  btn.disabled=true;
+
+  try{
+    const response=await fetch('https://billowing-band-4751.vmorgun2912.workers.dev/',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        type:'evaluate',
+        exerciseId:qid,
+        studentAnswer:answer,
+        exerciseContext:ctx.exerciseContext+'\nKEY POINTS: '+ctx.keyPoints.join('; '),
+        gradingNote:ctx.gradingNote||''
+      })
+    });
+
+    if(!response.ok){
+      let errMsg='';
+      const status=response.status;
+      if(status===429){errMsg='Too many requests \u2014 wait a minute and try again. \u23f1'}
+      else if(status===401||status===403){errMsg='Authentication error \u2014 the evaluation service needs to be reconfigured. Contact your instructor.'}
+      else if(status===400){
+        try{const errData=await response.json();errMsg='Bad request: '+(errData.error?.message||errData.error||'unknown issue')+'. Try rewriting your answer.'}
+        catch(e){errMsg='Bad request \u2014 try rewriting your answer.'}
+      }
+      else if(status>=500){errMsg='Champ\'s server had an issue ('+status+'). Try again in a moment. \ud83d\udd27'}
+      else{errMsg='Unexpected error (HTTP '+status+'). Try again.'}
+      console.error('[Champ] Exercise '+qid+': HTTP '+status);
+      fb.innerHTML=`<div class="cf-header">\U0001f916 Champ's feedback</div><div class="cf-body"><span class="cf-err">${errMsg}</span></div>`;
+      fb.classList.add('on');showModelAnswer(qid);
+      btn.classList.remove('loading');btn.innerHTML='\U0001f916 Check with Champ';btn.disabled=false;
+      return;
+    }
+
+    const data=await response.json();
+
+    if(data.error){
+      const apiErr=data.error.message||data.error||'Unknown API error';
+      console.error('[Champ] Exercise '+qid+': API error: '+apiErr);
+      let userMsg='Champ couldn\'t process this one';
+      if(apiErr.includes('rate')){userMsg='Too many requests \u2014 wait a minute. \u23f1'}
+      else if(apiErr.includes('model')){userMsg='The AI model is temporarily unavailable. Try again shortly. \ud83d\udd27'}
+      else if(apiErr.includes('key')||apiErr.includes('auth')){userMsg='Service configuration issue \u2014 contact your instructor.'}
+      else{userMsg='Champ encountered an error: '+apiErr}
+      fb.innerHTML=`<div class="cf-header">\U0001f916 Champ's feedback</div><div class="cf-body"><span class="cf-err">${userMsg}</span></div>`;
+      fb.classList.add('on');showModelAnswer(qid);
+      btn.classList.remove('loading');btn.innerHTML='\U0001f916 Check with Champ';btn.disabled=false;
+      return;
+    }
+
+    const text=data.content?.map(b=>b.type==='text'?b.text:'').join('')||data.text||data.response||'No response received.';
+    fb.innerHTML=`<div class="cf-header">\U0001f916 Champ's feedback</div><div class="cf-body">${text.replace(/\n/g,'<br>')}</div>`;
+    fb.classList.add('on');showModelAnswer(qid);
+
+    state.champFeedback[qid]=text;
+    if(!state.revealed.includes('champ-'+qid)){
+      state.xp+=3;state.revealed.push('champ-'+qid);saveState();renderChips();bumpChips();
+      showToast('+3 XP \u2014 Champ reviewed your answer');
+    }else{saveState()}
+
+  }catch(err){
+    console.error('[Champ] Exercise '+qid+': Network error: '+err.message);
+    let netMsg='Check your internet connection and try again.';
+    if(err.message.includes('fetch')||err.message.includes('Network')){netMsg='Can\'t reach Champ \u2014 check your internet connection. \ud83d\udce1'}
+    else if(err.message.includes('imeout')){netMsg='Request timed out \u2014 Champ might be overloaded. Try again. \u23f1'}
+    fb.innerHTML=`<div class="cf-header">\U0001f916 Champ's feedback</div><div class="cf-body"><span class="cf-err">${netMsg}</span></div>`;
+    fb.classList.add('on');showModelAnswer(qid);
+  }
+
+  btn.classList.remove('loading');
+  btn.innerHTML='\U0001f916 Check with Champ';
+  btn.disabled=false;
+}
+
+// Restore saved champ feedback
+Object.entries(state.champFeedback||{}).forEach(([qid,text])=>{
+  const fb=document.getElementById('cf-'+qid);
+  if(fb){
+    fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body">${text.replace(/\n/g,'<br>')}</div>`;
+    fb.classList.add('on');
+  }
+  showModelAnswer(qid);
+});
+
+
+
+// ── Toast ──
+let toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast');if(!t)return;
+  t.textContent=msg;t.classList.remove('on');void t.offsetWidth;t.classList.add('on');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('on'),2400);
+}
+
+// ── Final scores ──
+function updateFinalScores(){
+  document.getElementById('fs-xp').textContent=state.xp;
+  const qCorrect=Object.values(state.answers).filter(a=>a.correct).length;
+  const mCorrect=Object.values(state.matchDone).filter(m=>m.checked).reduce((sum,m)=>{
+    // count per-match
+    return sum+1;
+  },0);
+  document.getElementById('fs-correct').textContent=qCorrect+mCorrect;
+  document.getElementById('fs-streak').textContent=state.bestStreak;
+}
+
+// ── Reset ──
+function resetProgress(){
+  if(!confirm('Reset all progress? This clears your XP and answers.'))return;
+  try{localStorage.removeItem(SK);localStorage.removeItem('champ_challenge_v1');localStorage.removeItem('champ_challenge_v2')}catch(e){}
+  state=defaults();saveState();
+  // Clear quiz states
+  document.querySelectorAll('.qo.pk').forEach(o=>{o.classList.remove('pk','ok','no');o.style.cursor='pointer'});
+  document.querySelectorAll('.qe.sh').forEach(e=>{e.classList.remove('sh')});
+  document.querySelectorAll('.qe-score').forEach(s=>s.remove());
+  // Clear champ feedback
+  document.querySelectorAll('.champ-feedback.on').forEach(f=>{f.classList.remove('on');f.innerHTML=''});
+  document.querySelectorAll('.champ-btn').forEach(b=>{b.disabled=true;b.classList.remove('loading');b.innerHTML='\xf0\x9f\xa4\x96 Check with Champ'});
+  // Clear textareas
+  document.querySelectorAll('.write-area').forEach(ta=>{ta.value=''});
+  // Clear matching
+  document.querySelectorAll('.match-bucket-items').forEach(bi=>{bi.innerHTML=''});
+  document.querySelectorAll('.match-item.placed').forEach(i=>i.classList.remove('placed'));
+  document.querySelectorAll('.match-check').forEach(b=>{b.disabled=true;b.textContent='Check answers'});
+  // Clear sequencing
+  Object.keys(SEQ_DATA).forEach(sid=>initSeq(sid));
+  // Re-init matching
+  Object.keys(MATCH_DATA).forEach(mid=>initMatch(mid));
+  // Clear model answer wrappers
+  document.querySelectorAll('.qe[data-wrapped]').forEach(e=>e.removeAttribute('data-wrapped'));
+  // Clear reveals for non-champ exercises
+  document.querySelectorAll('.reveal-btn.revealed').forEach(b=>{b.classList.remove('revealed');b.onclick=function(){reveal(this,this.dataset.eid)};});
+  renderChips();go(0);
+  showToast('Progress reset');
+}
+
+// ── Fullscreen ──
+function doFS(){var el=document.documentElement;if(!document.fullscreenElement&&!document.webkitFullscreenElement){if(el.requestFullscreen)el.requestFullscreen();else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen()}else{if(document.exitFullscreen)document.exitFullscreen();else if(document.webkitExitFullscreen)document.webkitExitFullscreen()}}
+document.querySelectorAll('.sh').forEach(sh=>{
+  const right=sh.querySelector('.sh-right');
+  if(!right)return;
+  const btn=document.createElement('button');
+  btn.className='fs-btn';btn.title='Full Screen';btn.onclick=doFS;
+  btn.innerHTML='<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 1,1 5,1"/><polyline points="9,1 13,1 13,5"/><polyline points="13,9 13,13 9,13"/><polyline points="5,13 1,13 1,9"/></svg>';
+  right.insertBefore(btn,right.firstChild);
+});
+</script>
+</body>
+</html>
