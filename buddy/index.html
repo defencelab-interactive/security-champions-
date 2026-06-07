@@ -777,8 +777,29 @@ inp.addEventListener('input',()=>{
 inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
 
 function addMsg(role,text){
+  var cleanText=text;
+  var newSugs=[];
+  if(role==='bot'){
+    // Parse [SUG: text] tags
+    cleanText=text.replace(/\[SUG:\s*([^\]]+)\]/g,function(m,s){
+      newSugs.push(s.trim());
+      return '';
+    }).trim();
+    // Update suggestion buttons if we got new ones
+    if(newSugs.length>0){
+      sugsEl.innerHTML='';
+      newSugs.forEach(function(s){
+        var btn=document.createElement('button');
+        btn.className='sug';
+        btn.textContent=s;
+        btn.onclick=function(){askSug(btn)};
+        sugsEl.appendChild(btn);
+      });
+      sugsEl.style.display='';
+    }
+  }
   const d=document.createElement('div');d.className='msg '+role;
-  d.innerHTML='<div class="bub">'+fmt(text)+'</div>';
+  d.innerHTML='<div class="bub">'+fmt(cleanText)+'</div>';
   chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;
 }
 function addTyping(){
