@@ -101,10 +101,50 @@ canvas#bg{position:fixed;inset:0;z-index:0}
   align-items:center;justify-content:center;
   position:relative;
   padding:40px;
-  overflow:hidden;
 }
 
 /* Mascot character */
+.guy-stage{
+  display:flex;flex-direction:column;align-items:center;
+  transition:transform 1.5s cubic-bezier(.25,.46,.45,.94);
+}
+
+/* ═══ IDLE MOVEMENT STAGES ═══ */
+.guy-stage.wander{transform:translateX(75%) translateY(25%)}
+.guy-stage.wander .guy{animation:wander-look 3s ease-in-out infinite}
+@keyframes wander-look{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(5deg)}}
+.guy-stage.wander .eye-pupil{transform:translate(4px,0)}
+
+.guy-stage.peek{transform:translateX(-140%) translateY(55%);z-index:20}
+.guy-stage.peek .guy{animation:peek-nudge 2s ease-in-out infinite}
+@keyframes peek-nudge{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+.guy-stage.peek .eye-pupil{animation:peek-look 2s ease-in-out infinite}
+@keyframes peek-look{0%,100%{transform:translate(-4px,2px)}35%{transform:translate(-4px,2px)}50%{transform:translate(3px,-2px)}85%{transform:translate(3px,-2px)}}
+.guy-stage.peek .eye-lid{animation:peek-blink 3s ease-in-out infinite!important}
+@keyframes peek-blink{0%,42%,48%,100%{transform:scaleY(0)}44%,46%{transform:scaleY(1)}}
+.guy-stage.peek .mouth-normal{opacity:0}
+.guy-stage.peek .mouth-happy{opacity:1}
+.guy-stage.peek .question-marks{opacity:1}
+
+/* Floating question marks */
+.question-marks{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:280px;height:120px;pointer-events:none;opacity:0;transition:opacity .4s;
+}
+.qm{
+  position:absolute;font-size:20px;font-weight:700;color:var(--or);
+  opacity:0;animation:qm-float 3s ease-in-out infinite;
+}
+.qm:nth-child(1){left:10%;top:20%;animation-delay:0s}
+.qm:nth-child(2){right:5%;top:10%;animation-delay:.8s;font-size:16px}
+.qm:nth-child(3){left:0%;top:0%;animation-delay:1.6s;font-size:24px}
+@keyframes qm-float{
+  0%{opacity:0;transform:translateY(10px) rotate(-10deg)}
+  20%{opacity:.8;transform:translateY(0) rotate(0deg)}
+  80%{opacity:.8;transform:translateY(-8px) rotate(5deg)}
+  100%{opacity:0;transform:translateY(-20px) rotate(10deg)}
+}
+
 .guy{
   position:relative;
   width:280px;height:340px;
@@ -227,8 +267,21 @@ canvas#bg{position:fixed;inset:0;z-index:0}
 .guy.proud .head-sparkles{animation:sparkle-burst .8s ease-out forwards}
 .guy.proud .hsp{animation:hsp-fly .7s ease-out forwards}
 
+/* ═══ MYSTIC: fortune-telling mode ═══ */
+.guy.mystic{animation:mystic-hover 3s ease-in-out infinite}
+@keyframes mystic-hover{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.03)}}
+.guy.mystic .eye-lid{animation:none!important;transform:scaleY(.5)}
+.guy.mystic .eye-pupil{animation:mystic-gaze 3s ease-in-out infinite}
+@keyframes mystic-gaze{0%,100%{transform:translate(0,0)}33%{transform:translate(2px,-2px)}66%{transform:translate(-2px,1px)}}
+.guy.mystic .antenna-dot{animation:mystic-pulse 1.5s ease-in-out infinite!important;fill:#a855f7}
+@keyframes mystic-pulse{0%,100%{opacity:.3;r:4}50%{opacity:1;r:8}}
+.guy.mystic .mouth-normal{opacity:0}
+.guy.mystic .mouth-mystic{opacity:1}
+.guy.mystic .orbit{animation:spin 8s linear infinite}
+.guy.mystic .orb-item{border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.08)}
+
 /* ═══ Extra SVG elements ═══ */
-.mouth-yawn,.mouth-sad,.sweat-drop,.zzz{opacity:0;transition:opacity .3s}
+.mouth-yawn,.mouth-sad,.mouth-mystic,.sweat-drop,.zzz{opacity:0;transition:opacity .3s}
 .zzz{position:absolute;top:8%;right:12%;font-size:18px;animation:zzz-float 2s ease-in-out infinite;pointer-events:none}
 @keyframes zzz-float{0%,100%{transform:translateY(0) rotate(-5deg);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(-16px) rotate(5deg);opacity:0}}
 
@@ -238,6 +291,11 @@ canvas#bg{position:fixed;inset:0;z-index:0}
 .shield-glow{opacity:0;transition:opacity .4s}
 .shield-glow.on{opacity:1;animation:shield-pulse .8s ease-out}
 @keyframes shield-pulse{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
+
+/* Click feedback glow */
+.guy.clicked{filter:drop-shadow(0 0 12px rgba(232,129,58,.5))}
+.guy.clicked .antenna-dot{animation:click-flare .4s ease!important}
+@keyframes click-flare{0%{r:4;opacity:.6}50%{r:12;opacity:1}100%{r:4;opacity:.6}}
 
 /* Eye tracking */
 .eye-pupil{transition:transform .15s ease}
@@ -279,46 +337,37 @@ canvas#bg{position:fixed;inset:0;z-index:0}
 .hsp:nth-child(6){left:40%;top:40%;--hx:-15px;--hy:-32px;animation-delay:.06s}
 @keyframes hsp-fly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--hx),var(--hy)) scale(0)}}
 
-/* Speech bubble from mascot */
-.guy-speech{
-  position:absolute;top:-20px;right:-60px;
-  background:var(--card);border:1px solid var(--bd);
-  padding:8px 14px;border-radius:14px 14px 14px 4px;
-  font-size:12px;color:var(--tm);max-width:180px;
-  opacity:0;transform:translateY(4px) scale(.9);
-  transition:all .3s ease;
-  pointer-events:none;
-  box-shadow:0 8px 24px rgba(0,0,0,.3);
-}
-.guy-speech.on{opacity:1;transform:translateY(0) scale(1)}
+/* Speech — reuses fortune zone */
 
 /* ═══ CYBER FORTUNE ═══ */
 .fortune-zone{
-  position:absolute;top:2%;left:50%;transform:translateX(-50%);
-  width:300px;text-align:center;pointer-events:none;
-  height:80px;display:flex;align-items:center;justify-content:center;
+  position:absolute;top:8%;left:50%;transform:translateX(-50%);
+  width:420px;text-align:center;pointer-events:none;
+  min-height:100px;display:flex;align-items:center;justify-content:center;
+  padding:0 10px;
 }
 .fortune-text{
-  font-size:15px;line-height:1.5;
-  color:var(--or);font-weight:500;
+  font-size:20px;line-height:1.6;
+  color:#a855f7;font-weight:600;
   font-style:italic;
   opacity:0;
-  text-shadow:0 0 20px rgba(232,129,58,.3);
+  text-shadow:0 0 30px rgba(168,85,247,.4),0 0 60px rgba(168,85,247,.15);
   animation:none;
 }
-.fortune-text.show{animation:fortune-rise 3.5s ease-out forwards}
+.fortune-text.show{animation:fortune-rise 6s ease-out forwards}
 @keyframes fortune-rise{
-  0%{opacity:0;transform:translateY(20px) scale(.9)}
-  12%{opacity:1;transform:translateY(0) scale(1)}
-  75%{opacity:1;transform:translateY(-4px)}
-  100%{opacity:0;transform:translateY(-20px)}
+  0%{opacity:0;transform:translateY(24px) scale(.85);filter:blur(6px)}
+  10%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+  70%{opacity:1;transform:translateY(-3px)}
+  85%{opacity:.6;transform:translateY(-10px);filter:blur(1px)}
+  100%{opacity:0;transform:translateY(-30px) scale(.95);filter:blur(8px)}
 }
 
 .fortune-cta{
   margin-top:8px;
   cursor:pointer;
-  background:none;border:1px solid rgba(232,129,58,.25);
-  color:var(--or);
+  background:none;border:1px solid rgba(168,85,247,.25);
+  color:#a855f7;
   font-family:'DM Sans',sans-serif;
   font-size:12px;font-weight:600;
   padding:8px 20px;border-radius:20px;
@@ -327,9 +376,9 @@ canvas#bg{position:fixed;inset:0;z-index:0}
   position:relative;overflow:hidden;
 }
 .fortune-cta:hover{
-  background:var(--ol);border-color:var(--or);
+  background:rgba(168,85,247,.08);border-color:#a855f7;
   transform:translateY(-1px);
-  box-shadow:0 4px 16px rgba(232,129,58,.15);
+  box-shadow:0 4px 16px rgba(168,85,247,.15);
 }
 .fortune-cta:active{transform:scale(.97)}
 .fortune-cta .cta-icon{
@@ -375,12 +424,13 @@ canvas#bg{position:fixed;inset:0;z-index:0}
   </div>
 
   <!-- RIGHT: MASCOT -->
-  <div class="mascot-side">
+  <div class="mascot-side" id="mascotSide">
     <div class="fortune-zone" id="fortuneZone">
       <div class="fortune-text" id="fortuneText"></div>
     </div>
 
-    <div class="guy idle" id="guy">
+    <div class="guy-stage" id="guyStage">
+      <div class="guy idle" id="guy">
       <!-- Orbiting icons -->
       <div class="orbit">
         <div class="orb-item">🔒</div>
@@ -388,9 +438,6 @@ canvas#bg{position:fixed;inset:0;z-index:0}
         <div class="orb-item">🔑</div>
         <div class="orb-item">🔍</div>
       </div>
-
-      <!-- Speech bubble -->
-      <div class="guy-speech" id="speech"></div>
 
       <!-- Sparkles on happy -->
       <div class="head-sparkles">
@@ -400,6 +447,11 @@ canvas#bg{position:fixed;inset:0;z-index:0}
 
       <!-- Zzz for bored state -->
       <div class="zzz">💤</div>
+
+      <!-- Question marks for peek state -->
+      <div class="question-marks">
+        <div class="qm">?</div><div class="qm">?</div><div class="qm">?</div>
+      </div>
 
       <!-- THE CHARACTER -->
       <svg class="guy-body" viewBox="0 0 200 280" fill="none">
@@ -443,6 +495,7 @@ canvas#bg{position:fixed;inset:0;z-index:0}
           <path class="mouth-happy" d="M-10,-1 Q0,10 10,-1" stroke="var(--or)" stroke-width="2.5" stroke-linecap="round" fill="rgba(232,129,58,.15)" opacity="0"/>
           <ellipse class="mouth-yawn" cx="0" cy="3" rx="5" ry="6" fill="#111520" stroke="var(--or)" stroke-width="1" opacity="0"/>
           <path class="mouth-sad" d="M-7,4 Q0,-2 7,4" stroke="var(--or)" stroke-width="2" stroke-linecap="round" fill="none" opacity="0"/>
+          <path class="mouth-mystic" d="M-6,2 L6,2" stroke="#a855f7" stroke-width="2" stroke-linecap="round" fill="none" opacity="0"/>
         </g>
 
         <!-- Sweat drop (visible on sad) -->
@@ -531,6 +584,7 @@ canvas#bg{position:fixed;inset:0;z-index:0}
       <div class="gs-label" id="gsLabel">STATUS</div>
       <div class="gs-mood" id="gsMood"></div>
     </div>
+    </div><!-- /guy-stage -->
 
     <button class="fortune-cta" id="fortuneBtn" onclick="fortune()">
       <span class="cta-icon">🔮</span> Get a Cyber Fortune
@@ -567,41 +621,118 @@ bgLoop();
 
 /* ═══ MASCOT STATE ═══ */
 const guy=document.getElementById('guy');
-const speech=document.getElementById('speech');
+const fortuneText=document.getElementById('fortuneText');
 const gsLabel=document.getElementById('gsLabel');
 const gsMood=document.getElementById('gsMood');
 let mt=null, idleTimer=null, typingTimer=null;
 
 const moods={
-  idle:{label:'STATUS',mood:'Ready to help ✦',speech:''},
-  thinking:{label:'PROCESSING',mood:'Thinking…',speech:'Checking the modules…'},
-  happy:{label:'DONE',mood:'Here you go! ✓',speech:''},
-  'typing-user':{label:'LISTENING',mood:'Go on, I\'m listening…',speech:''},
-  bored:{label:'IDLE',mood:'Still here… 💤',speech:''},
-  sad:{label:'ERROR',mood:'Something broke…',speech:''},
-  curious:{label:'QUIZ TIME',mood:'Think carefully… 🤔',speech:''},
-  nod:{label:'EXPLAINED',mood:'Got it? ✓',speech:''},
-  proud:{label:'AWESOME',mood:'Nailed it! 🎉',speech:''}
+  idle:{label:'STATUS',mood:'Ready to help ✦'},
+  thinking:{label:'PROCESSING',mood:'Thinking…'},
+  happy:{label:'DONE',mood:'Here you go! ✓'},
+  'typing-user':{label:'LISTENING',mood:'Go on, I\'m listening…'},
+  bored:{label:'IDLE',mood:'Still here… 💤'},
+  sad:{label:'ERROR',mood:'Something broke…'},
+  curious:{label:'QUIZ TIME',mood:'Think carefully… 🤔'},
+  nod:{label:'EXPLAINED',mood:'Got it? ✓'},
+  proud:{label:'AWESOME',mood:'Nailed it! 🎉'},
+  mystic:{label:'🔮 ORACLE',mood:'The bits whisper…'},
+  wander:{label:'SEARCHING',mood:'Where did everyone go?'},
+  peek:{label:'👀 HEY',mood:'Let me pick something for you!'}
 };
+
+const guyStage=document.getElementById('guyStage');
+let idleStage=0;
+let peekActionTimer=null;
+const IDLE_STAGES=[
+  {delay:20000, state:'bored', move:''},
+  {delay:25000, state:'wander', move:'wander'},
+  {delay:15000, state:'peek', move:'peek', action:'suggest'}
+];
 
 function setGuy(state,dur){
   guy.className='guy '+state;
   const m=moods[state]||moods.idle;
   gsLabel.textContent=m.label;
   gsMood.textContent=m.mood;
-  if(m.speech){speech.textContent=m.speech;speech.classList.add('on')}
-  else{speech.classList.remove('on')}
   if(mt)clearTimeout(mt);
   if(dur)mt=setTimeout(()=>{setGuy('idle');startIdleTimer()},dur);
-  if(state!=='bored')resetIdleTimer();
+  if(state!=='bored'&&state!=='wander'&&state!=='peek')resetIdleTimer();
 }
 
 function startIdleTimer(){
   if(idleTimer)clearTimeout(idleTimer);
-  idleTimer=setTimeout(()=>{if(!busy&&guy.classList.contains('idle'))setGuy('bored')},30000);
+  if(idleStage>=IDLE_STAGES.length){idleStage=0;return}
+  var stage=IDLE_STAGES[idleStage];
+  idleTimer=setTimeout(function(){
+    if(!busy){
+      setGuy(stage.state);
+      guyStage.className='guy-stage'+(stage.move?' '+stage.move:'');
+      if(stage.action==='suggest'){
+        peekActionTimer=setTimeout(function(){
+          if(!busy&&guyStage.classList.contains('peek')){
+            var btns=Array.from(document.querySelectorAll('.sug'));
+            if(!btns.length)return;
+            var step=0;
+            var cycleTimer=null;
+            function typeText(text,cb){
+              inp.value='';var i=0;
+              var iv=setInterval(function(){
+                if(i<text.length){inp.value+=text[i];i++}
+                else{clearInterval(iv);if(cb)cb()}
+              },35);
+            }
+            function nextStep(){
+              if(busy||!guyStage.classList.contains('peek')){return}
+              // Cycle through suggestions
+              var idx=step%btns.length;
+              btns.forEach(function(b){b.style=''});
+              btns[idx].style.background='var(--ol)';btns[idx].style.borderColor='var(--or)';btns[idx].style.color='var(--or)';btns[idx].style.transform='scale(1.08)';
+              typeText(btns[idx].textContent,function(){
+                step++;
+                // After full cycle, type the question
+                if(step%btns.length===0){
+                  cycleTimer=setTimeout(function(){
+                    if(busy||!guyStage.classList.contains('peek'))return;
+                    btns.forEach(function(b){b.style=''});
+                    typeText('So... what shall we talk about? 🤔',function(){
+                      inp.style.borderColor='var(--or)';
+                      inp.style.boxShadow='0 0 16px rgba(232,129,58,.2)';
+                      // Restart cycle after pause
+                      cycleTimer=setTimeout(function(){
+                        inp.style='';
+                        nextStep();
+                      },3000);
+                    });
+                  },2500);
+                } else {
+                  cycleTimer=setTimeout(nextStep,2500);
+                }
+              });
+            }
+            // Store cleanup ref
+            var origReset=resetIdleTimer;
+            resetIdleTimer=function(){
+              if(cycleTimer)clearTimeout(cycleTimer);
+              btns.forEach(function(b){b.style=''});
+              inp.style='';inp.value='';
+              resetIdleTimer=origReset;
+              origReset();
+            };
+            nextStep();
+          }
+        },3000);
+      }
+      idleStage++;
+      startIdleTimer();
+    }
+  },stage.delay);
 }
 function resetIdleTimer(){
   if(idleTimer)clearTimeout(idleTimer);
+  if(peekActionTimer){clearTimeout(peekActionTimer);peekActionTimer=null}
+  idleStage=0;
+  guyStage.className='guy-stage';
   if(!busy)startIdleTimer();
 }
 
@@ -658,6 +789,9 @@ function addTyping(){
 function rmTyping(){const t=document.getElementById('typing');if(t)t.remove()}
 
 function fmt(t){
+  // Escape HTML entities first to prevent XSS
+  t=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  // Then apply markdown formatting on safe text
   return t.replace(/```(\w*)\n([\s\S]*?)```/g,'<pre><code>$2</code></pre>')
     .replace(/`([^`]+)`/g,'<code>$1</code>')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
@@ -670,12 +804,14 @@ function fmt(t){
 
 function askSug(btn){inp.value=btn.textContent;send()}
 
+const MAX_HISTORY=40; // 20 pairs
 async function send(){
   const text=inp.value.trim();
   if(!text||busy)return;
   busy=true;sendBtn.disabled=true;sugsEl.style.display='none';
   addMsg('user',text);
   history.push({role:'user',content:text});
+  if(history.length>MAX_HISTORY)history=history.slice(-MAX_HISTORY);
   inp.value='';inp.style.height='auto';
   setGuy('thinking');addTyping();
 
@@ -688,6 +824,7 @@ async function send(){
       setGuy(reaction,3000);
       addMsg('bot',reply);
       history.push({role:'assistant',content:reply});
+      if(history.length>MAX_HISTORY)history=history.slice(-MAX_HISTORY);
     }else{
       setGuy('sad',3000);
       addMsg('bot','⚠ '+(data.error&&data.error.message?data.error.message:'Something went wrong.'));
@@ -701,24 +838,27 @@ async function send(){
 }
 
 /* ═══ BODY PART CLICKS ═══ */
+function flashGlow(){
+  guy.classList.add('clicked');
+  setTimeout(function(){guy.classList.remove('clicked')},400);
+}
+
 var PART_REACTIONS={
   shield:function(){
     var sg=document.querySelector('.shield-glow');
     if(sg){sg.classList.add('on');setTimeout(function(){sg.classList.remove('on')},800)}
-    speech.textContent='Shield activated! 🛡';speech.classList.add('on');
-    setTimeout(function(){speech.classList.remove('on')},1500);
+    setGuy('happy',1500);flashGlow();
   },
-  head:function(){fortune()},
+  head:function(){
+    setGuy('curious',1500);flashGlow();
+  },
   antenna:function(){
     var dot=document.querySelector('.antenna-dot');
     if(dot){dot.style.fill='#2EAD6B';setTimeout(function(){dot.style.fill=''},1200)}
-    speech.textContent='Signal received! 📡';speech.classList.add('on');
-    setTimeout(function(){speech.classList.remove('on')},1500);
+    flashGlow();
   },
   headset:function(){
-    speech.textContent='*beep boop* 🎧';speech.classList.add('on');
-    setTimeout(function(){speech.classList.remove('on')},1500);
-    setGuy('happy',1200);
+    setGuy('happy',1500);flashGlow();
   }
 };
 
@@ -731,7 +871,9 @@ document.querySelectorAll('.click-zone').forEach(function(z){
 });
 
 guy.addEventListener('click',function(e){
-  if(!busy&&!e.target.closest('.click-zone'))fortune();
+  if(!busy&&!e.target.closest('.click-zone')){
+    setGuy('happy',1500);flashGlow();
+  }
 });
 
 /* ═══ CYBER FORTUNES ═══ */
@@ -755,26 +897,46 @@ var FORTUNES = [
   "Secrets belong in vaults,\nnot in .env files committed to main. 🤫",
   "The next zero-day will target\nthe dependency you forgot existed.",
   "Mobile app tip: certificate pinning.\nYour future self will thank you. 📱",
-  "\"We're too small to be a target\"\n— last words before every breach report."
+  "\"We're too small to be a target\"\n— last words before every breach report.",
+  "Your firewall is active.\nBut who reviews the rules? 🔥",
+  "Zero vulnerabilities detected.\nThat means you're not scanning hard enough.",
+  "Threat level: it's fine. Probably.\nThe oracle is not fully convinced.",
+  "Someone is listening on port 443.\nLet's hope it's your server. 🔒",
+  "DNS resolved. Suspiciously fast.\nThe stars find this… unusual.",
+  "A beacon was detected on port 8080.\nIt's probably just a dev server. Probably.",
+  "PagerDuty is silent tonight.\nThe calm before the deploy. 📟",
+  "Your SIEM has something to tell you.\nBut you haven't checked since Tuesday.",
+  "Alert fatigue is real.\nThe one you ignore will be the one that matters.",
+  "Uptime: 99.97%.\nThat 0.03% will be your next incident report.",
+  "Your CVSS score is being calculated.\nYou won't like the result.",
+  "Thinking in STRIDE today?\nSpoofing sends its regards.",
+  "Your attack surface grew last sprint.\nDid your threat model? 🤔",
+  "The CVE database has a new entry.\nIt matches your stack.",
+  "Trust but verify.\nActually, just verify. 🔍",
+  "Encrypt all the things.\nEspecially the ones you think don't matter.",
+  "Defense in depth is not a suggestion.\nIt's a survival strategy.",
+  "Shift left, stay safe.\nBut don't forget to look right. ⬅️➡️",
+  "Zero trust. Always.\nEspecially on Fridays before deploy."
 ];
 var lastFortune = -1;
 
 function fortune() {
-  setGuy('happy', 2500);
-  var ft = document.getElementById('fortuneText');
+  setGuy('mystic', 6500);
   var idx;
   do { idx = Math.floor(Math.random() * FORTUNES.length); } while (idx === lastFortune && FORTUNES.length > 1);
   lastFortune = idx;
-  ft.className = 'fortune-text';
-  ft.textContent = FORTUNES[idx];
-  void ft.offsetWidth;
-  ft.className = 'fortune-text show';
+  fortuneText.className = 'fortune-text';
+  fortuneText.textContent = FORTUNES[idx];
+  void fortuneText.offsetWidth;
+  fortuneText.className = 'fortune-text show';
 }
 
 addMsg('bot',
   "**Hey! I'm Champ — your Security Buddy** 🛡\n\n"+
-  "Ask me about any of the 9 course modules — I'll explain, give examples, and quiz you.\n\n"+
-  "Pick a topic below or type away!"
+  "I know all 9 course modules inside out. Ask me anything — I'll explain, give examples, and quiz you when you're ready.\n\n"+
+  "🔮 I also moonlight as a **Cyber Oracle** — hit the fortune button, I dare you\n"+
+  "🎯 In practice exercises, I'll review your code and give real feedback\n\n"+
+  "Fair warning: I don't like being ignored. Leave me alone too long and I *will* come find you. 👀"
 );
 </script>
 </body>
