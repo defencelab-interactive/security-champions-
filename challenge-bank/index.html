@@ -288,6 +288,51 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .champ-feedback .cf-body{white-space:pre-line}
 .champ-feedback .cf-body strong{color:#fff;font-weight:600}
 .champ-feedback .cf-err{color:rgba(255,255,255,.5);font-style:italic}
+
+/* ═══ CHAMP MASCOT OVERLAY ═══ */
+.champ-overlay{position:fixed;right:-320px;bottom:0;width:300px;height:420px;z-index:1000;transition:right .6s cubic-bezier(.25,.46,.45,.94);pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:30px}
+.champ-overlay.on{right:10px}
+.champ-overlay .champ-svg{width:220px;height:280px;animation:champ-float 3s ease-in-out infinite}
+@keyframes champ-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.champ-overlay .champ-mood{font-size:13px;font-weight:600;color:var(--or);text-align:center;margin-top:8px;letter-spacing:1px;text-transform:uppercase;opacity:0;transition:opacity .3s}
+.champ-overlay.on .champ-mood{opacity:1}
+
+/* Champ states */
+.champ-overlay .eye-lid{animation:blink 3s ease-in-out infinite}
+@keyframes blink{0%,42%,50%,100%{transform:scaleY(0)}45%{transform:scaleY(1)}}
+.champ-overlay.thinking .champ-svg{animation:champ-think 1.5s ease-in-out infinite}
+@keyframes champ-think{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(2deg)}}
+.champ-overlay.thinking .eye-pupil{animation:think-look 1.5s ease-in-out infinite}
+@keyframes think-look{0%,100%{transform:translate(0,0)}50%{transform:translate(3px,-2px)}}
+.champ-overlay.thinking .antenna-dot{animation:think-pulse .8s ease infinite}
+@keyframes think-pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+.champ-overlay.happy .happy-eye{opacity:1}
+.champ-overlay.happy .eye-pupil{opacity:0}
+.champ-overlay.happy .eye-lid{animation:none;transform:scaleY(1)}
+.champ-overlay.happy .mouth-normal{opacity:0}
+.champ-overlay.happy .mouth-happy{opacity:1}
+.champ-overlay.happy .head-sparkles{opacity:1;animation:sparkle-pop .8s ease-out}
+@keyframes sparkle-pop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+
+.champ-overlay.proud .happy-eye{opacity:1}
+.champ-overlay.proud .eye-pupil{opacity:0}
+.champ-overlay.proud .eye-lid{animation:none;transform:scaleY(1)}
+.champ-overlay.proud .mouth-normal{opacity:0}
+.champ-overlay.proud .mouth-happy{opacity:1}
+.champ-overlay.proud .champ-svg{animation:proud-bounce .6s ease infinite}
+@keyframes proud-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+.champ-overlay.sad .mouth-normal{opacity:0}
+.champ-overlay.sad .mouth-sad{opacity:1}
+.champ-overlay.sad .eye-lid{animation:none;transform:scaleY(.4)}
+.champ-overlay.sad .sweat-drop{opacity:1}
+
+.champ-overlay .head-sparkles{opacity:0;position:absolute;top:10px;left:50%;transform:translateX(-50%);width:80px;height:40px}
+.champ-overlay .hsp{position:absolute;width:6px;height:6px;background:var(--or);border-radius:50%}
+.champ-overlay .hsp:nth-child(1){left:10%;top:0}
+.champ-overlay .hsp:nth-child(2){left:50%;top:20%}
+.champ-overlay .hsp:nth-child(3){right:10%;top:0}
 </style>
 </head>
 <body>
@@ -1542,6 +1587,12 @@ async function checkWithChamp(qid){
     fb.classList.add('on');return;
   }
 
+  // Show Champ - thinking state
+  const co=document.getElementById('champOverlay');
+  const cm=document.getElementById('champMood');
+  co.className='champ-overlay on thinking';
+  cm.textContent='Reading…';
+
   btn.classList.add('loading');
   btn.innerHTML='🤖 Champ is reading<span class="champ-dots"></span>';
   btn.disabled=true;
@@ -1573,6 +1624,8 @@ async function checkWithChamp(qid){
       console.error('[Champ] Exercise '+qid+': HTTP '+status);
       fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body"><span class="cf-err">${errMsg}</span></div>`;
       fb.classList.add('on');showModelAnswer(qid);
+      co.className='champ-overlay on sad';cm.textContent='Oops…';
+      setTimeout(()=>{co.className='champ-overlay'},4000);
       btn.classList.remove('loading');btn.innerHTML='🤖 Check with Champ';btn.disabled=false;
       return;
     }
@@ -1589,6 +1642,8 @@ async function checkWithChamp(qid){
       else{userMsg='Champ encountered an error: '+apiErr}
       fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body"><span class="cf-err">${userMsg}</span></div>`;
       fb.classList.add('on');showModelAnswer(qid);
+      co.className='champ-overlay on sad';cm.textContent='Oops…';
+      setTimeout(()=>{co.className='champ-overlay'},4000);
       btn.classList.remove('loading');btn.innerHTML='🤖 Check with Champ';btn.disabled=false;
       return;
     }
@@ -1596,6 +1651,18 @@ async function checkWithChamp(qid){
     const text=data.content?.map(b=>b.type==='text'?b.text:'').join('')||data.text||data.response||'No response received.';
     fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body">${text.replace(/\n/g,'<br>')}</div>`;
     fb.classList.add('on');showModelAnswer(qid);
+
+    // React based on verdict
+    if(text.includes('✅')){
+      co.className='champ-overlay on proud';cm.textContent='Nailed it! 🎉';
+    } else if(text.includes('⚠')){
+      co.className='champ-overlay on happy';cm.textContent='Almost there!';
+    } else if(text.includes('❌')){
+      co.className='champ-overlay on sad';cm.textContent='You\'ll get it!';
+    } else {
+      co.className='champ-overlay on happy';cm.textContent='';
+    }
+    setTimeout(()=>{co.className='champ-overlay'},6000);
 
     state.champFeedback[qid]=text;
     if(!state.revealed.includes('champ-'+qid)){
@@ -1610,6 +1677,8 @@ async function checkWithChamp(qid){
     else if(err.message.includes('imeout')){netMsg='Request timed out \u2014 Champ might be overloaded. Try again. \u23f1'}
     fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body"><span class="cf-err">${netMsg}</span></div>`;
     fb.classList.add('on');showModelAnswer(qid);
+    co.className='champ-overlay on sad';cm.textContent='Connection lost';
+    setTimeout(()=>{co.className='champ-overlay'},4000);
   }
 
   btn.classList.remove('loading');
@@ -1708,5 +1777,53 @@ document.querySelectorAll('.sh').forEach(sh=>{
   window._checkFS();
 })();
 </script>
+<!-- CHAMP MASCOT OVERLAY -->
+<div class="champ-overlay" id="champOverlay">
+  <div class="head-sparkles"><div class="hsp"></div><div class="hsp"></div><div class="hsp"></div></div>
+  <svg class="champ-svg" viewBox="0 0 200 280" fill="none">
+    <line x1="100" y1="28" x2="100" y2="10" stroke="#E8813A" stroke-width="2.5" stroke-linecap="round"/>
+    <circle class="antenna-dot" cx="100" cy="8" r="4" fill="#E8813A"/>
+    <ellipse cx="100" cy="72" rx="52" ry="48" fill="#2a2d38"/>
+    <rect x="56" y="50" width="88" height="44" rx="16" fill="#111520"/>
+    <g class="eyes">
+      <g transform="translate(80,72)">
+        <ellipse rx="10" ry="11" fill="#E8813A" opacity=".9"/>
+        <g class="eye-pupil"><circle r="5" fill="#fff"/></g>
+        <ellipse class="eye-lid" rx="11" ry="11" fill="#111520"/>
+        <path class="happy-eye" d="M-7,2 Q0,-6 7,2" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0"/>
+      </g>
+      <g transform="translate(120,72)">
+        <ellipse rx="10" ry="11" fill="#E8813A" opacity=".9"/>
+        <g class="eye-pupil"><circle r="5" fill="#fff"/></g>
+        <ellipse class="eye-lid" rx="11" ry="11" fill="#111520"/>
+        <path class="happy-eye" d="M-7,2 Q0,-6 7,2" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0"/>
+      </g>
+    </g>
+    <g transform="translate(100,88)">
+      <path class="mouth-normal" d="M-8,0 Q0,6 8,0" stroke="#E8813A" stroke-width="2" stroke-linecap="round" fill="none" opacity=".8"/>
+      <path class="mouth-happy" d="M-10,-1 Q0,10 10,-1" stroke="#E8813A" stroke-width="2.5" stroke-linecap="round" fill="rgba(232,129,58,.15)" opacity="0"/>
+      <path class="mouth-sad" d="M-7,4 Q0,-2 7,4" stroke="#E8813A" stroke-width="2" stroke-linecap="round" fill="none" opacity="0"/>
+    </g>
+    <g class="sweat-drop" transform="translate(140,58)" opacity="0">
+      <path d="M0,0 Q3,6 0,10 Q-3,6 0,0Z" fill="rgba(100,180,255,.6)"/>
+    </g>
+    <rect x="55" y="105" width="90" height="6" rx="3" fill="rgba(232,129,58,.15)"/>
+    <rect x="42" y="115" width="25" height="50" rx="12" fill="#2a2d38"/>
+    <rect x="133" y="115" width="25" height="50" rx="12" fill="#2a2d38"/>
+    <rect x="58" y="108" width="84" height="85" rx="14" fill="#2a2d38"/>
+    <rect x="76" y="128" width="48" height="35" rx="6" fill="#1e2028" stroke="#E8813A" stroke-width="1.5" opacity=".5"/>
+    <path d="M100 136l-8 14h16z" fill="rgba(232,129,58,.15)" stroke="#E8813A" stroke-width="1" stroke-linejoin="round"/>
+    <path d="M92 154l-4 8h24l-4-8" fill="rgba(232,129,58,.1)"/>
+    <line x1="100" y1="136" x2="100" y2="148" stroke="#E8813A" stroke-width="1"/>
+    <circle cx="100" cy="152" r="2" fill="#E8813A" opacity=".6"/>
+    <circle cx="50" cy="145" r="6" fill="#1e2028"/>
+    <circle cx="150" cy="145" r="6" fill="#1e2028"/>
+    <rect x="72" y="196" width="16" height="55" rx="8" fill="#2a2d38"/>
+    <rect x="112" y="196" width="16" height="55" rx="8" fill="#2a2d38"/>
+    <ellipse cx="80" cy="254" rx="12" ry="5" fill="#1e2028"/>
+    <ellipse cx="120" cy="254" rx="12" ry="5" fill="#1e2028"/>
+  </svg>
+  <div class="champ-mood" id="champMood"></div>
+</div>
 </body>
 </html>
