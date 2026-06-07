@@ -1574,6 +1574,12 @@ function showModelAnswer(qid){
 }
 
 async function checkWithChamp(qid){
+  function fmtFeedback(t){
+    return t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g,'<em>$1</em>')
+            .replace(/`([^`]+)`/g,'<code style="background:rgba(232,129,58,.1);padding:1px 5px;border-radius:3px;font-size:13px">$1</code>')
+            .replace(/\n/g,'<br>');
+  }
   const ta=document.getElementById('ta-'+qid);
   const btn=document.getElementById('champ-'+qid);
   const fb=document.getElementById('cf-'+qid);
@@ -1649,7 +1655,7 @@ async function checkWithChamp(qid){
     }
 
     const text=data.content?.map(b=>b.type==='text'?b.text:'').join('')||data.text||data.response||'No response received.';
-    fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body">${text.replace(/\n/g,'<br>')}</div>`;
+    fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body">${fmtFeedback(text)}</div>`;
     fb.classList.add('on');showModelAnswer(qid);
 
     // React based on verdict
@@ -1690,7 +1696,7 @@ async function checkWithChamp(qid){
 Object.entries(state.champFeedback||{}).forEach(([qid,text])=>{
   const fb=document.getElementById('cf-'+qid);
   if(fb){
-    fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body">${text.replace(/\n/g,'<br>')}</div>`;
+    fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body">${fmtFeedback(text)}</div>`;
     fb.classList.add('on');
   }
   showModelAnswer(qid);
