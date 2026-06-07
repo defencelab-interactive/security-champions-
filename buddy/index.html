@@ -357,6 +357,12 @@ canvas#bg{position:fixed;inset:0;z-index:0}
   animation:none;
 }
 .fortune-text.show{animation:fortune-rise 6s ease-out forwards}
+.fortune-text.peek-show{
+  color:var(--or);font-size:18px;
+  text-shadow:0 0 20px rgba(232,129,58,.3);
+  opacity:1;animation:peek-pulse 2s ease-in-out infinite;
+}
+@keyframes peek-pulse{0%,100%{opacity:.7}50%{opacity:1}}
 @keyframes fortune-rise{
   0%{opacity:0;transform:translateY(24px) scale(.85);filter:blur(6px)}
   10%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
@@ -414,7 +420,7 @@ canvas#bg{position:fixed;inset:0;z-index:0}
     <div class="sugs" id="sugs">
       <button class="sug" onclick="askSug(this)">What is a Security Champion?</button>
       <button class="sug" onclick="askSug(this)">Explain STRIDE</button>
-      <button class="sug" onclick="askSug(this)">Quiz me on OWASP</button>
+      <button class="sug" onclick="askSug(this)">OWASP Top 10 changes</button>
       <button class="sug" onclick="askSug(this)">IR playbook basics</button>
     </div>
     <div class="inp-area">
@@ -671,6 +677,9 @@ function startIdleTimer(){
       setGuy(stage.state);
       guyStage.className='guy-stage'+(stage.move?' '+stage.move:'');
       if(stage.action==='suggest'){
+        // Show peek text above mascot
+        fortuneText.className='fortune-text peek-show';
+        fortuneText.textContent='Let me pick something for you! 👀';
         peekActionTimer=setTimeout(function(){
           if(!busy&&guyStage.classList.contains('peek')){
             var btns=Array.from(document.querySelectorAll('.sug'));
@@ -735,6 +744,7 @@ function resetIdleTimer(){
   if(peekActionTimer){clearTimeout(peekActionTimer);peekActionTimer=null}
   idleStage=0;
   guyStage.className='guy-stage';
+  fortuneText.className='fortune-text';fortuneText.textContent='';
   if(!busy)startIdleTimer();
 }
 
