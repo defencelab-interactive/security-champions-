@@ -532,7 +532,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <textarea class="write-area" id="ta-q6" oninput="onWriteInput('q6')" placeholder="Describe the vulnerability and how the attacker exploits it..." rows="3"></textarea>
     <div class="write-actions"><button class="champ-btn" id="champ-q6" onclick="checkWithChamp('q6')" disabled>🤖 Check with Champ</button></div>
     <div class="champ-feedback" id="cf-q6"></div>
-    <div class="qe" id="q6-e"><strong>NoSQL Injection — A03:2021.</strong> The MongoDB query becomes <code>{ username: "admin", password: { "$gt": "" } }</code> which matches any non-empty password — the attacker logs in as admin without knowing the password. Fix: (1) Validate input types explicitly (<code>if (typeof password !== 'string') reject</code>). (2) Use a schema validator like Joi or Zod. (3) Use <code>$eq</code> operator explicitly. Classic SQL injection is caught by ORMs — NoSQL injection is the vector mid-level devs encounter today.</div>
+    <div class="qe" id="q6-e"><strong>NoSQL Injection — A05:2025.</strong> The MongoDB query becomes <code>{ username: "admin", password: { "$gt": "" } }</code> which matches any non-empty password — the attacker logs in as admin without knowing the password. Fix: (1) Validate input types explicitly (<code>if (typeof password !== 'string') reject</code>). (2) Use a schema validator like Joi or Zod. (3) Use <code>$eq</code> operator explicitly. Classic SQL injection is caught by ORMs — NoSQL injection is the vector mid-level devs encounter today.</div>
   </div></div></div>
   <div class="sf"><span class="shint">#6 / 27</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
 </div>
@@ -582,7 +582,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <textarea class="write-area" id="ta-q8" oninput="onWriteInput('q8')" placeholder="What would you recommend?" rows="4"></textarea>
     <div class="write-actions"><button class="champ-btn" id="champ-q8" onclick="checkWithChamp('q8')" disabled>🤖 Check with Champ</button></div>
     <div class="champ-feedback" id="cf-q8"></div>
-    <div class="qe" id="q8-e"><strong>A06:2021 — Vulnerable and Outdated Components.</strong> Options: (1) Find an actively maintained alternative, (2) Fork and patch the CVEs yourself (only if critical), (3) If neither is feasible, document the risk, restrict the package's permissions, and add monitoring. "It has 12k stars" is not a security argument.</div>
+    <div class="qe" id="q8-e"><strong>A03:2025 — Software Supply Chain Failures.</strong> Options: (1) Find an actively maintained alternative, (2) Fork and patch the CVEs yourself (only if critical), (3) If neither is feasible, document the risk, restrict the package's permissions, and add monitoring. "It has 12k stars" is not a security argument.</div>
   </div></div></div>
   <div class="sf"><span class="shint">#8 / 27</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
 </div>
@@ -1480,7 +1480,7 @@ const EVAL_CONTEXTS={
     keyPoints:["triage by severity","separate new code baseline from legacy debt","don't block dev workflow","document nosec suppressions"]
   },
   q8:{
-    exerciseContext:"12k-star npm package, 14 months no commits, 3 unpatched CVEs, maintainer inactive 8 months. A06:2021. Student must recommend concrete action.",
+    exerciseContext:"12k-star npm package, 14 months no commits, 3 unpatched CVEs, maintainer inactive 8 months. A03:2025 Software Supply Chain Failures. Student must recommend concrete action.",
     keyPoints:["find maintained alternative","fork and patch if critical","document risk if neither feasible","stars ≠ security"]
   },
   q10:{
@@ -1530,7 +1530,7 @@ const EVAL_CONTEXTS={
     gradingNote:"Grade on communication skill. Would a non-technical PM understand the risk, know what to do, feel urgency without panic?"
   },
   q6:{
-    exerciseContext:"NoSQL injection via MongoDB operator injection. Code passes req.body.password directly to find(). Attacker sends {$gt:''} as password, bypasses auth. A03:2021.",
+    exerciseContext:"NoSQL injection via MongoDB operator injection. Code passes req.body.password directly to find(). Attacker sends {$gt:''} as password, bypasses auth. A05:2025 Injection.",
     keyPoints:["NoSQL injection / operator injection","query becomes {password:{$gt:''}} matching any non-empty password","attacker logs in without knowing password","fix: validate input types, use Joi/Zod, use $eq explicitly"]
   },
   q7:{
