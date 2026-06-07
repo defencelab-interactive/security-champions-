@@ -1538,12 +1538,12 @@ async function checkWithChamp(qid){
 
   const ctx=EVAL_CONTEXTS[qid];
   if(!ctx){
-    fb.innerHTML='<div class="cf-header">\U0001f916 Champ\'s feedback</div><div class="cf-body"><span class="cf-err">No grading context for this exercise.</span></div>';
+    fb.innerHTML='<div class="cf-header">🤖 Champ\'s feedback</div><div class="cf-body"><span class="cf-err">No grading context for this exercise.</span></div>';
     fb.classList.add('on');return;
   }
 
   btn.classList.add('loading');
-  btn.innerHTML='\U0001f916 Champ is reading<span class="champ-dots"></span>';
+  btn.innerHTML='🤖 Champ is reading<span class="champ-dots"></span>';
   btn.disabled=true;
 
   try{
@@ -1571,9 +1571,9 @@ async function checkWithChamp(qid){
       else if(status>=500){errMsg='Champ\'s server had an issue ('+status+'). Try again in a moment. \ud83d\udd27'}
       else{errMsg='Unexpected error (HTTP '+status+'). Try again.'}
       console.error('[Champ] Exercise '+qid+': HTTP '+status);
-      fb.innerHTML=`<div class="cf-header">\U0001f916 Champ's feedback</div><div class="cf-body"><span class="cf-err">${errMsg}</span></div>`;
+      fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body"><span class="cf-err">${errMsg}</span></div>`;
       fb.classList.add('on');showModelAnswer(qid);
-      btn.classList.remove('loading');btn.innerHTML='\U0001f916 Check with Champ';btn.disabled=false;
+      btn.classList.remove('loading');btn.innerHTML='🤖 Check with Champ';btn.disabled=false;
       return;
     }
 
@@ -1587,14 +1587,14 @@ async function checkWithChamp(qid){
       else if(apiErr.includes('model')){userMsg='The AI model is temporarily unavailable. Try again shortly. \ud83d\udd27'}
       else if(apiErr.includes('key')||apiErr.includes('auth')){userMsg='Service configuration issue \u2014 contact your instructor.'}
       else{userMsg='Champ encountered an error: '+apiErr}
-      fb.innerHTML=`<div class="cf-header">\U0001f916 Champ's feedback</div><div class="cf-body"><span class="cf-err">${userMsg}</span></div>`;
+      fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body"><span class="cf-err">${userMsg}</span></div>`;
       fb.classList.add('on');showModelAnswer(qid);
-      btn.classList.remove('loading');btn.innerHTML='\U0001f916 Check with Champ';btn.disabled=false;
+      btn.classList.remove('loading');btn.innerHTML='🤖 Check with Champ';btn.disabled=false;
       return;
     }
 
     const text=data.content?.map(b=>b.type==='text'?b.text:'').join('')||data.text||data.response||'No response received.';
-    fb.innerHTML=`<div class="cf-header">\U0001f916 Champ's feedback</div><div class="cf-body">${text.replace(/\n/g,'<br>')}</div>`;
+    fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body">${text.replace(/\n/g,'<br>')}</div>`;
     fb.classList.add('on');showModelAnswer(qid);
 
     state.champFeedback[qid]=text;
@@ -1608,12 +1608,12 @@ async function checkWithChamp(qid){
     let netMsg='Check your internet connection and try again.';
     if(err.message.includes('fetch')||err.message.includes('Network')){netMsg='Can\'t reach Champ \u2014 check your internet connection. \ud83d\udce1'}
     else if(err.message.includes('imeout')){netMsg='Request timed out \u2014 Champ might be overloaded. Try again. \u23f1'}
-    fb.innerHTML=`<div class="cf-header">\U0001f916 Champ's feedback</div><div class="cf-body"><span class="cf-err">${netMsg}</span></div>`;
+    fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body"><span class="cf-err">${netMsg}</span></div>`;
     fb.classList.add('on');showModelAnswer(qid);
   }
 
   btn.classList.remove('loading');
-  btn.innerHTML='\U0001f916 Check with Champ';
+  btn.innerHTML='🤖 Check with Champ';
   btn.disabled=false;
 }
 
