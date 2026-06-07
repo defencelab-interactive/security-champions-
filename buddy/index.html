@@ -618,6 +618,9 @@ canvas#bg{position:fixed;inset:0;z-index:0}
     <button class="fortune-cta" id="fortuneBtn" onclick="fortune()">
       <span class="cta-icon">🔮</span> Get a Cyber Fortune
     </button>
+    <a href="https://defencelab-interactive.github.io/security-champions-/challenge-bank/" target="_blank" class="fortune-cta" style="margin-top:6px;border-color:var(--or);color:var(--or)">
+      <span class="cta-icon">🎯</span> Challenge Bank
+    </a>
   </div>
 </div>
 
@@ -845,6 +848,8 @@ function fmt(t){
   // Then apply markdown formatting on safe text
   return t.replace(/```(\w*)\n([\s\S]*?)```/g,'<pre><code>$2</code></pre>')
     .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*\[(.+?)\]\((.+?)\)\*\*/g,'<a href="$2" target="_blank" style="color:var(--or);font-weight:700;text-decoration:underline">$1</a>')
+    .replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2" target="_blank" style="color:var(--or);text-decoration:underline">$1</a>')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/\*(.+?)\*/g,'<em>$1</em>')
     .replace(/^- (.+)/gm,'<li>$1</li>')
@@ -986,7 +991,7 @@ addMsg('bot',
   "**Hey! I'm Champ — your Security Buddy** 🛡\n\n"+
   "I know all 9 course modules. Ask me anything — I'll explain, give examples, and help you work through real situations.\n\n"+
   "🔮 I moonlight as a **Cyber Oracle** — try the fortune button\n"+
-  "🎯 In practice exercises I'll review your answers and give real feedback\n\n"+
+  "🎯 Ready to practice? Jump into the **[Challenge Bank](https://defencelab-interactive.github.io/security-champions-/challenge-bank/)** — 27 exercises, I'll grade your answers\n\n"+
   "Fair warning: I don't like being ignored. Leave me alone too long and I *will* come find you. 👀"
 );
 </script>
