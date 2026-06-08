@@ -1054,7 +1054,7 @@ let c=0;
 // ── State ──
 const SK='champ_challenge_v3';
 let state;
-function defaults(){return{xp:0,streak:0,bestStreak:0,answers:{},matchDone:{},seqDone:{},revealed:[],champFeedback:{}}}
+function defaults(){return{xp:0,streak:0,bestStreak:0,answers:{},matchDone:{},seqDone:{},revealed:[],champFeedback:{},champAttempts:{}}}
 function loadState(){try{state=JSON.parse(localStorage.getItem(SK))||defaults()}catch(e){state=defaults()}}
 function saveState(){try{localStorage.setItem(SK,JSON.stringify(state))}catch(e){}}
 loadState();
@@ -1576,19 +1576,40 @@ function showModelAnswer(qid){
   e.innerHTML=`<div class="xp" id="xma-${qid}"><button class="xh" onclick="tg('xma-${qid}')"><span>📋 Model answer</span><span class="xa">›</span></button><div class="xb">${content}</div></div>`;
 }
 
-async function checkWithChamp(qid){
-  function fmtFeedback(t){
-    return t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-            .replace(/\*(.+?)\*/g,'<em>$1</em>')
-            .replace(/`([^`]+)`/g,'<code style="background:rgba(232,129,58,.1);padding:1px 5px;border-radius:3px;font-size:13px">$1</code>')
-            .replace(/\n/g,'<br>');
+const MAX_CHAMP_ATTEMPTS=3;
+
+function updateChampBtn(qid){
+  const btn=document.getElementById('champ-'+qid);
+  if(!btn)return;
+  const attempts=state.champAttempts[qid]||0;
+  const solved=state.champFeedback[qid]&&state.champFeedback[qid].includes('✅');
+  if(solved){
+    btn.innerHTML='🤖 ✅ Answered';btn.disabled=true;btn.style.opacity='.5';
+  } else if(attempts>=MAX_CHAMP_ATTEMPTS){
+    btn.innerHTML='🤖 No attempts left';btn.disabled=true;btn.style.opacity='.5';
+  } else {
+    btn.innerHTML=`🤖 Check with Champ (${attempts+1}/${MAX_CHAMP_ATTEMPTS})`;btn.disabled=false;btn.style.opacity='';
   }
+}
+
+function fmtFeedback(t){
+  return t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+          .replace(/\*(.+?)\*/g,'<em>$1</em>')
+          .replace(/`([^`]+)`/g,'<code style="background:rgba(232,129,58,.1);padding:1px 5px;border-radius:3px;font-size:13px">$1</code>')
+          .replace(/\n/g,'<br>');
+}
+
+async function checkWithChamp(qid){
   const ta=document.getElementById('ta-'+qid);
   const btn=document.getElementById('champ-'+qid);
   const fb=document.getElementById('cf-'+qid);
   if(!ta||!btn||!fb)return;
   const answer=ta.value.trim();
   if(answer.length<30)return;
+
+  // Check attempts
+  if(!state.champAttempts[qid])state.champAttempts[qid]=0;
+  if(state.champAttempts[qid]>=MAX_CHAMP_ATTEMPTS)return;
 
   const ctx=EVAL_CONTEXTS[qid];
   if(!ctx){
@@ -1659,21 +1680,29 @@ async function checkWithChamp(qid){
 
     const text=data.content?.map(b=>b.type==='text'?b.text:'').join('')||data.text||data.response||'No response received.';
     fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body">${fmtFeedback(text)}</div>`;
-    fb.classList.add('on');showModelAnswer(qid);
+    fb.classList.add('on');
+
+    // Track attempt
+    state.champAttempts[qid]++;
+    state.champFeedback[qid]=text;
+
+    const isCorrect=text.includes('✅');
+    const attemptsUsed=state.champAttempts[qid]>=MAX_CHAMP_ATTEMPTS;
+
+    // Show model answer only on ✅ or after all attempts used
+    if(isCorrect||attemptsUsed){showModelAnswer(qid)}
 
     // React based on verdict
-    if(text.includes('✅')){
+    if(isCorrect){
       co.className='champ-overlay on proud';cm.textContent='Nailed it! 🎉';
     } else if(text.includes('⚠')){
-      co.className='champ-overlay on happy';cm.textContent='Almost there!';
+      co.className='champ-overlay on happy';cm.textContent=attemptsUsed?'Here\'s the answer':'Almost there!';
     } else if(text.includes('❌')){
-      co.className='champ-overlay on sad';cm.textContent='You\'ll get it!';
+      co.className='champ-overlay on sad';cm.textContent=attemptsUsed?'Don\'t worry — check the answer':'You\'ll get it!';
     } else {
       co.className='champ-overlay on happy';cm.textContent='';
     }
-    
 
-    state.champFeedback[qid]=text;
     if(!state.revealed.includes('champ-'+qid)){
       state.xp+=3;state.revealed.push('champ-'+qid);saveState();renderChips();bumpChips();
       showToast('+3 XP \u2014 Champ reviewed your answer');
@@ -1685,24 +1714,26 @@ async function checkWithChamp(qid){
     if(err.message.includes('fetch')||err.message.includes('Network')){netMsg='Can\'t reach Champ \u2014 check your internet connection. \ud83d\udce1'}
     else if(err.message.includes('imeout')){netMsg='Request timed out \u2014 Champ might be overloaded. Try again. \u23f1'}
     fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body"><span class="cf-err">${netMsg}</span></div>`;
-    fb.classList.add('on');showModelAnswer(qid);
+    fb.classList.add('on');
     co.className='champ-overlay on sad';cm.textContent='Connection lost';
-    
   }
 
   btn.classList.remove('loading');
-  btn.innerHTML='🤖 Check with Champ';
-  btn.disabled=false;
+  updateChampBtn(qid);
 }
 
-// Restore saved champ feedback
+// Restore saved champ feedback and attempt states
+if(!state.champAttempts)state.champAttempts={};
 Object.entries(state.champFeedback||{}).forEach(([qid,text])=>{
   const fb=document.getElementById('cf-'+qid);
   if(fb){
     fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body">${fmtFeedback(text)}</div>`;
     fb.classList.add('on');
   }
-  showModelAnswer(qid);
+  const isCorrect=text.includes('✅');
+  const attemptsUsed=(state.champAttempts[qid]||0)>=MAX_CHAMP_ATTEMPTS;
+  if(isCorrect||attemptsUsed)showModelAnswer(qid);
+  updateChampBtn(qid);
 });
 
 
