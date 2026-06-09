@@ -1653,10 +1653,10 @@ async function checkWithChamp(qid){
       else{errMsg='Unexpected error (HTTP '+status+'). Try again.'}
       console.error('[Champ] Exercise '+qid+': HTTP '+status);
       fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body"><span class="cf-err">${errMsg}</span></div>`;
-      fb.classList.add('on');showModelAnswer(qid);
+      fb.classList.add('on');
       co.className='champ-overlay on sad';cm.textContent='Oops…';
       
-      btn.classList.remove('loading');btn.innerHTML='🤖 Check with Champ';btn.disabled=false;
+      btn.classList.remove('loading');updateChampBtn(qid);
       return;
     }
 
@@ -1671,10 +1671,10 @@ async function checkWithChamp(qid){
       else if(apiErr.includes('key')||apiErr.includes('auth')){userMsg='Service configuration issue \u2014 contact your instructor.'}
       else{userMsg='Champ encountered an error: '+apiErr}
       fb.innerHTML=`<div class="cf-header">🤖 Champ's feedback</div><div class="cf-body"><span class="cf-err">${userMsg}</span></div>`;
-      fb.classList.add('on');showModelAnswer(qid);
+      fb.classList.add('on');
       co.className='champ-overlay on sad';cm.textContent='Oops…';
       
-      btn.classList.remove('loading');btn.innerHTML='🤖 Check with Champ';btn.disabled=false;
+      btn.classList.remove('loading');updateChampBtn(qid);
       return;
     }
 
