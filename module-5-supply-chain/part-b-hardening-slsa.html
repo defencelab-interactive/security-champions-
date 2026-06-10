@@ -274,6 +274,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="fb-tg">Module 5 · Part 2 of 2</div>
       <div class="fb-tt">Hardening & SLSA</div>
       <div class="fb-sb">Docker, Kubernetes, and Jenkins deep dives. The SLSA framework for measuring your supply chain maturity. Specific tools, configurations, and a path forward.</div>
+      <div class="fb-sb" style="font-size:12px;color:rgba(255,255,255,.4);margin-top:6px">Developers — these sections build the infrastructure context you'll need as a Champion. Focus on the risks described rather than memorizing every command.</div>
     </div>
     <div class="fb-visual">
       <svg viewBox="0 0 200 200" width="220" height="220">
@@ -433,6 +434,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="cl-item" onclick="toggleCl(this)"><div class="cl-check">✓</div><div><div class="cl-text">Monitor: builds = merge requests</div><div class="cl-sub">If build count exceeds MR count, something triggered outside normal flow.</div></div></div>
     </div>
     <div class="cl-counter" id="cicd-counter"><b>0</b> / 10 checked</div>
+    <div class="xp" id="xgha"><button class="xh" onclick="tg('xgha')"><span>If you use GitHub Actions (not just Jenkins)</span><span class="xa">›</span></button><div class="xb" id="xgha-p">The same principles apply, different controls. <strong>Workflow permissions:</strong> set <code>permissions:</code> to least privilege per job — don't leave the default read-write. <strong>GITHUB_TOKEN scope:</strong> restrict to the minimum needed; <code>contents: read</code> is enough for most build jobs. <strong>Third-party actions:</strong> pin by commit SHA, not by tag — tags can be rewritten. <strong>Fork PRs:</strong> never auto-run workflows on PRs from forks without explicit approval; they can inject code that runs with your secrets.</div></div>
   </div></div></div>
   <div class="sf"><span class="shint">10 / 22</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
 </div>
@@ -554,6 +556,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="co"><em>2. CI/CD configuration:</em> Can jobs run on the primary node? How many service accounts exist? Who last audited their permissions?</div>
     <div class="co"><em>3. SLSA self-assessment:</em> Based on the checklist from this module, what's your current level? What's the single cheapest practice that would move you up one level?</div>
     <div class="prose">This isn't a graded exercise. It's a mirror. The value is in looking — most teams have never systematically asked these questions about their own pipeline.</div>
+    <div class="prose" style="font-size:12px;color:var(--mu);font-style:italic">Don't manage containers directly? Substitute a dependency tree audit: count transitive deps, check for unpinned versions, and investigate one dependency you've never looked at.</div>
   </div></div></div>
   <div class="sf"><span class="shint">18 / 22</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
 </div>

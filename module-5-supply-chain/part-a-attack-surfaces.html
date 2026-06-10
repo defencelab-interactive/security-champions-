@@ -749,6 +749,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="prose"><strong>Dependencies need inventory, ownership, and a firewall.</strong> You cannot secure what you do not know about. SBOM, feature-to-dependency mapping, and a permitted-list approach are the foundation.</div>
     <div class="prose"><strong>Build environments are high-value targets</strong> — they have access to source, secrets, and deployment. Isolate them, monitor them, and verify that build count matches merge request count.</div>
     <div class="prose"><strong>Signed builds mean nothing if delivery isn't verified.</strong> The customer must independently verify the signature and composition. Signing without verification is a false sense of security.</div>
+    <div class="co" style="margin-top:10px;font-size:13.5px"><strong>Your role as a Champion:</strong> ensure your team maintains an SBOM and knows what's in the dependency tree. Verify that the build pipeline has integrity controls. Flag when a new dependency enters without a feature justification. You don't audit every package — you ensure the system that audits packages is working.</div>
   </div></div></div>
   <div class="sf"><span class="shint">26 / 28</span><div class="snav"><button class="btn" onclick="go(24)">← Back</button><button class="btn pri" onclick="go(26)">Next →</button></div></div>
 </div>
