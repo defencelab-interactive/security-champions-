@@ -681,6 +681,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="punch-tag">The principle, in one line</div>
     <div class="punch-quote">Security work that happens inside every sprint looks like <em>washing your hands</em> before each meal.</div>
     <div class="punch-source">Security work belongs inside ordinary work, woven into how the team builds — <b>not in a separate process running alongside</b> it.</div>
+    <div class="co" style="margin-top:14px;font-size:13.5px"><strong>Your role as a Champion:</strong> ensure security requirements are at the right layer, visible in the tracker, and framed in language product can act on. You don't own all the security work — you own making it <em>plannable</em>.</div>
   </div></div>
   <div class="sf"><span class="shint">05 / 35 · Punch line</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
 </div>
@@ -977,6 +978,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The Champion's most underrated skill</div></div><div class="sp-r">
     <div class="prose">Translating a technical concern into a sentence that ends in a dollar figure isn't a presentation skill. It's a habit you build by doing it weekly. The framing changes the conversation completely.</div>
     <div class="xp" id="x20a"><button class="xh" onclick="tg('x20a')"><span>A worked example — same vulnerability, two framings</span><span class="xa">›</span></button><div class="xb" id="x20a-p"><div class="xb-q">"This dependency is unpatched, CVE-2024-XXXX, CVSS 9.8."</div><div style="margin:8px 0;font-size:12px;color:var(--mu);font-style:italic">Meaningless to a CFO.</div><div class="xb-q">"This dependency handles our payment routing. If exploited, attackers can redirect transactions. Probability: medium — there's a public exploit and our service is internet-facing. Impact: a single day of redirected payments at our volume is roughly $400K, plus regulatory penalties. Recommended action: upgrade this sprint, $0 marginal cost."</div><div class="xb-n">The vulnerability is identical. The framing is everything.</div></div></div>
+    <div class="xp" id="x20b"><button class="xh" onclick="tg('x20b')"><span>Another example — session tokens in localStorage</span><span class="xa">›</span></button><div class="xb" id="x20b-p"><div class="xb-q">"We're storing session tokens in localStorage. That's an XSS risk, severity high."</div><div style="margin:8px 0;font-size:12px;color:var(--mu);font-style:italic">Technically correct. Practically useless in a planning meeting.</div><div class="xb-q">"Our session tokens are in localStorage — any XSS vulnerability gives an attacker full account access. We have 45K active users; a single reflected XSS in our search page (found in last quarter's pentest) would expose all active sessions. Estimated incident cost: $150K in response, notification, and credential reset — plus reputational damage we can't price. Fix: move to httpOnly cookies, 2-day migration, no user-facing changes."</div><div class="xb-n">Same pattern: name the asset, quantify the exposure, price the impact, propose the fix with cost. Works for any domain.</div></div></div>
     <div class="prose">When security stops being a cost center and starts being a line item that competes — and wins — on its own merits, that's the shift. You make it by doing this translation, every time, until the team picks it up too.</div>
   </div></div></div>
   <div class="sf"><span class="shint">22 / 35 · Business</span><div class="snav"><button class="btn" onclick="go(20)">← Back</button><button class="btn pri" onclick="go(22)">Next →</button></div></div>
@@ -1208,6 +1210,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       </div>
     </div>
     <div class="co" style="font-size:13.5px">Run STRIDE on each component in your diagram. You won't catch every threat, but you'll catch the obvious ones — and that's most of them.</div>
+    <div class="xp" id="x29a"><button class="xh" onclick="tg('x29a')"><span>What STRIDE doesn't cover</span><span class="xa">›</span></button><div class="xb" id="x29a-p">STRIDE catches most software threats, but it wasn't designed for everything. Supply chain attacks (a compromised dependency), business logic flaws (a valid user abusing a legitimate feature), and privacy-specific threats (data minimization, consent) need complementary approaches. You'll cover supply chain in Module 5 and privacy considerations alongside access control in Module 7.</div></div>
   </div></div></div>
   <div class="sf"><span class="shint">30 / 35 · STRIDE</span><div class="snav"><button class="btn" onclick="go(28)">← Back</button><button class="btn pri" onclick="go(30)">Next →</button></div></div>
 </div>
@@ -1238,6 +1241,13 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <button class="qo" onclick="pk('q5',2)">C) Repudiation</button>
       <button class="qo" onclick="pk('q5',3)">D) Information disclosure</button>
       <div class="qe" id="q5-e"><strong>C — Repudiation.</strong> The user can deny they took the action because the system has no audit trail to prove otherwise. The fix is the audit logging that Layer 3 (functional security) is supposed to provide. Spoofing would be pretending to be a different user; tampering would be modifying the request mid-flight; information disclosure would be leaking data.</div>
+    </div>
+    <div class="qw" id="q6" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bd)"><div class="qq">A login API returns <code>401 Invalid password</code> for existing users but <code>404 User not found</code> for non-existent accounts. Which STRIDE category?</div>
+      <button class="qo" onclick="pk('q6',0)">A) Spoofing</button>
+      <button class="qo" onclick="pk('q6',1)">B) Repudiation</button>
+      <button class="qo" onclick="pk('q6',2)">C) Information disclosure</button>
+      <button class="qo" onclick="pk('q6',3)">D) Denial of service</button>
+      <div class="qe" id="q6-e"><strong>C — Information disclosure.</strong> The different error messages leak whether an account exists. An attacker can enumerate valid usernames before even attempting to break in. The fix: return the same generic error regardless — "Invalid credentials." This is one of the most common real-world information disclosure patterns.</div>
     </div>
   </div></div></div>
   <div class="sf"><span class="shint">32 / 35 · Quiz</span><div class="snav"><button class="btn" onclick="go(30)">← Back</button><button class="btn pri" onclick="go(32)">Next →</button></div></div>
@@ -1400,7 +1410,7 @@ document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.
 function tg(id){const el=document.getElementById(id),b=el.querySelector('.xb'),a=el.querySelector('.xa');b.classList.toggle('op');if(a)a.classList.toggle('op')}
 function tgw(id){const el=document.getElementById(id);if(el)el.classList.toggle('op')}
 
-const ans={q1:3,q2:2,q3:1,q4:1,q5:2};
+const ans={q1:3,q2:2,q3:1,q4:1,q5:2,q6:2};
 
 const WAGERS=[
   {key:'sure',mult:3,name:'Sure',sub:'×3 if right · 0 if wrong'},
