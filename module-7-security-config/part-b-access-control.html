@@ -576,6 +576,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="prose"><strong>Role count changes</strong> — scan your IAM roles regularly. Last scan: 42 roles. This scan: 45 roles. Why +3? Each new role should be justified.</div>
     <div class="prose"><strong>Privileged port exceptions</strong> — how many security group rules allow non-standard access? Each one should be tracked and reviewed.</div>
     <div class="co">Even something as simple as <em>role count</em> can serve as a reference metric. Plus two roles since last month — why? That question alone catches configuration drift.</div>
+    <div class="co" style="font-size:13.5px"><strong>Your role as a Champion:</strong> ensure your team has a written baseline, track every drift from it as a defect in Jira, and report these four metrics to your security team quarterly. You don't set the policies — you make sure they're being followed and the gaps are visible.</div>
   </div></div></div>
   <div class="sf"><span class="shint">17 / 24</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
 </div>
@@ -589,7 +590,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <button class="qo" onclick="pk('q2',1)">B) No — Checkov only scans Terraform code, not the live cloud state</button>
       <button class="qo" onclick="pk('q2',2)">C) Yes — if the bucket is also defined in the Terraform state file</button>
       <button class="qo" onclick="pk('q2',3)">D) It depends on how Checkov is configured</button>
-      <div class="qe" id="q2-e"><strong>B.</strong> IaC scanners check code, not cloud reality. The console-created bucket exists only in AWS, not in any Terraform file. You need AWS Service Control Policies (SCP) or AWS Config rules to catch resources created outside of IaC. This is why two-layer enforcement — code scanning + cloud policies — is essential.</div>
+      <div class="qe" id="q2-e"><strong>B.</strong> IaC scanners check code, not cloud reality. The console-created bucket exists only in AWS, not in any Terraform file. You need AWS Service Control Policies (SCP) or AWS Config rules to catch resources created outside of IaC. This is why two-layer enforcement — code scanning + cloud policies — is essential. Tools like <strong>Wiz, Prisma Cloud, and AWS Security Hub</strong> (CSPM — Cloud Security Posture Management) automate continuous cloud state scanning across both layers.</div>
     </div>
   </div></div></div>
   <div class="sf"><span class="shint">18 / 24 · Quiz</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
