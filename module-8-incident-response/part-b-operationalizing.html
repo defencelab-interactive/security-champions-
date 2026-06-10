@@ -951,7 +951,7 @@ document.querySelectorAll('.pips').forEach(p=>bp(p));
   btn.setAttribute('aria-label','Toggle fullscreen');
   btn.innerHTML='<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 1,1 5,1"/><polyline points="9,1 13,1 13,5"/><polyline points="13,9 13,13 9,13"/><polyline points="5,13 1,13 1,9"/></svg>';
   function doFS(){var el=document.documentElement;if(!document.fullscreenElement&&!document.webkitFullscreenElement){if(el.requestFullscreen)el.requestFullscreen();else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen()}else{if(document.exitFullscreen)document.exitFullscreen();else if(document.webkitExitFullscreen)document.webkitExitFullscreen()}}
-  document.querySelectorAll('.sh').forEach(function(sh){var clone=btn.cloneNode(true);clone.onclick=doFS;var pips=sh.querySelector('.pips');if(pips){sh.insertBefore(clone,pips)}else{sh.appendChild(clone)}});
+  document.querySelectorAll('.sh').forEach(function(sh){var clone=btn.cloneNode(true);clone.onclick=doFS;var shr=sh.querySelector('.sh-right');if(shr){shr.insertBefore(clone,shr.firstChild)}else{var pips=sh.querySelector('.pips');if(pips){pips.parentNode.insertBefore(clone,pips)}else{sh.appendChild(clone)}}});
   function updFS(){var isFS=!!(document.fullscreenElement||document.webkitFullscreenElement);document.documentElement.classList.toggle('is-fs',isFS);document.querySelectorAll('.fs-btn').forEach(function(b){b.classList.toggle('active',isFS)});setTimeout(function(){if(typeof fitAllScenes==='function')fitAllScenes()},150)}
   document.addEventListener('fullscreenchange',updFS);
   document.addEventListener('webkitfullscreenchange',updFS);
