@@ -792,6 +792,8 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <b>04:</b> The VCS approach (git-crypt) works for small projects. The orchestrator approach (dedicated stores) scales better and provides audit trails.<br><br>
       <b>05:</b> Your secret management solution is also your disaster recovery plan. Plan for the scenario where it fails.
     </div>
+    <div class="co" style="margin-top:10px;font-size:13.5px"><strong>Your role as a Champion:</strong> you own three things regarding secrets — knowing where they live in your project right now (the sprawl map), ensuring rotation happens when someone leaves the team, and running the health checklist quarterly. You don't manage the vault infrastructure — you ensure your team's secrets are in the vault, not in Slack.</div>
+    <div class="xp" id="xscan"><button class="xh" onclick="tg('xscan')"><span>Tools: finding secrets before attackers do</span><span class="xa">›</span></button><div class="xb" id="xscan-p">Run secret scanning in your pipeline as a pre-commit hook or CI step. <strong>gitleaks</strong> — fast, regex-based, catches most patterns. <strong>truffleHog</strong> — scans full git history including deleted commits. <strong>detect-secrets</strong> (Yelp) — lower false-positive rate, good for large repos. <strong>GitHub Advanced Security</strong> — native integration if you're on GitHub Enterprise. Adding any one of these to your pipeline is a single-sprint task.</div></div>
   </div></div></div>
   <div class="sf"><span class="shint">22 / 24 · Summary</span><div class="snav"><button class="btn" onclick="go(20)">← Back</button><button class="btn pri" onclick="go(22)">Next →</button></div></div>
 </div>
