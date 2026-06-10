@@ -501,5 +501,20 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeReflect()});
   window._checkFS();
 })();
 </script>
+<script>
+(function(){
+  var css='.fs-btn{background:none;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.45);width:28px;height:28px;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;padding:0;margin-left:6px}.fs-btn:hover{color:#fff;border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.08)}.fs-btn.active{border-color:rgba(232,129,58,.5);color:#E8813A;background:rgba(232,129,58,.08)}.fs-btn svg{pointer-events:none}:fullscreen .lms-main,:-webkit-full-screen .lms-main{overflow:hidden!important}:fullscreen .deck,:-webkit-full-screen .deck{padding:0!important}:fullscreen .slide.on,:-webkit-full-screen .slide.on{height:100vh!important;max-height:100vh!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}:fullscreen .sb,:-webkit-full-screen .sb{flex:1!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;min-height:0!important}:fullscreen .split,:-webkit-full-screen .split{flex:1!important;min-height:0!important;overflow:hidden!important}:fullscreen .sp-r,:-webkit-full-screen .sp-r{flex:1!important;min-height:0!important;overflow-y:auto!important}:fullscreen .fbody,:-webkit-full-screen .fbody{flex:1!important;min-height:0!important;overflow:hidden!important}:fullscreen .breather,:-webkit-full-screen .breather{flex:1!important;min-height:0!important;overflow:hidden!important}:fullscreen .punch,:-webkit-full-screen .punch{flex:1!important;min-height:0!important}:fullscreen .sh,:-webkit-full-screen .sh{flex-shrink:0!important}:fullscreen .sf,:-webkit-full-screen .sf{flex-shrink:0!important}';
+  var s=document.createElement('style');s.textContent=css;document.head.appendChild(s);
+  var btn=document.createElement('button');
+  btn.className='fs-btn';btn.title='Full Screen';
+  btn.setAttribute('aria-label','Toggle fullscreen');
+  btn.innerHTML='<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 1,1 5,1"/><polyline points="9,1 13,1 13,5"/><polyline points="13,9 13,13 9,13"/><polyline points="5,13 1,13 1,9"/></svg>';
+  function doFS(){var el=document.documentElement;if(!document.fullscreenElement&&!document.webkitFullscreenElement){if(el.requestFullscreen)el.requestFullscreen();else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen()}else{if(document.exitFullscreen)document.exitFullscreen();else if(document.webkitExitFullscreen)document.webkitExitFullscreen()}}
+  document.querySelectorAll('.sh').forEach(function(sh){var clone=btn.cloneNode(true);clone.onclick=doFS;var shRight=sh.querySelector('.sh-right');if(shRight)shRight.insertBefore(clone,shRight.firstChild);else sh.appendChild(clone)});
+  function updFS(){var isFS=!!(document.fullscreenElement||document.webkitFullscreenElement);document.documentElement.classList.toggle('is-fs',isFS);document.querySelectorAll('.fs-btn').forEach(function(b){b.classList.toggle('active',isFS)});setTimeout(function(){if(typeof fitAllScenes==='function')fitAllScenes()},150)}
+  document.addEventListener('fullscreenchange',updFS);
+  document.addEventListener('webkitfullscreenchange',updFS);
+})();
+</script>
 </body>
 </html>
