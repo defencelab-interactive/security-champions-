@@ -424,6 +424,9 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="xp" id="x4a"><button class="xh" aria-expanded="false" aria-controls="x4a-p" onclick="tg('x4a')"><span class="xt">How to automate these checks</span><span class="xa">›</span></button>
       <div class="xb" id="x4a-p">Most storage checks can run as SAST rules in your CI/CD pipeline. Tools like <strong>MobSF</strong> (Mobile Security Framework) scan APK/IPA files and flag storage violations automatically. The champion's job isn't running the tool — it's ensuring the pipeline <em>blocks the build</em> when it finds violations, rather than generating reports nobody reads.</div>
     </div>
+    <div class="xp" id="x4b"><button class="xh" aria-expanded="false" aria-controls="x4b-p" onclick="tg('x4b')"><span class="xt">React Native / Flutter: same principles, different APIs</span><span class="xa">›</span></button>
+      <div class="xb" id="x4b-p">If you use a cross-platform framework, the same MASVS storage requirements apply — but the secure storage APIs differ. <strong>React Native:</strong> use <code>expo-secure-store</code> or <code>react-native-keychain</code> instead of AsyncStorage for sensitive data. <strong>Flutter:</strong> use <code>flutter_secure_storage</code> which wraps Keychain (iOS) and EncryptedSharedPreferences (Android). Check that your framework's security bridge actually calls the native platform APIs, not a custom implementation.</div>
+    </div>
   </div></div></div>
   <div class="sf"><span class="shint">5 / 18 · Storage</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
 </div>
