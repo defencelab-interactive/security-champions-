@@ -499,7 +499,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 <!-- ═══ S7 · Defining the terms ═══ -->
 <div class="slide" id="s7">
   <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · Definitions that matter</span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
-  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Vulnerability, threat, risk</div><div class="sp-s">Three words, three different things</div></div><div class="sp-r sparse">
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Vulnerability, threat, risk</div><div class="sp-s">Three words, three different things</div></div><div class="sp-r">
     <div class="prose">These three terms get used interchangeably in casual conversation. They mean different things, and the difference changes what you do about them.</div>
     <div class="def-table">
       <div class="def-row"><div class="def-term">Vulnerability / weakness</div><div class="def-desc">An <em>attribute of the system</em> that permits an attack to be realized. A misconfiguration, a missing control, or the <span class="gloss" data-def="A public API without rate limiting isn't 'broken' — it's doing its job. But the absence of a compensating control (rate limiting, WAF, traffic shaping) makes it a weakness. Weaknesses aren't always bugs in code — sometimes they're architectural decisions nobody questioned.">absence of a security feature</span> altogether.</div></div>
@@ -585,7 +585,7 @@ if (!validPassword(user, pwd)) {
 <!-- ═══ S11 · The formula + RISK SLIDER ═══ -->
 <div class="slide" id="s11">
   <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · The formula</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
-  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Feel the formula</div><div class="sp-s">Drag the sliders</div></div><div class="sp-r sparse">
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Feel the formula</div><div class="sp-s">Drag the sliders</div></div><div class="sp-r">
     <div class="co" style="font-weight:700;font-size:18px;text-align:center;padding:14px 20px;background:rgba(232,129,58,.08);border-color:var(--or)">Risk = Impact × Likelihood</div>
     <div class="rslider" id="rslider1">
       <div class="rslider-row">
@@ -739,7 +739,7 @@ if (!validPassword(user, pwd)) {
 <!-- ═══ S17 · BRIDGE — Lens 2 preview ═══ -->
 <div class="slide" id="s18">
   <div class="sh"><span class="stag"><span class="hl">Bridge</span> · Into Lens 2</span><div class="sh-right"><div class="pips" id="pp18"></div></div></div>
-  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Coming next: what changed and why</div></div><div class="sp-r sparse">
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Coming next: what changed and why</div></div><div class="sp-r">
     <div class="prose">The 2021 → 2025 OWASP evolution isn't just a reshuffling of categories. It's a mirror of how software development itself changed. Lens 2 reads that mirror.</div>
     <div class="xp" id="x15a"><button class="xh" onclick="tg('x15a')"><span>Why did supply chain risk rise?</span><span class="xa">›</span></button><div class="xb" id="x15a-p">How many dependencies does your product have? 10? 50? Hundreds? We're not writing everything from primitives anymore — we compose. And the cost of that composition is supply chain risk.</div></div>
     <div class="xp" id="x15b"><button class="xh" onclick="tg('x15b')"><span>Why did misconfiguration jump to #2?</span><span class="xa">›</span></button><div class="xb" id="x15b-p">Can you imagine your API without a WAF? Your registration form without a captcha? We're so dependent on external security controls that <strong>forgetting to configure one</strong> is itself a vulnerability now.</div></div>
@@ -751,7 +751,7 @@ if (!validPassword(user, pwd)) {
 <!-- ═══ S19 · End of Lens 1 ═══ -->
 <div class="slide" id="s19">
   <div class="sh"><span class="stag"><span class="hl">Module 3</span> · Lens 1 complete</span><div class="sh-right"><div class="pips" id="pp19"></div></div></div>
-  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Lens 1 complete</div><div class="sp-s">Risk ≠ vulnerability</div></div><div class="sp-r sparse">
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Lens 1 complete</div><div class="sp-s">Risk ≠ vulnerability</div></div><div class="sp-r">
     <div class="prose">You covered the foundation: OWASP Top 10 measures <strong>risks</strong> (impact × likelihood), not individual bugs. Vulnerability, threat, and risk are three different things — and the difference changes how you prioritize.</div>
     <div class="co" id="final-score" style="text-align:center;font-size:15px;padding:16px 20px"><strong>Your score:</strong> calculating...</div>
     <div class="prose">The remaining four lenses build on this. Lens 2 looks at how the Top 10 evolved from 2021 to 2025 — and what that says about the way we build software now.</div>
