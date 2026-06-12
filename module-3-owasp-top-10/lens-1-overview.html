@@ -88,11 +88,10 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .accent{font-size:32px;font-weight:300;color:var(--or);line-height:1.4;font-style:italic;border-left:3px solid var(--or);padding-left:20px;margin:4px 0}
 
 /* Champion takeaway box */
-.takeaway{background:#E8813A;border:none;border-radius:12px;padding:24px 28px 24px 64px;margin-top:4px;position:relative;overflow:hidden}
-.takeaway::before{content:'🛡';position:absolute;left:20px;top:22px;font-size:28px}
-.takeaway::after{content:'';position:absolute;right:-30px;bottom:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(255,255,255,.1) 0%,transparent 70%);pointer-events:none}
-.takeaway-label{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#fff;margin-bottom:10px;opacity:.8}
-.takeaway-text{font-size:20px;color:#fff;line-height:1.75;font-weight:500}
+.takeaway{background:var(--ow);border-left:4px solid var(--or);border-radius:0 10px 10px 0;padding:20px 24px 20px 56px;margin-top:4px;position:relative}
+.takeaway::before{content:'🛡';position:absolute;left:18px;top:18px;font-size:22px}
+.takeaway-label{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--or);margin-bottom:8px}
+.takeaway-text{font-size:17px;color:var(--td);line-height:1.7}
 .prose strong{color:var(--td);font-weight:600}
 .prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
 .prose em{font-style:italic}
