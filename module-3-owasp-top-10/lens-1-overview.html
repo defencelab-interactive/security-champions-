@@ -44,7 +44,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .pip.on{background:var(--or);transform:scaleY(1.8)}
 
 /* Split layout */
-.split{display:flex;min-height:calc(100vh - 120px)}
+.split{display:flex;min-height:480px}
 .sp-l{width:24%;background:var(--bk);display:flex;flex-direction:column;justify-content:center;padding:20px 18px;position:relative}
 .sp-l::after{content:'';position:absolute;bottom:18px;left:18px;width:22px;height:2px;background:rgba(255,255,255,.2)}
 .sp-l .sp-t{font-size:24px;font-weight:700;color:var(--wh);line-height:1.25}
@@ -55,7 +55,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 
 /* Black full-bleed divider */
 .sb{padding:0}
-.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:calc(100vh - 120px);position:relative;overflow:hidden}
+.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:480px;position:relative;overflow:hidden}
 .fb-content{flex:1;z-index:1}
 .fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
 .fb-tt{font-size:48px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
@@ -174,7 +174,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 @keyframes punch-fade-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
 /* Breather */
-.breather{display:flex;flex-direction:column;align-items:center;padding:24px 32px 14px;min-height:calc(100vh - 120px);gap:12px}
+.breather{display:flex;flex-direction:column;align-items:center;padding:24px 32px 14px;min-height:480px;gap:12px}
 .breather-visual{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0}
 .breather-caption{text-align:center;padding:4px 0 2px;max-width:640px}
 .breather-caption p{font-size:20px;line-height:1.7}
