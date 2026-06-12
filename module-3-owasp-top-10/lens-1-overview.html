@@ -75,9 +75,11 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .evo-arrow{font-size:18px;color:var(--bd);padding:0 6px;flex-shrink:0}
 
 /* Champion takeaway box */
-.takeaway{background:var(--bk);border-radius:8px;padding:16px 20px;margin-top:8px}
-.takeaway-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--or);margin-bottom:6px}
-.takeaway-text{font-size:15px;color:rgba(255,255,255,.75);line-height:1.65}
+.takeaway{background:linear-gradient(135deg,rgba(232,129,58,.08),rgba(232,129,58,.04));border:1px solid rgba(232,129,58,.2);border-radius:10px;padding:20px 24px 20px 60px;margin-top:8px;position:relative;overflow:hidden}
+.takeaway::before{content:'🛡';position:absolute;left:18px;top:18px;font-size:24px}
+.takeaway::after{content:'';position:absolute;right:-20px;bottom:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(232,129,58,.06) 0%,transparent 70%);pointer-events:none}
+.takeaway-label{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--or);margin-bottom:8px}
+.takeaway-text{font-size:17px;color:var(--td);line-height:1.7;font-weight:500}
 .prose strong{color:var(--td);font-weight:600}
 .prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
 .prose em{font-style:italic}
@@ -466,7 +468,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="prose">The OWASP Top 10 has gone through three naming eras: first a list of <strong>vulnerabilities</strong>, then <strong>threats</strong>, today — <strong>risks</strong>. The reason is practical: there are too many individual vulnerabilities to list. Grouping them by risk makes the Top 10 something you can actually work with.</div>
     <div class="co" style="font-weight:600">Each of the ten items is a <em>risk category</em> — a cluster of related weaknesses with shared impact profiles — not a single bug or attack technique.</div>
     <div class="xp" id="x5a"><button class="xh" onclick="tg('x5a')"><span>Why listing vulnerabilities doesn't scale — the DDoS example</span><span class="xa">›</span></button><div class="xb" id="x5a-p">Take <span class="gloss" data-def="DDoS — Distributed Denial of Service. An attack that overwhelms a system with traffic or requests to make it unavailable. Can target the network, application, database connections, or virtually any resource.">distributed denial of service</span>: you can execute it at the network level, at the application level, against database connection pools, against virtual resources — the specific vulnerabilities are endless. But the <em>risk</em> — that your service becomes unavailable and the business loses revenue — is one thing, regardless of which weakness the attacker exploits. That's why the unit moved up.</div></div>
-    <div class="takeaway"><div class="takeaway-label">🛡 Champion's takeaway</div><div class="takeaway-text">When you file a security ticket, name the risk category — not the individual bug. "Broken access control in our payment service" gives your team more to act on than "found an auth issue."</div></div>
+    <div class="takeaway"><div class="takeaway-label">Champion's takeaway</div><div class="takeaway-text">When you file a security ticket, name the risk category — not the individual bug. "Broken access control in our payment service" gives your team more to act on than "found an auth issue."</div></div>
   </div></div></div>
   <div class="sf"><span class="shint">06 / 20 · Lens 1</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
 </div>
