@@ -586,27 +586,30 @@ if (!validPassword(user, pwd)) {
 <div class="slide" id="s11">
   <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · The formula</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Feel the formula</div><div class="sp-s">Drag the sliders</div></div><div class="sp-r">
-    <div class="co" style="font-weight:700;font-size:18px;text-align:center;padding:14px 20px;background:rgba(232,129,58,.08);border-color:var(--or)">Risk = Impact × Likelihood</div>
-    <div class="rslider" id="rslider1">
-      <div class="rslider-row">
-        <div class="rslider-label">Impact</div>
-        <input type="range" class="rslider-input" min="1" max="5" value="2" oninput="calcRisk('rslider1')">
-        <div class="rslider-val" id="rslider1-imp">2</div>
+    <div style="text-align:center;padding:8px 0">
+      <div style="font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--or);margin-bottom:8px">The Core Equation</div>
+      <div style="font-size:36px;font-weight:300;color:var(--td);letter-spacing:2px">Risk = Impact × Likelihood</div>
+    </div>
+    <div class="rslider" id="rslider1" style="padding:16px 0">
+      <div class="rslider-row" style="margin-bottom:12px">
+        <div class="rslider-label" style="font-size:16px;font-weight:700;min-width:110px">Impact</div>
+        <input type="range" class="rslider-input" min="1" max="5" value="2" oninput="calcRisk('rslider1')" style="height:8px">
+        <div class="rslider-val" id="rslider1-imp" style="font-size:24px;font-weight:700;min-width:40px">2</div>
       </div>
-      <div class="rslider-row">
-        <div class="rslider-label">Likelihood</div>
-        <input type="range" class="rslider-input" min="1" max="5" value="1" oninput="calcRisk('rslider1')">
-        <div class="rslider-val" id="rslider1-lik">1</div>
+      <div class="rslider-row" style="margin-bottom:12px">
+        <div class="rslider-label" style="font-size:16px;font-weight:700;min-width:110px">Likelihood</div>
+        <input type="range" class="rslider-input" min="1" max="5" value="1" oninput="calcRisk('rslider1')" style="height:8px">
+        <div class="rslider-val" id="rslider1-lik" style="font-size:24px;font-weight:700;min-width:40px">1</div>
       </div>
-      <div class="rslider-result lvl-low" id="rslider1-result">
-        <div class="rslider-score" id="rslider1-score">2</div>
+      <div class="rslider-result lvl-low" id="rslider1-result" style="padding:16px 20px;margin-top:8px">
+        <div class="rslider-score" id="rslider1-score" style="font-size:40px">2</div>
         <div class="rslider-info">
-          <div class="rslider-level" id="rslider1-level">LOW</div>
-          <div class="rslider-explain" id="rslider1-explain">Acceptable risk. Monitor and revisit next review cycle.</div>
+          <div class="rslider-level" id="rslider1-level" style="font-size:16px">LOW</div>
+          <div class="rslider-explain" id="rslider1-explain" style="font-size:15px">Acceptable risk. Monitor and revisit next review cycle.</div>
         </div>
       </div>
     </div>
-    <div class="prose" style="font-size:14px;color:var(--mu);margin-top:4px">Try it: set Impact to 5 and Likelihood to 1. Then flip them. Same score — different situation. That's why both dimensions matter.</div>
+    <div class="accent" style="font-size:22px">Set Impact to 5, Likelihood to 1. Then flip them. Same score — <em>completely different situation</em>.</div>
     <div class="idot-wrap" id="id11a">
       <button class="idot-trigger" onclick="tgd('id11a')"><span class="idot">?</span><span class="idot-label">Why did OWASP stop listing individual vulnerabilities?</span></button>
       <div class="idot-pop">Earlier versions listed specific types — "cross-site scripting" or "SQL injection" as separate entries. Too many vulnerabilities, too much overlap. By grouping them into <strong>risk categories</strong>, each entry represents a cluster of related problems with shared root causes and shared mitigations.</div>
@@ -651,12 +654,14 @@ if (!validPassword(user, pwd)) {
 <div class="slide" id="s14"> <!-- sparse -->
   <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · What this changes</span><div class="sh-right"><div class="pips" id="pp14"></div></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What this changes in practice</div></div><div class="sp-r">
-    <div class="prose">If the Top 10 were still about vulnerabilities, you'd use it like a checklist: does my app have X? Yes/no. Because it's about <em>risks</em>, the question is different: <strong>how likely is this for us, and how bad would it be?</strong></div>
+    <div class="accent" style="font-size:24px">It's about <em>risks</em> — so the question is: how likely is this for us, and how bad would it be?</div>
+    <div class="prose">If the Top 10 were still about vulnerabilities, you'd use it like a checklist: does my app have X? Yes/no. Risk thinking changes that entirely.</div>
     <div class="scenario">
       <div class="scenario-tag">The shift</div>
       <div class="scenario-text">Broken access control (A01) shows up differently in a financial API than in a content management system. The risk category is the same. The vulnerabilities, mitigations, and trade-offs are <em>completely different</em>.</div>
     </div>
     <div class="co">The OWASP Top 10 doesn't tell you <em>what to fix</em>. It tells you <em>where to look</em>. The fixing part requires knowing your own system — and that's what the remaining four lenses are about.</div>
+    <div class="takeaway"><div class="takeaway-label">Champion's takeaway</div><div class="takeaway-text">Don't treat OWASP as a checklist. Use it as a <strong>lens for your system</strong> — same A01, different risks depending on what you build.</div></div>
   </div></div></div>
   <div class="sf"><span class="shint">14 / 20 · Lens 1</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
 </div>
