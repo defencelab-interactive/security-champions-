@@ -63,7 +63,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
 
 /* Sparse slide helpers */
-.sp-r.sparse{justify-content:space-evenly}
+.sp-r.sparse{justify-content:space-around}
 .big-terminal{font-size:15px!important;line-height:1.7!important;padding:24px 28px!important}
 .big-terminal .term-line{font-size:15px;line-height:1.8}
 .key-insight{font-size:22px;color:var(--td);font-weight:600;line-height:1.6;text-align:center;padding:12px 20px}
@@ -585,7 +585,7 @@ if (!validPassword(user, pwd)) {
 <!-- ═══ S11 · The formula + RISK SLIDER ═══ -->
 <div class="slide" id="s11">
   <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · The formula</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
-  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Feel the formula</div><div class="sp-s">Drag the sliders</div></div><div class="sp-r">
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Feel the formula</div><div class="sp-s">Drag the sliders</div></div><div class="sp-r sparse">
     <div class="co" style="font-weight:700;font-size:18px;text-align:center;padding:14px 20px;background:rgba(232,129,58,.08);border-color:var(--or)">Risk = Impact × Likelihood</div>
     <div class="rslider" id="rslider1">
       <div class="rslider-row">
