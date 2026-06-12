@@ -66,20 +66,23 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .prose{font-size:18px;color:var(--tm);line-height:1.85}
 
 /* Evolution timeline */
-.evo-timeline{display:flex;align-items:center;gap:0;margin-bottom:8px}
-.evo-step{flex:1;text-align:center;padding:14px 10px;background:var(--card);border-radius:8px;position:relative}
+.evo-timeline{display:flex;align-items:stretch;gap:0;margin-bottom:4px}
+.evo-step{flex:1;text-align:center;padding:20px 12px;background:var(--card);border-radius:10px;position:relative}
 .evo-step.active{background:var(--ol);border:2px solid var(--or)}
-.evo-step .evo-year{font-size:11px;color:var(--mu);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
-.evo-step .evo-name{font-size:16px;font-weight:700;color:var(--td)}
-.evo-step.active .evo-name{color:var(--or)}
-.evo-arrow{font-size:18px;color:var(--bd);padding:0 6px;flex-shrink:0}
+.evo-step .evo-year{font-size:12px;color:var(--mu);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.evo-step .evo-name{font-size:22px;font-weight:700;color:var(--td)}
+.evo-step.active .evo-name{color:var(--or);font-size:26px}
+.evo-arrow{font-size:22px;color:var(--bd);padding:0 8px;display:flex;align-items:center}
+
+/* Accent pull-quote inline */
+.accent{font-size:28px;font-weight:300;color:var(--or);line-height:1.4;font-style:italic;border-left:3px solid var(--or);padding-left:20px;margin:4px 0}
 
 /* Champion takeaway box */
-.takeaway{background:linear-gradient(135deg,rgba(232,129,58,.08),rgba(232,129,58,.04));border:1px solid rgba(232,129,58,.2);border-radius:10px;padding:20px 24px 20px 60px;margin-top:8px;position:relative;overflow:hidden}
-.takeaway::before{content:'🛡';position:absolute;left:18px;top:18px;font-size:24px}
-.takeaway::after{content:'';position:absolute;right:-20px;bottom:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(232,129,58,.06) 0%,transparent 70%);pointer-events:none}
-.takeaway-label{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--or);margin-bottom:8px}
-.takeaway-text{font-size:17px;color:var(--td);line-height:1.7;font-weight:500}
+.takeaway{background:linear-gradient(135deg,rgba(232,129,58,.10),rgba(232,129,58,.04));border:1.5px solid rgba(232,129,58,.25);border-radius:12px;padding:24px 28px 24px 64px;margin-top:4px;position:relative;overflow:hidden}
+.takeaway::before{content:'🛡';position:absolute;left:20px;top:22px;font-size:28px}
+.takeaway::after{content:'';position:absolute;right:-30px;bottom:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(232,129,58,.08) 0%,transparent 70%);pointer-events:none}
+.takeaway-label{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--or);margin-bottom:10px}
+.takeaway-text{font-size:18px;color:var(--td);line-height:1.75;font-weight:500}
 .prose strong{color:var(--td);font-weight:600}
 .prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
 .prose em{font-style:italic}
@@ -465,10 +468,10 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="evo-arrow">→</div>
       <div class="evo-step active"><div class="evo-year">2017–2025</div><div class="evo-name">Risks</div></div>
     </div>
-    <div class="prose">The OWASP Top 10 has gone through three naming eras: first a list of <strong>vulnerabilities</strong>, then <strong>threats</strong>, today — <strong>risks</strong>. The reason is practical: there are too many individual vulnerabilities to list. Grouping them by risk makes the Top 10 something you can actually work with.</div>
-    <div class="co" style="font-weight:600">Each of the ten items is a <em>risk category</em> — a cluster of related weaknesses with shared impact profiles — not a single bug or attack technique.</div>
-    <div class="xp" id="x5a"><button class="xh" onclick="tg('x5a')"><span>Why listing vulnerabilities doesn't scale — the DDoS example</span><span class="xa">›</span></button><div class="xb" id="x5a-p">Take <span class="gloss" data-def="DDoS — Distributed Denial of Service. An attack that overwhelms a system with traffic or requests to make it unavailable. Can target the network, application, database connections, or virtually any resource.">distributed denial of service</span>: you can execute it at the network level, at the application level, against database connection pools, against virtual resources — the specific vulnerabilities are endless. But the <em>risk</em> — that your service becomes unavailable and the business loses revenue — is one thing, regardless of which weakness the attacker exploits. That's why the unit moved up.</div></div>
-    <div class="takeaway"><div class="takeaway-label">Champion's takeaway</div><div class="takeaway-text">When you file a security ticket, name the risk category — not the individual bug. "Broken access control in our payment service" gives your team more to act on than "found an auth issue."</div></div>
+    <div class="prose">The OWASP Top 10 has gone through three naming eras. The reason is practical: there are too many individual vulnerabilities to list. Grouping them by risk makes the Top 10 something you can actually work with.</div>
+    <div class="accent">Each of the ten items is a <em>risk category</em> — not a single bug or attack technique.</div>
+    <div class="xp" id="x5a"><button class="xh" onclick="tg('x5a')"><span>Why listing vulnerabilities doesn't scale — the DDoS example</span><span class="xa">›</span></button><div class="xb" id="x5a-p">Take <span class="gloss" data-def="DDoS — Distributed Denial of Service. An attack that overwhelms a system with traffic or requests to make it unavailable. Can target the network, application, database connections, or virtually any resource.">distributed denial of service</span>: you can execute it at the network level, at the application level, against database connection pools, against virtual resources — the specific vulnerabilities are endless. But the <em>risk</em> — that your service becomes unavailable and the business loses revenue — is one thing, regardless of which weakness the attacker exploits.</div></div>
+    <div class="takeaway"><div class="takeaway-label">Champion's takeaway</div><div class="takeaway-text">When you file a security ticket, name the risk category — not the individual bug. <strong>"Broken access control in our payment service"</strong> gives your team more to act on than "found an auth issue."</div></div>
   </div></div></div>
   <div class="sf"><span class="shint">06 / 20 · Lens 1</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
 </div>
