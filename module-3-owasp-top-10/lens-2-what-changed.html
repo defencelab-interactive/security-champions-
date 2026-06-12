@@ -36,7 +36,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .sp-r{flex:1;background:var(--wh);padding:40px 48px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;justify-content:center}
 .sb{padding:0}.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:calc(100vh - 120px);position:relative;overflow:hidden}
 .fb-content{flex:1;z-index:1}.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
-.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px}.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-tt{font-size:48px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px}.fb-sb{font-size:19px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
 .fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
 .prose{font-size:18px;color:var(--tm);line-height:1.85}.prose strong{color:var(--td);font-weight:600}.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
 .co{border-left:4px solid var(--or);padding:18px 24px;background:var(--ol);font-size:17px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}.co em{font-style:italic;font-weight:500;color:var(--or)}.co strong{font-weight:600}
@@ -111,7 +111,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 <div class="slide" id="s2">
   <div class="sh"><span class="stag"><span class="hl">Lens 2</span> · The two lists</span><div class="sh-right"><div class="pips" id="pp2"></div></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">2021 vs 2025</div><div class="sp-s">One look, then we move on to why</div></div><div class="sp-r">
-    <div class="prose" style="font-size:14px">The positions matter less than the patterns. Look at what <strong>rose</strong> — those are the signals.</div>
+    <div class="prose">The positions matter less than the patterns. Look at what <strong>rose</strong> — those are the signals.</div>
     <div class="compare" id="cmp1">
       <div class="compare-tabs"><button class="compare-tab active" onclick="switchTab('cmp1',0)">OWASP 2021</button><button class="compare-tab" onclick="switchTab('cmp1',1)">OWASP 2025</button></div>
       <div class="compare-panel active"><ol class="rank-list"><li>Broken Access Control</li><li>Cryptographic Failures</li><li>Injection</li><li>Insecure Design</li><li>Security Misconfiguration</li><li>Vulnerable &amp; Outdated Components</li><li>Identification &amp; Auth Failures</li><li>Software &amp; Data Integrity Failures</li><li>Security Logging &amp; Monitoring Failures</li><li>Server-Side Request Forgery</li></ol></div>
@@ -269,7 +269,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 <div class="slide" id="s13">
   <div class="sh"><span class="stag"><span class="hl">Lens 2</span> · Complete</span><div class="sh-right"><div class="pips" id="pp13"></div></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Lens 2 complete</div><div class="sp-s">What changed and why</div></div><div class="sp-r">
-    <div class="prose" style="font-size:16px">The 2021→2025 shift isn't about OWASP changing its mind. It's about development changing its shape: more composition, more configuration, more dependency on things we don't control.</div>
+    <div class="prose">The 2021→2025 shift isn't about OWASP changing its mind. It's about development changing its shape: more composition, more configuration, more dependency on things we don't control.</div>
     <div class="co"><strong>Supply chain</strong> rose because we compose more than we write. <strong>Misconfiguration</strong> rose because forgetting to configure a control is now itself a vulnerability. <strong>Exceptional conditions</strong> appeared because our tools outgrew our ability to predict their behavior.</div>
     <div class="co" id="final-score" style="text-align:center;font-size:15px;padding:16px 20px"><strong>Your score:</strong> calculating...</div>
     <div class="prose">Next: <strong>Lens 3</strong> — broken access control, misconfiguration, and insecure design. Three risks with a common root: architectural decisions that create risk by default.</div>

@@ -34,8 +34,8 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .sp-r{flex:1;background:var(--wh);padding:40px 48px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;justify-content:center}.sp-r::-webkit-scrollbar{width:3px}.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
 .sb{padding:0}.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:calc(100vh - 120px);position:relative;overflow:hidden}
 .fb-content{flex:1;z-index:1}.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
-.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
-.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-tt{font-size:48px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:19px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
 .fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
 .prose{font-size:18px;color:var(--tm);line-height:1.85}.prose strong{color:var(--td);font-weight:600}.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
 .co{border-left:4px solid var(--or);padding:18px 24px;background:var(--ol);font-size:17px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}.co em{font-style:italic;font-weight:500;color:var(--or)}.co strong{font-weight:600}
@@ -295,11 +295,11 @@ params = [userId]
 <div class="slide" id="s9">
   <div class="sh"><span class="stag"><span class="hl">Lens 5</span> · A09 — Logging & monitoring</span><div class="sh-right"><div class="pips" id="pp9"></div></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Signal vs. noise</div><div class="sp-s">A09 · Logging & Monitoring Failures</div></div><div class="sp-r">
-    <div class="prose" style="font-size:14px">This risk has two roots. First: <strong>separating signal from noise</strong>. You <em>can</em> log everything — but it's too expensive and kills performance. Deciding <em>what</em> to log for each component is itself a bulk of work.</div>
+    <div class="prose">This risk has two roots. First: <strong>separating signal from noise</strong>. You <em>can</em> log everything — but it's too expensive and kills performance. Deciding <em>what</em> to log for each component is itself a bulk of work.</div>
     <div class="co">There are billion-dollar companies — just for storing telemetry and providing analysis. That's how big the signal-vs-noise problem is.</div>
-    <div class="prose" style="font-size:14px">Second: the <strong>number of sources</strong>. Traffic, container orchestrators, databases, operating systems, application logs — each with different mechanisms for what to log, where to store it, how to gather it.</div>
+    <div class="prose">Second: the <strong>number of sources</strong>. Traffic, container orchestrators, databases, operating systems, application logs — each with different mechanisms for what to log, where to store it, how to gather it.</div>
     <div class="scenario"><div class="scenario-tag">What actually happens</div><div class="scenario-text">"We'll just gather NetFlow, or metadata, or logs from the application — and skip the databases, orchestrators, etc." That shortcut is exactly how <em>coverage gaps</em> form.</div></div>
-    <div class="co" style="font-size:13px;color:var(--mu)">Logging and monitoring are covered in operational depth in <strong>Module 8 (Incident Response)</strong> — including alert funnels, tuning, and what to prioritize.</div>
+    <div class="co" style="font-size:14px;color:var(--mu)">Logging and monitoring are covered in operational depth in <strong>Module 8 (Incident Response)</strong> — including alert funnels, tuning, and what to prioritize.</div>
   </div></div></div>
   <div class="sf"><span class="shint">10 / 14</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
 </div>
@@ -311,7 +311,7 @@ params = [userId]
     <div class="scenario"><div class="scenario-tag">Key principle</div><div class="scenario-text">"Everything is more simple. We are <em>not able</em> to take into consideration everything. Our tools became more and more complex — providing more functions, more data objects, more capacities. It's absolutely obvious that it's difficult to predict all potential behavior."</div></div>
     <div class="prose">This is the newest risk on the list. The root cause isn't that developers forget edge cases — it's a <strong>structural limit</strong> on what we can anticipate. Tools grow because clients demand more and competition forces it. The unpredicted-behavior surface grows with the tools.</div>
     <div class="co">This trend is here to stay. More features = more exceptions = more unpredicted behavior. We are limited in resources, time, and our capacities. <em>That's why this risk was raised.</em></div>
-    <div class="co" style="font-size:13px;color:var(--mu)">How to respond when the unpredictable happens is the focus of <strong>Module 8 (Incident Response)</strong> — runbooks, containment, and operational recovery.</div>
+    <div class="co" style="font-size:14px;color:var(--mu)">How to respond when the unpredictable happens is the focus of <strong>Module 8 (Incident Response)</strong> — runbooks, containment, and operational recovery.</div>
   </div></div></div>
   <div class="sf"><span class="shint">11 / 14</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
 </div>

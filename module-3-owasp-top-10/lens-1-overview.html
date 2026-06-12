@@ -58,8 +58,8 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:calc(100vh - 120px);position:relative;overflow:hidden}
 .fb-content{flex:1;z-index:1}
 .fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
-.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
-.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-tt{font-size:48px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:19px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
 .fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
 
 /* Prose */
@@ -134,11 +134,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 
 /* Punch Line */
 .punch{background:#0F0E14;background-image:radial-gradient(ellipse at center,rgba(232,129,58,.08) 0%,transparent 60%),radial-gradient(ellipse at top right,rgba(123,111,174,.06) 0%,transparent 50%);min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;text-align:center;position:relative;overflow:hidden}
-.punch-tag{font-size:10px;letter-spacing:5px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:36px;display:flex;align-items:center;gap:14px;animation:punch-fade-in .8s ease both}
+.punch-wrap{position:relative}.punch-wrap::before{content:"201C";position:absolute;top:-80px;left:-20px;font-size:200px;color:rgba(232,129,58,.06);font-family:Georgia,serif;line-height:1;pointer-events:none;z-index:0}.punch-wrap>*{position:relative;z-index:1}
+.punch-tag{font-size:12px;letter-spacing:6px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:36px;display:flex;align-items:center;gap:14px;animation:punch-fade-in .8s ease both}
 .punch-tag::before,.punch-tag::after{content:'';width:32px;height:1px;background:linear-gradient(90deg,transparent,var(--or),transparent)}
-.punch-quote{font-family:'DM Sans',sans-serif;font-size:42px;font-weight:300;line-height:1.22;letter-spacing:-.02em;color:#F5F2ED;max-width:780px;text-wrap:balance;animation:punch-fade-in 1s ease .15s both}
+.punch-quote{font-family:"DM Sans",sans-serif;font-size:58px;font-weight:300;line-height:1.22;letter-spacing:-.02em;color:#F5F2ED;max-width:780px;text-wrap:balance;animation:punch-fade-in 1s ease .15s both}
 .punch-quote em{color:var(--or);font-style:normal;font-weight:600}
-.punch-source{font-size:15px;color:rgba(245,242,237,.45);line-height:1.7;max-width:600px;margin-top:26px;animation:punch-fade-in 1s ease .4s both}
+.punch-source{font-size:18px;color:rgba(245,242,237,.45);line-height:1.7;max-width:600px;margin-top:26px;animation:punch-fade-in 1s ease .4s both}
 .punch-source b{color:rgba(245,242,237,.65);font-weight:600}
 .punch-mark{position:absolute;font-size:160px;font-weight:700;color:rgba(232,129,58,.06);line-height:1;pointer-events:none;user-select:none}
 .punch-mark.tl{top:20px;left:30px}.punch-mark.br{bottom:-20px;right:30px;transform:rotate(180deg)}
@@ -374,7 +375,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="prose">The OWASP Top 10 is publicly available — you can read the descriptions on <span class="gloss" data-def="OWASP — Open Web Application Security Project. A nonprofit community that produces open-source security tools, documentation, and the Top 10 list. owasp.org">owasp.org</span> in twenty minutes. This module doesn't try to compete with that.</div>
     <div class="prose">Instead, we organize the ten risks into <strong>five lenses</strong> — five angles that help you look at your own product and see where the risks actually live. Each lens groups risks that share a common root cause or structural pattern.</div>
     <div class="co">The goal: take a component you work on and map the Top 10 against it. Not because you memorized a list, but because you understand <em>why</em> each risk exists and where it hides in your architecture.</div>
-    <div class="co" style="font-size:13.5px"><strong>Your role as a Champion:</strong> when you file a security ticket, don't just describe the symptom — name the root cause pattern. "This is an architectural gap that creates risk by default" gives your security team more to work with than "found an access control bug." You don't need to fix every risk on the Top 10 — you need to see where they live in your product.</div>
+    <div class="co" style="font-size:15px"><strong>Your role as a Champion:</strong> when you file a security ticket, don't just describe the symptom — name the root cause pattern. "This is an architectural gap that creates risk by default" gives your security team more to work with than "found an access control bug." You don't need to fix every risk on the Top 10 — you need to see where they live in your product.</div>
     <div class="xp" id="xasvs"><button class="xh" onclick="tg('xasvs')"><span>Beyond the Top 10 — OWASP ASVS</span><span class="xa">›</span></button><div class="xb" id="xasvs-p">The Top 10 is a starting point, not a checklist. For teams that want a more granular verification framework, <strong>OWASP ASVS</strong> (Application Security Verification Standard) provides hundreds of specific requirements organized by security level. Think of the Top 10 as "where to look" and ASVS as "exactly what to check."</div></div>
     <div class="prose">The next slide shows the roadmap — which risks go where, and why we grouped them this way.</div>
   </div></div></div>
@@ -451,9 +452,9 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 <!-- ═══ S6 · HUMOR — "we have a weather" ═══ -->
 <div class="slide" id="s6">
   <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · Quick check</span><div class="sh-right"><div class="pips" id="pp6"></div></div></div>
-  <div class="sb"><div class="punch" style="min-height:420px;background:#0F0E14;background-image:radial-gradient(ellipse at center,rgba(123,111,174,.08) 0%,transparent 55%)">
+  <div class="sb"><div class="punch" style="background:#0F0E14;background-image:radial-gradient(ellipse at center,rgba(123,111,174,.08) 0%,transparent 55%)">
     <div class="punch-tag">A common mistake</div>
-    <div class="punch-quote" style="font-size:32px">"We have an <em>OWASP vulnerability</em>."</div>
+    <div class="punch-quote">"We have an <em>OWASP vulnerability</em>."</div>
     <div class="punch-source">That's like saying "we have a weather." OWASP Top 10 is a set of <b>risk categories</b>, not specific bugs. Saying "we have broken access control risk in our payment service" — that's a sentence you can actually act on.</div>
   </div></div>
   <div class="sf"><span class="shint">07 / 20</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
@@ -463,13 +464,13 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 <div class="slide" id="s7">
   <div class="sh"><span class="stag"><span class="hl">Lens 1</span> · Definitions that matter</span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Vulnerability, threat, risk</div><div class="sp-s">Three words, three different things</div></div><div class="sp-r">
-    <div class="prose" style="font-size:16px">These three terms get used interchangeably in casual conversation. They mean different things, and the difference changes what you do about them.</div>
+    <div class="prose">These three terms get used interchangeably in casual conversation. They mean different things, and the difference changes what you do about them.</div>
     <div class="def-table">
       <div class="def-row"><div class="def-term">Vulnerability / weakness</div><div class="def-desc">An <em>attribute of the system</em> that permits an attack to be realized. A misconfiguration, a missing control, or the <span class="gloss" data-def="A public API without rate limiting isn't 'broken' — it's doing its job. But the absence of a compensating control (rate limiting, WAF, traffic shaping) makes it a weakness. Weaknesses aren't always bugs in code — sometimes they're architectural decisions nobody questioned.">absence of a security feature</span> altogether.</div></div>
       <div class="def-row"><div class="def-term">Threat</div><div class="def-desc">The <em>action or agent</em> attempting to exploit the weakness. The attacker, the script, the insider.</div></div>
       <div class="def-row"><div class="def-term">Risk</div><div class="def-desc"><em>Impact × likelihood</em> — the business-level concern. How bad would it be, weighted by how probable it is.</div></div>
     </div>
-    <div class="prose" style="font-size:16px">A vulnerability is something about how the system <em>is</em> — from a forgotten <code>admin/admin</code> password to the absence of <span class="gloss" data-def="Rate limiting — restricting how many requests a client can make in a given time window. Without it, an API is open to brute-force attacks, credential stuffing, and denial-of-service.">rate limiting</span> on a public API. It's not something someone <em>does</em> — that's a threat.</div>
+    <div class="prose">A vulnerability is something about how the system <em>is</em> — from a forgotten <code>admin/admin</code> password to the absence of <span class="gloss" data-def="Rate limiting — restricting how many requests a client can make in a given time window. Without it, an API is open to brute-force attacks, credential stuffing, and denial-of-service.">rate limiting</span> on a public API. It's not something someone <em>does</em> — that's a threat.</div>
   </div></div></div>
   <div class="sf"><span class="shint">08 / 20 · Lens 1</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
 </div>
@@ -567,7 +568,7 @@ if (!validPassword(user, pwd)) {
         </div>
       </div>
     </div>
-    <div class="prose" style="font-size:13px;color:var(--mu);margin-top:4px">Try it: set Impact to 5 and Likelihood to 1. Then flip them. Same score — different situation. That's why both dimensions matter.</div>
+    <div class="prose" style="font-size:14px;color:var(--mu);margin-top:4px">Try it: set Impact to 5 and Likelihood to 1. Then flip them. Same score — different situation. That's why both dimensions matter.</div>
     <div class="idot-wrap" id="id11a">
       <button class="idot-trigger" onclick="tgd('id11a')"><span class="idot">?</span><span class="idot-label">Why did OWASP stop listing individual vulnerabilities?</span></button>
       <div class="idot-pop">Earlier versions listed specific types — "cross-site scripting" or "SQL injection" as separate entries. Too many vulnerabilities, too much overlap. By grouping them into <strong>risk categories</strong>, each entry represents a cluster of related problems with shared root causes and shared mitigations.</div>
@@ -713,7 +714,7 @@ if (!validPassword(user, pwd)) {
 <div class="slide" id="s19">
   <div class="sh"><span class="stag"><span class="hl">Module 3</span> · Lens 1 complete</span><div class="sh-right"><div class="pips" id="pp19"></div></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Lens 1 complete</div><div class="sp-s">Risk ≠ vulnerability</div></div><div class="sp-r">
-    <div class="prose" style="font-size:16px">You covered the foundation: OWASP Top 10 measures <strong>risks</strong> (impact × likelihood), not individual bugs. Vulnerability, threat, and risk are three different things — and the difference changes how you prioritize.</div>
+    <div class="prose">You covered the foundation: OWASP Top 10 measures <strong>risks</strong> (impact × likelihood), not individual bugs. Vulnerability, threat, and risk are three different things — and the difference changes how you prioritize.</div>
     <div class="co" id="final-score" style="text-align:center;font-size:15px;padding:16px 20px"><strong>Your score:</strong> calculating...</div>
     <div class="prose">The remaining four lenses build on this. Lens 2 looks at how the Top 10 evolved from 2021 to 2025 — and what that says about the way we build software now.</div>
   </div></div></div>

@@ -41,8 +41,8 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .sb{padding:0}
 .fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:calc(100vh - 120px);position:relative;overflow:hidden}
 .fb-content{flex:1;z-index:1}.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
-.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
-.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-tt{font-size:48px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:19px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
 .fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
 
 /* Prose & callout */
@@ -236,7 +236,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 <div class="slide" id="s2">
   <div class="sh"><span class="stag"><span class="hl">Lens 4</span> · A03 — Supply chain</span><div class="sh-right"><div class="pips" id="pp2"></div></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Third-party code</div><div class="sp-s">A03 · Supply Chain Failures</div></div><div class="sp-r">
-    <div class="prose" style="font-size:14px">Lens 2 covered why supply chain rose in the rankings. The short version: we compose more than we write, and we don't audit most of what we import. Here's what you can actually do about it:</div>
+    <div class="prose">Lens 2 covered why supply chain rose in the rankings. The short version: we compose more than we write, and we don't audit most of what we import. Here's what you can actually do about it:</div>
     <div class="co"><strong>Trusted repository</strong> — maintain a curated list of approved dependencies. <strong>SBOM</strong> — know what's in your build. <strong>Integrity checks</strong> — verify at install, verify at runtime.</div>
     <div class="idot-wrap" id="id-sbom"><button class="idot-trigger" onclick="tgd('id-sbom')"><span class="idot">?</span><span class="idot-label">What is an SBOM?</span></button><div class="idot-pop"><strong>Software Bill of Materials</strong> — a complete inventory of all components, libraries, and dependencies in your software. Think of it as a nutrition label for code. It lists what's inside, what version, and where it came from. Required by some regulations and increasingly expected by enterprise customers.</div></div>
     <div class="scenario"><div class="scenario-tag">Key principle</div><div class="scenario-text">"The core reason is that we use third-party code, and we don't always know <em>who</em> developed those dependencies and <em>how</em>. And that's a risk."</div></div>
@@ -305,7 +305,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 <div class="slide" id="s7">
   <div class="sh"><span class="stag"><span class="hl">Lens 4</span> · A08 — Integrity failures</span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Three states, two moments</div><div class="sp-s">A08 · Software & Data Integrity</div></div><div class="sp-r">
-    <div class="prose" style="font-size:14px">Maintaining integrity is structurally hard. Data exists in three states — <strong>at rest</strong>, <strong>in transit</strong>, and <strong>in process</strong> — and each requires different protections.</div>
+    <div class="prose">Maintaining integrity is structurally hard. Data exists in three states — <strong>at rest</strong>, <strong>in transit</strong>, and <strong>in process</strong> — and each requires different protections.</div>
     <div class="compare" id="cmp1">
       <div class="compare-tabs"><button class="compare-tab active" onclick="switchTab('cmp1',0)">Integrity at install</button><button class="compare-tab" onclick="switchTab('cmp1',1)">Integrity at runtime</button></div>
       <div class="compare-panel active">You verify the hash of a package when you install it. You check the signature of a container image before deploying. This is <strong>point-in-time verification</strong> — it proves the component was intact <em>at that moment</em>. Most teams do this well.</div>

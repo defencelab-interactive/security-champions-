@@ -37,8 +37,8 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .sp-r::-webkit-scrollbar{width:3px}.sp-r::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
 .sb{padding:0}.fbody{background:var(--bk);padding:44px 48px;display:flex;align-items:center;gap:48px;min-height:calc(100vh - 120px);position:relative;overflow:hidden}
 .fb-content{flex:1;z-index:1}.fb-tg{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or);margin-bottom:14px}
-.fb-tt{font-size:38px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
-.fb-sb{font-size:16px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
+.fb-tt{font-size:48px;font-weight:700;color:var(--wh);line-height:1.12;letter-spacing:-.02em;margin-bottom:18px;max-width:600px}
+.fb-sb{font-size:19px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px}
 .fb-visual{flex-shrink:0;width:240px;height:240px;display:flex;align-items:center;justify-content:center;z-index:1}
 .prose{font-size:18px;color:var(--tm);line-height:1.85}.prose strong{color:var(--td);font-weight:600}.prose code{background:var(--card);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:13px}
 .co{border-left:4px solid var(--or);padding:18px 24px;background:var(--ol);font-size:17px;color:var(--td);line-height:1.65;border-radius:0 7px 7px 0}.co em{font-style:italic;font-weight:500;color:var(--or)}.co strong{font-weight:600}
@@ -337,7 +337,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 <div class="slide" id="s6">
   <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · A02 — Security Misconfiguration</span><div class="sh-right"><div class="pips" id="pp6"></div></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Four ways configuration fails</div><div class="sp-s">A02 · Security Misconfiguration</div></div><div class="sp-r">
-    <div class="prose" style="font-size:14px">The old name was "shrink-wrap code attack" — using defaults straight out of the box. Today, four categories:</div>
+    <div class="prose">The old name was "shrink-wrap code attack" — using defaults straight out of the box. Today, four categories:</div>
     <div class="reveal-steps" id="rv1">
       <div class="reveal-step active" data-step="0"><div class="reveal-num">1</div><div class="reveal-body"><div class="reveal-title">Default configurations still in place</div><div class="reveal-text">Default users, default permissions, default databases. Remember <code>mysql_secure_installation</code>? Its entire purpose is removing defaults. With hundreds of components, forcing this step has become more important, not less.</div></div></div>
       <div class="reveal-step locked" data-step="1"><div class="reveal-num">2</div><div class="reveal-body"><div class="reveal-title">Unnecessary features enabled</div><div class="reveal-text">Features you don't use can leak memory, eat resources, or expose attack surface — leading to application-level denial of service, or simply paying for resources you didn't need.</div></div></div>
