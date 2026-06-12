@@ -669,39 +669,46 @@ if (!validPassword(user, pwd)) {
 <!-- ═══ S14 · BREATHER — Risk pipe ═══ -->
 <div class="slide" id="s15">
   <div class="sh"><span class="stag"><span class="hl">Time to think</span> · How it all connects</span><div class="sh-right"><div class="pips" id="pp15"></div></div></div>
-  <div class="sb"><div class="breather bg-warm" style="padding:24px 28px 14px;align-items:stretch">
-    <div class="breather-visual" style="flex-direction:column;justify-content:center;align-items:stretch">
-      <div class="pipe-box">
-        <!-- Vulnerabilities — widest bar -->
+  <div class="sb"><div class="breather bg-warm" style="padding:24px 36px 14px;align-items:stretch">
+    <div class="breather-visual" style="flex-direction:row;justify-content:center;align-items:stretch;gap:40px">
+      <!-- LEFT: pipe visualization -->
+      <div class="pipe-box" style="flex:1;max-width:50%;display:flex;flex-direction:column;justify-content:center">
         <div class="pipe-row" id="pv1">
           <div class="pipe-bar pb-vuln">
             <span class="pipe-label">Vulnerabilities</span>
             <div class="pipe-dots"><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span></div>
-            <div class="pipe-idot"><button class="idot" onclick="tgd('pv1')">?</button></div>
           </div>
         </div>
-        <div class="pipe-idot-pop" id="pv1-pop">Hundreds of specific weaknesses: misconfigurations, missing controls, default credentials, unpatched components. These are <strong>attributes of your system</strong> — things about how it <em>is</em>, not things someone does.</div>
         <div class="pipe-narrow"><div class="pipe-narrow-line"></div><span class="pipe-narrow-label">exploited by threats ↓</span></div>
-        <!-- Threats — medium bar -->
         <div class="pipe-row" id="pv2">
           <div class="pipe-bar pb-threat">
             <span class="pipe-label">Threats</span>
             <div class="pipe-dots"><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span></div>
-            <div class="pipe-idot"><button class="idot" onclick="tgd('pv2')">?</button></div>
           </div>
         </div>
-        <div class="pipe-idot-pop" id="pv2-pop">The actions and agents trying to exploit weaknesses — attackers, scripts, insiders, bots. Many vulnerabilities share the same threats. That's why this bar is <strong>narrower</strong>.</div>
         <div class="pipe-narrow"><div class="pipe-narrow-line"></div><span class="pipe-narrow-label">produce risks ↓</span></div>
-        <!-- Risks — narrow bar, brightest -->
         <div class="pipe-row" id="pv3">
           <div class="pipe-bar pb-risk">
             <span class="pipe-label">Risks</span>
             <div class="pipe-dots"><span class="pipe-dot"></span><span class="pipe-dot"></span><span class="pipe-dot"></span></div>
-            <div class="pipe-idot"><button class="idot" onclick="tgd('pv3')">?</button></div>
           </div>
         </div>
-        <div class="pipe-idot-pop" id="pv3-pop"><strong>Impact × likelihood</strong> — the business-level concerns. Dozens of vulnerabilities and threats compress into a handful of risks you can prioritize and budget for. This is the level executives can act on.</div>
         <div class="pipe-owasp-tag">↑ OWASP Top 10 operates here</div>
+      </div>
+      <!-- RIGHT: explanations always visible -->
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:24px">
+        <div style="border-left:3px solid rgba(232,129,58,.3);padding:12px 20px">
+          <div style="font-size:13px;font-weight:700;color:var(--or);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Vulnerabilities</div>
+          <div style="font-size:17px;color:rgba(255,255,255,.7);line-height:1.65">Hundreds of specific weaknesses — misconfigurations, missing controls, default credentials. <strong style="color:rgba(255,255,255,.9)">Attributes of your system</strong>, not things someone does.</div>
+        </div>
+        <div style="border-left:3px solid rgba(232,129,58,.5);padding:12px 20px">
+          <div style="font-size:13px;font-weight:700;color:var(--or);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Threats</div>
+          <div style="font-size:17px;color:rgba(255,255,255,.7);line-height:1.65">Attackers, scripts, insiders, bots. Many vulnerabilities share the same threats — that's why this bar is <strong style="color:rgba(255,255,255,.9)">narrower</strong>.</div>
+        </div>
+        <div style="border-left:3px solid var(--or);padding:12px 20px">
+          <div style="font-size:13px;font-weight:700;color:var(--or);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Risks</div>
+          <div style="font-size:17px;color:rgba(255,255,255,.7);line-height:1.65"><strong style="color:rgba(255,255,255,.9)">Impact × likelihood.</strong> Dozens of vulnerabilities compress into a handful of risks you can prioritize. This is the level executives act on.</div>
+        </div>
       </div>
     </div>
     <div class="breather-caption"><p>The bars get <strong>narrower</strong> because many weaknesses compress into fewer risks. That compression is what makes the Top 10 <strong>actionable</strong>.</p></div>
