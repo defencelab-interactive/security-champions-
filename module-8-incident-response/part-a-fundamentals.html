@@ -1061,16 +1061,16 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
     }
   }
   window.go=go;window.tg=tg;window.tgw=tgw;
-  function go(n){
+  function go(n){try{
     if(n<0||n>=T)return;
     document.querySelectorAll('.slide').forEach(s=>s.classList.remove('on'));
     cur=n;
     const s=document.getElementById('s'+n);if(s){s.classList.add('on')}
     document.querySelectorAll('.pips').forEach(bp);
     renderChips();
-    if(n===26)populateResults();
+    if(n===29)populateResults();
     document.querySelector('.lms-main').scrollTo({top:0,behavior:'smooth'});
-  }
+  }catch(e){console.error("go("+n+") error:",e)}}
 
   function tg(id){
     const xb=document.querySelector('#'+id+' .xb');

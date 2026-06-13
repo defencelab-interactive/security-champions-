@@ -1066,12 +1066,14 @@ function bumpChips(){document.querySelectorAll('.scorechip').forEach(c=>{c.class
 
 function go(n){
   if(n<0||n>=T)return;
-  document.getElementById('s'+c).classList.remove('on');
+  try{
+  var prev=document.getElementById('s'+c);if(prev)prev.classList.remove('on');
   c=n;
   const slide=document.getElementById('s'+n);
+  if(!slide){console.error('go('+n+'): slide s'+n+' not found');return}
   slide.classList.add('on');
   const r=slide.querySelector('.sp-r');if(r)r.scrollTop=0;
-  if(n===26){
+  if(n===29){
     const fs=document.getElementById('final-score');
     if(fs){
       const totalQ=Object.keys(ans).length;
@@ -1083,7 +1085,7 @@ function go(n){
   }
   document.querySelectorAll('.pips').forEach(p=>bp(p));
   window.scrollTo(0,0);
-}
+}catch(e){console.error("go() error:",e)}}
 function bp(el){if(!el)return;el.innerHTML='';for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}}
 document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(c+1)}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(c-1)}});
 function tg(id){const el=document.getElementById(id),b=el.querySelector('.xb'),a=el.querySelector('.xa');b.classList.toggle('op');if(a)a.classList.toggle('op')}

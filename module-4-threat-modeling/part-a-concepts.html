@@ -607,15 +607,15 @@ function buildPips(el){
   if(!el)return;el.innerHTML='';
   for(let i=0;i<T;i++){const b=document.createElement('button');b.className='pip'+(i===c?' on':'');b.onclick=()=>go(i);el.appendChild(b)}
 }
-function go(n){
+function go(n){try{
   if(n<0||n>=T)return;
   document.getElementById('s'+c).classList.remove('on');c=n;
   const slide=document.getElementById('s'+n);slide.classList.add('on');
   const r=slide.querySelector('.sp-r');if(r)r.scrollTop=0;
   document.querySelectorAll('.pips').forEach(p=>buildPips(p));
   window.scrollTo(0,0);renderChips();
-  if(n===35)populateResults();
-}
+  if(n===38)populateResults();
+}catch(e){console.error("go("+n+") error:",e)}}
 document.addEventListener('keydown',e=>{
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
   if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(c+1)}

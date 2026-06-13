@@ -987,13 +987,15 @@ function toast(msg,err){const t=document.getElementById('toast');t.textContent=m
 
 function go(n){
   if(n<0||n>=T)return;
-  document.getElementById('s'+c).classList.remove('on');
+  try{
+  var prev=document.getElementById('s'+c);if(prev)prev.classList.remove('on');
   c=n;
   const slide=document.getElementById('s'+n);
+  if(!slide){console.error('go('+n+'): slide s'+n+' not found');return}
   slide.classList.add('on');
   const r=slide.querySelector('.sp-r');if(r)r.scrollTop=0;
-  if(n===5) runDecompTypewriter();
-  if(n===18) populateResults();
+  if(n===8) runDecompTypewriter();
+  if(n===21) populateResults();
   document.querySelectorAll('.pips').forEach(p=>bp(p));
   document.querySelector('.lms-main').scrollTo(0,0);
 }
