@@ -82,6 +82,13 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .stack-viz{width:100%;max-width:460px}.stack-viz svg{width:100%;height:auto}.stack-viz .ring{fill:none;stroke-width:1.5}.stack-viz .r1{stroke:rgba(232,129,58,.15);animation:srp 4s ease-in-out 2s infinite}.stack-viz .r2{stroke:rgba(232,129,58,.2);animation:srp 4s ease-in-out 1s infinite}.stack-viz .r3{stroke:rgba(232,129,58,.3);animation:srp 4s ease-in-out 0s infinite}.stack-viz .r4{fill:rgba(232,129,58,.15);stroke:rgba(232,129,58,.5);stroke-width:2}@keyframes srp{0%,100%{stroke:rgba(232,129,58,.15)}50%{stroke:rgba(232,129,58,.45);filter:drop-shadow(0 0 8px rgba(232,129,58,.15))}}
 #reflect-modal{position:fixed;inset:0;background:rgba(8,6,12,.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}#reflect-modal.on{display:flex}.rm-card{background:linear-gradient(170deg,#1c1820,#181820);border:1px solid rgba(232,129,58,.35);border-radius:14px;padding:36px 40px 28px;max-width:560px;width:100%;text-align:center;color:#F5F2ED;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}.rm-tag{font-size:10px;letter-spacing:4px;color:var(--or);font-weight:700;text-transform:uppercase;margin-bottom:18px}.rm-q{font-size:22px;line-height:1.45;font-weight:300;margin-bottom:14px;color:#F5F2ED}.rm-q em{color:var(--or);font-style:normal;font-weight:600}.rm-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin:0 auto 24px;max-width:440px}.rm-actions{display:flex;gap:10px;justify-content:center}.rm-close{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;width:28px;height:28px;border-radius:6px}.rm-close:hover{background:rgba(255,255,255,.08);color:#fff}
 @media(max-width:700px){.split{flex-direction:column}.sp-l{width:100%;min-height:auto;padding:16px 18px}.sp-r{max-height:none}.fbody{flex-direction:column;padding:32px 24px;gap:24px}.fb-visual{width:180px;height:180px}.fb-tt{font-size:28px}.mr-quote{font-size:20px}.mr-reality-text{font-size:15px}.mr-body{padding:28px 20px}.yah{flex-wrap:wrap;gap:4px}.yah-line{width:20px}}
+
+/* ═══ ENRICHMENT ═══ */
+.sp-l{border-left:3px solid rgba(232,129,58,.25)}
+.takeaway{margin-top:auto}
+.sp-r .prose+.prose{margin-top:4px}
+.sp-r .prose+.co,.sp-r .co+.prose{margin-top:6px}
+.sp-r .co+.takeaway,.sp-r .prose+.takeaway,.sp-r .xp+.takeaway{margin-top:auto}
 </style>
 </head>
 <body>
