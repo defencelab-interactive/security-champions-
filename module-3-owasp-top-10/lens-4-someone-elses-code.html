@@ -318,6 +318,10 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
 
 /* ═══ MR-BODY FIX ═══ */
 .mr-body{flex:1!important;min-height:0!important}
+
+/* ═══ MR-BODY SLIDE FIX ═══ */
+#s5.on{height:100vh!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+#s5 .mr-body{flex:1!important;min-height:0!important;overflow:hidden!important}
 </style>
 </head>
 <body>
@@ -426,9 +430,9 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
 </div>
 
 <!-- ═══ S5 · MYTH/REALITY — crypto is not for us ═══ -->
-<div class="slide" id="s5" style="height:100vh;max-height:100vh;display:flex;flex-direction:column">
+<div class="slide" id="s5">
   <div class="sh"><span class="stag"><span class="hl">Myth vs reality</span></span><div class="sh-right"><div class="pips" id="pp5"></div></div></div>
-  <div class="mr-body" style="flex:1;min-height:0" id="mr0"><div class="mr-cracks"><div class="mr-crack mc1"></div><div class="mr-crack mc2"></div><div class="mr-crack mc3"></div><div class="mr-crack mc4"></div><div class="mr-crack mc5"></div><div class="mr-crack mc6"></div></div><div class="mr-container"><div class="mr-myth">
+  <div class="mr-body" id="mr0"><div class="mr-cracks"><div class="mr-crack mc1"></div><div class="mr-crack mc2"></div><div class="mr-crack mc3"></div><div class="mr-crack mc4"></div><div class="mr-crack mc5"></div><div class="mr-crack mc6"></div></div><div class="mr-container"><div class="mr-myth">
       <span class="mr-icon">🔐</span><div class="mr-label">Common assumption</div>
       <div class="mr-quote">"Crypto is for crypto engineers, not for us"</div>
       <button class="mr-reveal-btn" onclick="reveal('mr0')">Think again →</button>
