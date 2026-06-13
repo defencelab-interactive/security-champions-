@@ -374,6 +374,22 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .sum-num{font-size:16px!important;width:32px!important;height:32px!important;line-height:32px!important}
 .sum-item div{font-size:18px!important;line-height:1.6!important}
 .sum-item strong{font-size:18px!important}
+
+/* ═══ SVG ILLUSTRATION ANIMATIONS ═══ */
+@keyframes svg-fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes svg-draw{from{stroke-dashoffset:200}to{stroke-dashoffset:0}}
+@keyframes svg-pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.03)}}
+@keyframes svg-glow{0%,100%{filter:drop-shadow(0 0 0 transparent)}50%{filter:drop-shadow(0 2px 8px rgba(232,129,58,.25))}}
+.svg-illust{animation:svg-fade .6s ease both;margin:16px 0}
+.svg-illust svg{width:100%;display:block}
+.svg-draw{stroke-dasharray:200;animation:svg-draw 2s ease-in-out forwards}
+.svg-pulse{animation:svg-pulse 3s ease-in-out infinite}
+.svg-glow{animation:svg-glow 3s ease-in-out infinite}
+.cards-row{display:flex;justify-content:center;gap:14px;padding:20px 0;flex-wrap:wrap;animation:svg-fade .6s ease both}
+.cards-row .card-item{text-align:center;padding:20px 22px;border-radius:12px;min-width:110px;flex:1;max-width:140px;transition:transform .2s}
+.cards-row .card-item:hover{transform:translateY(-3px)}
+.cards-row .card-icon{font-size:28px;margin-bottom:8px;display:block}
+.cards-row .card-label{font-size:13px;font-weight:700;letter-spacing:.3px}
 </style>
 </head>
 <body>
@@ -742,7 +758,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">When K8s secrets are enough</div></div><div class="sp-r">
     <div class="prose"><strong>Use Kubernetes native secrets</strong> when your secrets don't change often, are used exclusively within the cluster, and your team has implemented RBAC and etcd encryption.</div>
     <div class="prose"><strong>Move to an external store</strong> (Vault with K8s auth method, or External Secrets Operator with cloud secret managers) when secrets need to be shared across clusters, across cloud providers, or when you need rotation, fine-grained audit trails, or compliance-grade access controls.</div>
-  <div class="takeaway"><div class="takeaway-label">Practical rule</div><div class="takeaway-text">K8s native secrets are <strong>base64-encoded, not encrypted</strong>. They're fine for non-sensitive config. For real secrets, use an external vault with CSI driver injection.</div></div></div></div></div>
+  <div class="svg-illust" style="display:flex;justify-content:center;padding:24px 0"><svg viewBox="0 0 360 80" width="100%" style="max-width:400px"><g class="svg-pulse"><rect x="5" y="10" width="100" height="55" rx="8" fill="rgba(74,143,212,.06)" stroke="var(--bl)" stroke-width="1.5"/><text x="55" y="32" text-anchor="middle" fill="var(--bl)" font-size="9" font-weight="700" font-family="DM Sans">K8s Secret</text><text x="55" y="46" text-anchor="middle" fill="var(--mu)" font-size="8" font-family="DM Sans">base64 only</text></g><text x="130" y="40" text-anchor="middle" fill="var(--mu)" font-size="16" font-family="DM Sans">≠</text><g class="svg-glow"><rect x="155" y="10" width="100" height="55" rx="8" fill="rgba(46,173,107,.06)" stroke="var(--gr)" stroke-width="2"/><text x="205" y="32" text-anchor="middle" fill="var(--gr)" font-size="9" font-weight="700" font-family="DM Sans">Vault + CSI</text><text x="205" y="46" text-anchor="middle" fill="var(--mu)" font-size="8" font-family="DM Sans">encrypted</text></g><text x="280" y="40" text-anchor="middle" fill="var(--or)" font-size="9" font-weight="700" font-family="DM Sans" letter-spacing="1">USE FOR</text><text x="280" y="55" text-anchor="middle" fill="var(--mu)" font-size="8" font-family="DM Sans">real secrets →</text></svg></div><div class="takeaway"><div class="takeaway-label">Practical rule</div><div class="takeaway-text">K8s native secrets are <strong>base64-encoded, not encrypted</strong>. They're fine for non-sensitive config. For real secrets, use an external vault with CSI driver injection.</div></div></div></div></div>
   <div class="sf"><span class="shint">17 / 28 · K8s recommendation</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
 </div>
 

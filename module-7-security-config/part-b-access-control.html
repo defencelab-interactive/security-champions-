@@ -276,6 +276,22 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 .sum-num{font-size:16px!important;width:32px!important;height:32px!important;line-height:32px!important}
 .sum-item div{font-size:18px!important;line-height:1.6!important}
 .sum-item strong{font-size:18px!important}
+
+/* ═══ SVG ILLUSTRATION ANIMATIONS ═══ */
+@keyframes svg-fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes svg-draw{from{stroke-dashoffset:200}to{stroke-dashoffset:0}}
+@keyframes svg-pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.03)}}
+@keyframes svg-glow{0%,100%{filter:drop-shadow(0 0 0 transparent)}50%{filter:drop-shadow(0 2px 8px rgba(232,129,58,.25))}}
+.svg-illust{animation:svg-fade .6s ease both;margin:16px 0}
+.svg-illust svg{width:100%;display:block}
+.svg-draw{stroke-dasharray:200;animation:svg-draw 2s ease-in-out forwards}
+.svg-pulse{animation:svg-pulse 3s ease-in-out infinite}
+.svg-glow{animation:svg-glow 3s ease-in-out infinite}
+.cards-row{display:flex;justify-content:center;gap:14px;padding:20px 0;flex-wrap:wrap;animation:svg-fade .6s ease both}
+.cards-row .card-item{text-align:center;padding:20px 22px;border-radius:12px;min-width:110px;flex:1;max-width:140px;transition:transform .2s}
+.cards-row .card-item:hover{transform:translateY(-3px)}
+.cards-row .card-icon{font-size:28px;margin-bottom:8px;display:block}
+.cards-row .card-label{font-size:13px;font-weight:700;letter-spacing:.3px}
 </style>
 </head>
 <body>
