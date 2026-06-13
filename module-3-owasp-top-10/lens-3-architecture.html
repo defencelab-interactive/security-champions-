@@ -340,6 +340,17 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
 .is-fs .rm-tag{font-size:12px!important}
 .is-fs .gloss{border-bottom-width:2px!important}
 
+
+/* ═══ CODE DIFF ENLARGE ═══ */
+.cdiff-code{font-size:15px!important;line-height:1.8!important;padding:18px 20px!important}
+.cdiff-head{font-size:14px!important;padding:10px 16px!important}
+.cdiff-fix{font-size:15px!important;padding:14px 18px!important}
+
+/* ═══ REVEAL STEPS ENLARGE ═══ */
+.reveal-title{font-size:18px!important;line-height:1.5!important}
+.reveal-text{font-size:16px!important;line-height:1.7!important}
+.reveal-num{font-size:16px!important;width:32px!important;height:32px!important;line-height:32px!important}
+.reveal-btn{font-size:15px!important;padding:12px 24px!important}
 </style>
 </head>
 <body>
@@ -404,26 +415,26 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
   <div class="sh"><span class="stag"><span class="hl">Threat spotlight</span> · Where authorization breaks</span><div class="sh-right"><div class="pips" id="pp3"></div></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Distributed auth</div><div class="sp-s">Click each service to see what happens inside</div></div><div class="sp-r" style="background:#0d0f14;padding:18px 20px">
     <div class="ts-diagram">
-      <svg viewBox="0 0 520 130" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg">
         <!-- IdP -->
-        <rect x="10" y="42" width="72" height="42" rx="5" fill="rgba(74,143,212,.15)" stroke="rgba(74,143,212,.5)" stroke-width="1.5"/>
-        <text x="46" y="60" fill="rgba(74,143,212,.9)" font-size="10" font-weight="700" text-anchor="middle" font-family="DM Sans">IdP</text>
-        <text x="46" y="74" fill="rgba(255,255,255,.3)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">identity</text>
+        <rect x="10" y="50" width="88" height="56" rx="5" fill="rgba(74,143,212,.15)" stroke="rgba(74,143,212,.5)" stroke-width="1.5"/>
+        <text x="46" y="72" fill="rgba(74,143,212,.9)" font-size="13" font-weight="700" text-anchor="middle" font-family="DM Sans">IdP</text>
+        <text x="46" y="88" fill="rgba(255,255,255,.3)" font-size="9" text-anchor="middle" font-family="JetBrains Mono">identity</text>
         <!-- Arrow IdP → Token -->
-        <line x1="82" y1="63" x2="118" y2="63" stroke="rgba(255,255,255,.2)" stroke-width="1" stroke-dasharray="4 3"><animate attributeName="stroke-dashoffset" from="7" to="0" dur="1.5s" repeatCount="indefinite"/></line>
+        <line x1="82" y1="78" x2="118" y2="78" stroke="rgba(255,255,255,.2)" stroke-width="1" stroke-dasharray="4 3"><animate attributeName="stroke-dashoffset" from="7" to="0" dur="1.5s" repeatCount="indefinite"/></line>
         <!-- Token -->
         <rect x="118" y="46" width="54" height="34" rx="4" fill="rgba(232,129,58,.12)" stroke="rgba(232,129,58,.4)" stroke-width="1.5"/>
-        <text x="145" y="60" fill="var(--or)" font-size="9" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">JWT</text>
-        <text x="145" y="72" fill="rgba(255,255,255,.25)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">token</text>
+        <text x="145" y="72" fill="var(--or)" font-size="9" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">JWT</text>
+        <text x="145" y="72" fill="rgba(255,255,255,.25)" font-size="9" text-anchor="middle" font-family="JetBrains Mono">token</text>
         <!-- Arrows to services -->
         <line x1="172" y1="55" x2="220" y2="22" stroke="rgba(255,255,255,.15)" stroke-width="1" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="6" to="0" dur="1.2s" repeatCount="indefinite"/></line>
-        <line x1="172" y1="63" x2="220" y2="63" stroke="rgba(255,255,255,.15)" stroke-width="1" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="6" to="0" dur="1.4s" repeatCount="indefinite"/></line>
+        <line x1="172" y1="78" x2="220" y2="78" stroke="rgba(255,255,255,.15)" stroke-width="1" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="6" to="0" dur="1.4s" repeatCount="indefinite"/></line>
         <line x1="172" y1="71" x2="220" y2="106" stroke="rgba(255,255,255,.15)" stroke-width="1" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="6" to="0" dur="1.6s" repeatCount="indefinite"/></line>
         <!-- Service A (checks roles) -->
         <g class="ts-node" onclick="tsClick('ts-a')">
           <rect class="ts-box" x="220" y="4" width="110" height="38" rx="5" fill="rgba(46,173,107,.08)" stroke="rgba(46,173,107,.4)" stroke-width="1.5"/>
           <text x="275" y="21" fill="rgba(46,173,107,.85)" font-size="9" font-weight="700" text-anchor="middle" font-family="DM Sans">Service A</text>
-          <text x="275" y="34" fill="rgba(255,255,255,.3)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">checks roles ✓</text>
+          <text x="275" y="34" fill="rgba(255,255,255,.3)" font-size="9" text-anchor="middle" font-family="JetBrains Mono">checks roles ✓</text>
         </g>
         <!-- Service B (no check!) -->
         <g class="ts-node" onclick="tsClick('ts-b')">
@@ -431,21 +442,21 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
             <animate attributeName="stroke-opacity" values=".45;.8;.45" dur="2s" repeatCount="indefinite"/>
           </rect>
           <text x="275" y="62" fill="rgba(217,69,69,.85)" font-size="9" font-weight="700" text-anchor="middle" font-family="DM Sans">Service B</text>
-          <text x="275" y="75" fill="rgba(255,255,255,.3)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">no authz check ✗</text>
+          <text x="275" y="75" fill="rgba(255,255,255,.3)" font-size="9" text-anchor="middle" font-family="JetBrains Mono">no authz check ✗</text>
         </g>
         <!-- Service C (caches) -->
         <g class="ts-node" onclick="tsClick('ts-c')">
           <rect class="ts-box" x="220" y="87" width="110" height="38" rx="5" fill="rgba(229,168,50,.1)" stroke="rgba(229,168,50,.4)" stroke-width="1.5"/>
           <text x="275" y="104" fill="rgba(229,168,50,.85)" font-size="9" font-weight="700" text-anchor="middle" font-family="DM Sans">Service C</text>
-          <text x="275" y="117" fill="rgba(255,255,255,.3)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">caches perms ⚡</text>
+          <text x="275" y="117" fill="rgba(255,255,255,.3)" font-size="9" text-anchor="middle" font-family="JetBrains Mono">caches perms ⚡</text>
         </g>
         <!-- DB -->
-        <line x1="330" y1="23" x2="395" y2="63" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-        <line x1="330" y1="64" x2="395" y2="63" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-        <line x1="330" y1="106" x2="395" y2="63" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line x1="330" y1="23" x2="395" y2="78" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line x1="330" y1="64" x2="395" y2="78" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line x1="330" y1="106" x2="395" y2="78" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
         <ellipse cx="440" cy="63" rx="48" ry="26" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-        <text x="440" y="60" fill="rgba(255,255,255,.35)" font-size="9" font-weight="600" text-anchor="middle" font-family="DM Sans">Database</text>
-        <text x="440" y="74" fill="rgba(255,255,255,.2)" font-size="7" text-anchor="middle" font-family="JetBrains Mono">tables</text>
+        <text x="440" y="72" fill="rgba(255,255,255,.35)" font-size="9" font-weight="600" text-anchor="middle" font-family="DM Sans">Database</text>
+        <text x="440" y="88" fill="rgba(255,255,255,.2)" font-size="9" text-anchor="middle" font-family="JetBrains Mono">tables</text>
       </svg>
     </div>
     <div style="font-size:11px;color:rgba(232,129,58,.5);text-align:center;margin:6px 0 2px;font-weight:600;letter-spacing:.5px">↑ Click a service to inspect ↑</div>
@@ -504,7 +515,7 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
 <!-- ═══ S7 · CODE DIFF — Cookie flags ═══ -->
 <div class="slide" id="s7">
   <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · The decisive fix</span><div class="sh-right"><div class="pips" id="pp7"></div></div></div>
-  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Cookie flags</div><div class="sp-s">The fix you can ship today</div></div><div class="sp-r" style="background:#0d0f14;padding:22px 20px">
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Cookie flags</div><div class="sp-s">The fix you can ship today</div></div><div class="sp-r" style="justify-content:center;background:#0d0f14;padding:22px 20px">
     <div class="cdiff">
       <div class="cdiff-col cdiff-bad"><div class="cdiff-head">✗ Default (insecure)</div><div class="cdiff-code">Set-Cookie: session=abc123
 <span class="hl-bad">  // no flags</span>
@@ -525,7 +536,7 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
 <!-- ═══ S8 · TERMINAL — mysql_secure_installation ═══ -->
 <div class="slide" id="s8">
   <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · What secure defaults look like</span><div class="sh-right"><div class="pips" id="pp8"></div></div></div>
-  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Removing defaults</div><div class="sp-s">mysql_secure_installation</div></div><div class="sp-r" style="background:#0d0f14;padding:22px 20px">
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Removing defaults</div><div class="sp-s">mysql_secure_installation</div></div><div class="sp-r" style="justify-content:center;background:#0d0f14;padding:22px 20px">
     <div class="term" id="term1"><div class="term-bar"><div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div><span class="term-title">secure installation</span></div><div class="term-body" id="term1-body"></div></div>
     <button class="term-play" id="term1-play" onclick="playTerm('term1')">▶ Run it</button>
     <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:14px;line-height:1.5">This command exists because <strong style="color:rgba(255,255,255,.6)">defaults are insecure by design</strong>. Every component you install comes with its own set of defaults that need hardening.</div>
@@ -562,8 +573,18 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
 <!-- ═══ S11 · REVEAL STEPS — Dog analogy ═══ -->
 <div class="slide" id="s11">
   <div class="sh"><span class="stag"><span class="hl">Lens 3</span> · Why it happens</span><div class="sh-right"><div class="pips" id="pp11"></div></div></div>
-  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Running from a dog</div><div class="sp-s">The analogy that explains A06</div></div><div class="sp-r">
-    <div class="reveal-steps" id="rv2">
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Running from a dog</div><div class="sp-s">The analogy that explains A06</div></div><div class="sp-r" style="justify-content:center">
+    <div class="svg-illust" style="display:flex;justify-content:center;padding:16px 0;gap:24px;align-items:center">
+<svg viewBox="0 0 360 80" width="100%" style="max-width:380px">
+<g class="svg-pulse"><circle cx="40" cy="40" r="28" fill="rgba(217,69,69,.06)" stroke="var(--rd)" stroke-width="1.5"/><text x="40" y="36" text-anchor="middle" font-size="22">🐕</text><text x="40" y="56" text-anchor="middle" fill="var(--rd)" font-size="8" font-weight="700" font-family="DM Sans">THREAT</text></g>
+<line x1="75" y1="40" x2="135" y2="40" stroke="var(--or)" stroke-width="2" stroke-dasharray="6,3" class="svg-draw"/>
+<text x="105" y="32" text-anchor="middle" fill="var(--or)" font-size="8" font-weight="700" font-family="DM Sans">CHASING</text>
+<g><circle cx="180" cy="40" r="28" fill="rgba(232,129,58,.06)" stroke="var(--or)" stroke-width="1.5"/><text x="180" y="36" text-anchor="middle" font-size="22">🏃</text><text x="180" y="56" text-anchor="middle" fill="var(--or)" font-size="8" font-weight="700" font-family="DM Sans">YOU</text></g>
+<line x1="215" y1="40" x2="270" y2="40" stroke="var(--bd)" stroke-width="1.5" stroke-dasharray="4,3"/>
+<text x="242" y="32" text-anchor="middle" fill="var(--mu)" font-size="7" font-weight="600" font-family="DM Sans">CAN'T OUTRUN</text>
+<g class="svg-glow"><rect x="280" y="16" width="75" height="48" rx="8" fill="rgba(46,173,107,.06)" stroke="var(--gr)" stroke-width="2"/><text x="318" y="36" text-anchor="middle" fill="var(--gr)" font-size="9" font-weight="700" font-family="DM Sans">DESIGN</text><text x="318" y="50" text-anchor="middle" fill="var(--mu)" font-size="7" font-family="DM Sans">the fence</text></g>
+</svg>
+</div><div class="reveal-steps" id="rv2">
       <div class="reveal-step active" data-step="0"><div class="reveal-num">1</div><div class="reveal-body"><div class="reveal-title">"When you're crossing the road, do you check for cars?"</div><div class="reveal-text">Of course. You look both ways. You have the time and awareness to evaluate risk before stepping off the curb.</div></div></div>
       <div class="reveal-step locked" data-step="1"><div class="reveal-num">2</div><div class="reveal-body"><div class="reveal-title">"Do you always have the time to check?"</div><div class="reveal-text">Under normal conditions — yes. The background risk (cars) is always there, but you've internalized the check. It's automatic.</div></div></div>
       <div class="reveal-step locked" data-step="2"><div class="reveal-num">3</div><div class="reveal-body"><div class="reveal-title">"When you run from a dog, you will not check."</div><div class="reveal-text">When the immediate risk feels survival-level, the background risk gets ignored. You just cross. <strong>Engineering teams running from a delivery deadline behave exactly like someone running from a dog — they skip the check.</strong></div></div></div>
