@@ -353,8 +353,8 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
 .reveal-btn{font-size:15px!important;padding:12px 24px!important}
 
 /* ═══ TS-INFO ENLARGE ═══ */
-.ts-info{font-size:15px!important;line-height:1.7!important;padding:16px 20px!important}
-.ts-tag{font-size:13px!important;padding:5px 12px!important}
+.ts-info{font-size:17px!important;line-height:1.75!important;padding:20px 28px!important;margin-top:0!important}
+.ts-tag{font-size:14px!important;padding:6px 14px!important;letter-spacing:1px!important}
 </style>
 </head>
 <body>
@@ -479,10 +479,10 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
         <text x="650" y="168" fill="rgba(255,255,255,.4)" font-size="13" font-weight="600" text-anchor="middle" font-family="DM Sans">Database</text>
       </svg>
     </div>
-    <div style="font-size:14px;color:rgba(232,129,58,.6);text-align:center;margin:12px 0 8px;font-weight:600;letter-spacing:.5px">↑ Click a service to inspect ↑</div>
-    <div class="ts-info" id="ts-a"><span class="ts-tag ts-tag-ok">Checks role claims</span><br>Service A validates the JWT signature <strong>and</strong> checks role claims against its own policy. If the token says <code style="color:var(--gr)">role: viewer</code>, write operations are denied. This is the correct pattern — but it's one service out of three.</div>
-    <div class="ts-info" id="ts-b"><span class="ts-tag ts-tag-fail">No authorization check</span><br>Service B validates the JWT signature but <strong>does not check role claims or permissions at all</strong>. Any valid token — regardless of role — gets full access. The team assumed "if the token is valid, the user is authorized." That assumption is the vulnerability.</div>
-    <div class="ts-info" id="ts-c"><span class="ts-tag ts-tag-warn">Caches permissions</span><br>Service C checks roles — but <strong>caches the result for 15 minutes</strong>. If a user's permissions are revoked, the cached version keeps granting access. The delay between revocation and enforcement is a window of exposure.</div>
+    <div style="font-size:12px;color:rgba(232,129,58,.5);text-align:center;margin:4px 0 4px;font-weight:600;letter-spacing:.5px">↑ Click a service to inspect ↑</div>
+    <div class="ts-info" id="ts-a"><span class="ts-tag ts-tag-ok">Checks role claims</span><br>Service A validates the JWT signature <strong>and</strong> checks role claims against its own policy. If the token says <code style="color:var(--gr)">role: viewer</code>, write operations are denied.<br><br>This is the correct pattern: <strong>verify identity + enforce authorization at every service boundary</strong>. But it's one service out of three — and the others don't follow it.</div>
+    <div class="ts-info" id="ts-b"><span class="ts-tag ts-tag-fail">No authorization check</span><br>Service B validates the JWT signature but <strong>does not check role claims or permissions at all</strong>. Any valid token — regardless of role — gets full access.<br><br>The team assumed <em>"if the token is valid, the user is authorized."</em> That assumption is the vulnerability. A <code style="color:var(--rd)">viewer</code> token gives the same access as <code style="color:var(--rd)">admin</code>. This is <strong>broken access control</strong> — OWASP A01.</div>
+    <div class="ts-info" id="ts-c"><span class="ts-tag ts-tag-warn">Caches permissions</span><br>Service C checks roles — but <strong>caches the result for 15 minutes</strong>. If a user's permissions are revoked, the cached version keeps granting access.<br><br>This creates a <strong>15-minute window of exposure</strong> after every revocation. In incident response, that's the difference between containing a breach and losing data. Cache TTLs on authorization decisions should be <strong>seconds, not minutes</strong>.</div>
   </div></div></div>
   <div class="sf"><span class="shint">04 / 16 · Interactive</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
 </div>
