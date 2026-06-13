@@ -498,15 +498,18 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
 <!-- ═══ CTX-3: What this module adds ═══ -->
 <div class="slide" id="s3">
   <div class="sh"><span class="stag"><span class="hl">Module 7</span> · Where it all runs</span><div class="pips" id="pp3"></div></div>
-  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Where it all runs</div></div><div class="sp-r" style="justify-content:flex-start;gap:14px">
-    <div style="display:flex;gap:20px;align-items:flex-start">
-      <div style="flex-shrink:0;opacity:.85"><svg viewBox="0 0 100 100" width="120" height="120"><g transform="translate(50,50)"><path d="M0,-28 L5,-26 L6,-20 L10,-18 L13,-24 L18,-21 L16,-15 L21,-11 L25,-15 L27,-10 L22,-7 L22,-3 L28,0 L27,5 L22,6 L21,10 L25,12 L22,17 L18,15 L13,20 L16,24 L11,26 L8,22 L5,22 L0,28 L-5,26 L-6,20 L-10,18 L-13,24 L-18,21 L-16,15 L-21,11 L-25,15 L-27,10 L-22,7 L-22,3 L-28,0 L-27,-5 L-22,-6 L-21,-10 L-25,-12 L-22,-17 L-18,-15 L-13,-20 L-16,-24 L-11,-26 L-8,-22 L-5,-22 Z" fill="none" stroke="rgba(232,129,58,.2)" stroke-width="1"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite"/></path></g><circle cx="50" cy="50" r="10" fill="none" stroke="rgba(232,129,58,.3)" stroke-width="1.5"/><path d="M46,50 L49,53 L55,46" fill="none" stroke="var(--or)" stroke-width="2" stroke-linecap="round"/></svg></div>
-      <div style="flex:1">
-        <div class="co" style="font-size:16px;line-height:1.65;font-weight:500;margin-bottom:12px">Supply chain delivers code (M5). Code contains secrets (M6). Now: where does it all run?</div>
-        <div class="prose">Configuration is where the most common security failures happen. Misconfiguration rose to #2 on the OWASP Top 10.</div>
-      </div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Where it all runs</div></div><div class="sp-r" style="justify-content:center;gap:16px">
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="flex-shrink:0;opacity:.75"><svg viewBox="0 0 100 100" width="80" height="80"><g transform="translate(50,50)"><path d="M0,-28 L5,-26 L6,-20 L10,-18 L13,-24 L18,-21 L16,-15 L21,-11 L25,-15 L27,-10 L22,-7 L22,-3 L28,0 L27,5 L22,6 L21,10 L25,12 L22,17 L18,15 L13,20 L16,24 L11,26 L8,22 L5,22 L0,28 L-5,26 L-6,20 L-10,18 L-13,24 L-18,21 L-16,15 L-21,11 L-25,15 L-27,10 L-22,7 L-22,3 L-28,0 L-27,-5 L-22,-6 L-21,-10 L-25,-12 L-22,-17 L-18,-15 L-13,-20 L-16,-24 L-11,-26 L-8,-22 L-5,-22 Z" fill="none" stroke="rgba(232,129,58,.18)" stroke-width="1"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite"/></path></g><circle cx="50" cy="50" r="10" fill="none" stroke="rgba(232,129,58,.3)" stroke-width="1.5"/><path d="M46,50 L49,53 L55,46" fill="none" stroke="var(--or)" stroke-width="2" stroke-linecap="round"/></svg></div>
+      <div class="co" style="flex:1;font-size:16px;line-height:1.6;font-weight:500;margin:0">Supply chain delivers code (M5). Code contains secrets (M6). Now: where does it all run?</div>
     </div>
-    <div class="prose">This module covers <strong>secure configuration baselines</strong> (Part A) and <strong>access control</strong> (Part B). Key habit: treat every config drift as a defect — <strong>a bug in Jira</strong>, not a note in a wiki.</div>
+    <div class="prose" style="font-size:15px">Configuration is where the most common security failures happen. Misconfiguration rose to #2 on the OWASP Top 10.</div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding:14px 18px;background:var(--ow);border-radius:8px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--or);text-transform:uppercase">By the end of this module</div>
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:18px;font-weight:800;color:var(--or);flex-shrink:0;width:22px">1</span><div><div style="font-size:16px;font-weight:600;color:var(--td);line-height:1.35">Secure configuration baseline</div><div style="font-size:13px;color:var(--mu);line-height:1.5;margin-top:2px">A known-good state you can measure drift against</div></div></div>
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:18px;font-weight:800;color:var(--or);flex-shrink:0;width:22px">2</span><div><div style="font-size:16px;font-weight:600;color:var(--td);line-height:1.35">Access control: who has access to what</div><div style="font-size:13px;color:var(--mu);line-height:1.5;margin-top:2px">Least privilege, not convenience-driven permissions</div></div></div>
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:18px;font-weight:800;color:var(--or);flex-shrink:0;width:22px">3</span><div><div style="font-size:16px;font-weight:600;color:var(--td);line-height:1.35">Key habit: config drift = defect</div><div style="font-size:13px;color:var(--mu);line-height:1.5;margin-top:2px">A bug in Jira, not a note in a wiki</div></div></div>
+    </div>
   </div></div></div>
   <div class="sf"><span class="shint">Context</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
 </div>
