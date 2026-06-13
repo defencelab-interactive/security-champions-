@@ -455,7 +455,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="chk-item"><div class="chk-icon pass">✓</div><div class="chk-text"><strong>Random IVs per operation.</strong> AES requires a unique initialization vector for every encryption call. Static IVs mean identical plaintexts produce identical ciphertexts.</div></div>
       <div class="chk-item"><div class="chk-icon pass">✓</div><div class="chk-text"><strong>Platform crypto APIs.</strong> Use <code>Security</code> framework (iOS) or <code>javax.crypto</code> with Android Keystore provider — not custom implementations.</div></div>
     </div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Remember</div><div class="takeaway-text">Mobile crypto failures are almost always <strong>misuse of correct libraries</strong> — hardcoded IVs, ECB mode, insufficient key lengths. The fix is a review checklist, not a new library.</div></div></div></div></div>
   <div class="sf"><span class="shint">6 / 18 · Crypto</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
 </div>
 
@@ -470,7 +470,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="chk-item"><div class="chk-icon fail">✗</div><div class="chk-text"><strong>No client-only authorization.</strong> If the app hides a button to restrict access, but the API endpoint accepts the request anyway — that's a BOLA vulnerability, not access control.</div></div>
       <div class="chk-item"><div class="chk-icon warn">!</div><div class="chk-text"><strong>Biometrics backed by crypto.</strong> L2 apps should bind biometric auth to a cryptographic key in the secure enclave — not just a boolean <code>isAuthenticated</code> flag.</div></div>
     </div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Champion's takeaway</div><div class="takeaway-text">Mobile auth is split-brain: the app validates locally, the server validates remotely. <strong>Never trust client-side auth decisions</strong> — always verify server-side.</div></div></div></div></div>
   <div class="sf"><span class="shint">7 / 18 · Auth</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
 </div>
 
@@ -513,7 +513,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="xp" id="x9a"><button class="xh" aria-expanded="false" aria-controls="x9a-p" onclick="tg('x9a')"><span class="xt">Feature flags as a security boundary</span><span class="xa">›</span></button>
       <div class="xb" id="x9a-p">A common variant: premium features "disabled" on the client via a feature flag. The API endpoints for those features still accept requests from any authenticated user. An attacker with a proxy enables the features by flipping the client flag — or just calls the API directly. <strong>Feature access must be enforced server-side.</strong></div>
     </div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Pattern</div><div class="takeaway-text">Client-side validation is <strong>UX, not security</strong>. Every check in the mobile app can be bypassed with a proxy. The server is the only trust boundary.</div></div></div></div></div>
   <div class="sf"><span class="shint">10 / 18 · Pitfall 1</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
 </div>
 
@@ -526,7 +526,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="xp" id="x10a"><button class="xh" aria-expanded="false" aria-controls="x10a-p" onclick="tg('x10a')"><span class="xt">The three-layer secret defense</span><span class="xa">›</span></button>
       <div class="xb" id="x10a-p"><strong>Layer 1 — IDE plugin:</strong> flag secrets as you type (GitGuardian, GitHub Copilot security). <strong>Layer 2 — Pre-commit hook:</strong> scan staged files before commit (<code>gitleaks</code>). <strong>Layer 3 — CI pipeline:</strong> scan the full repo on every PR. Three layers because no single layer catches everything, and developers will bypass any layer that interrupts their flow too aggressively.</div>
     </div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Champion's takeaway</div><div class="takeaway-text">AI-assisted reverse engineering makes <strong>obfuscation a speed bump, not a wall</strong>. Don't store secrets in mobile binaries — assume they'll be extracted.</div></div></div></div></div>
   <div class="sf"><span class="shint">11 / 18 · Pitfall 2</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
 </div>
 
@@ -539,7 +539,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="xp" id="x11a"><button class="xh" aria-expanded="false" aria-controls="x11a-p" onclick="tg('x11a')"><span class="xt">The minimum mobile CI/CD security gates</span><span class="xa">›</span></button>
       <div class="xb" id="x11a-p"><strong>Gate 1:</strong> Secret detection (block on any credential found). <strong>Gate 2:</strong> Dependency check for known vulnerabilities (block on critical CVEs). <strong>Gate 3:</strong> Configuration validation — debug disabled, ATS enabled, backup disabled. <strong>Gate 4:</strong> SAST for mobile-specific patterns (block on high). These four gates catch the majority of shippable mobile security issues. They add ~2 minutes to a build.</div>
     </div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Practical rule</div><div class="takeaway-text">Mobile CI/CD should include <strong>SAST + dependency scanning</strong> as blocking gates. A pipeline that only builds and tests is a pipeline that ships vulnerabilities.</div></div></div></div></div>
   <div class="sf"><span class="shint">12 / 18 · Pitfall 3</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
 </div>
 
@@ -552,7 +552,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="xp" id="x12a"><button class="xh" aria-expanded="false" aria-controls="x12a-p" onclick="tg('x12a')"><span class="xt">The Firebase rules mistake</span><span class="xa">›</span></button>
       <div class="xb" id="x12a-p">During development, Firebase rules are often set to <code>{ ".read": true, ".write": true }</code> for convenience. This ships to production more than you'd think. A single curl command to <code>your-project.firebaseio.com/.json</code> returns the entire database. Google Cloud's security scanner can detect this, but it needs to be enabled and integrated into the release process — not run quarterly.</div>
     </div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Remember</div><div class="takeaway-text">The mobile app's backend API is often <strong>less hardened than the web API</strong> because teams assume the app is the only client. It isn't.</div></div></div></div></div>
   <div class="sf"><span class="shint">13 / 18 · Pitfall 4</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
 </div>
 

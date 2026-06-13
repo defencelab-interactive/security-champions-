@@ -518,7 +518,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="case-card"><div class="case-head"><span class="case-tag">Real Case</span><span class="case-title">NotPetya via MEDOC (2017)</span></div><div class="case-body">Adversaries accessed the update servers of MEDOC — a legitimate Ukrainian accounting software used by virtually every business in the country. They injected malicious code into a routine software update. The update was signed, distributed through official channels, and installed automatically by trusting customers. The result: a global wiper disguised as ransomware that spread through corporate networks for months. <span class="case-stat">$10B+ in global damages</span></div></div>
     <div class="prose">This wasn't a dependency attack. This was a <strong>trusted vendor's code</strong>, compromised at the source. Both the development process and the build pipeline were breached. No customer had any reason to suspect the update — it came from the official source, through the official channel.</div>
     <div class="co"><em>The lesson:</em> trusting a vendor is not a security strategy. Verification is. If MEDOC's update had included integrity hashes verified by an independent mechanism, the tampered payload would have failed validation on client side.</div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Pattern</div><div class="takeaway-text">NotPetya spread via a <strong>trusted update channel</strong>. The lesson: your update mechanism is an attack surface. If you auto-update dependencies, you're trusting every maintainer in the chain.</div></div></div></div></div>
   <div class="sf"><span class="shint">11 / 28</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
 </div>
 
@@ -631,7 +631,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">GitLab runner</div><div class="sp-s">2019 · One parameter change</div></div><div class="sp-r">
     <div class="case-card"><div class="case-head"><span class="case-tag">Real Case</span><span class="case-title">GitLab Runner Exploit (2019)</span></div><div class="case-body">Attackers gained access to a GitLab runner. They changed <strong>one parameter</strong>: the container registry destination path. The build pipeline continued running normally — same code, same tests, same green checkmarks. But the output artifact was now pushed to an attacker-controlled registry. Worse: the source code contained hardcoded credentials in configuration files, which were exfiltrated along with the code.</div></div>
     <div class="co"><em>One parameter change.</em> Full code exfiltration + credential leak. No alerts fired because the build itself succeeded. The monitoring was watching for build failures, not for changes to build configuration.</div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Champion's takeaway</div><div class="takeaway-text">Your CI runner has <strong>more access than most developers</strong>. Treat runner configuration as a security-critical asset, not DevOps plumbing.</div></div></div></div></div>
   <div class="sf"><span class="shint">18 / 28</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
 </div>
 
@@ -700,7 +700,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Airport printers</div><div class="sp-s">2016 · Physical delivery</div></div><div class="sp-r">
     <div class="case-card"><div class="case-head"><span class="case-tag">Real Case</span><span class="case-title">Airport HP Printers (2016)</span></div><div class="case-body">An airport received new HP network printers through standard procurement. The IT team installed them, connected them to the internal network. Three days later, the SIEM flagged malicious traffic originating from the printers' IP addresses. Investigation revealed the printers had been <strong>compromised during physical delivery</strong> — the firmware was tampered with before reaching the airport.</div></div>
     <div class="prose">Not a code problem. Not a build problem. A <strong>delivery problem</strong>. The printers passed every procurement check. They looked right, they functioned correctly, they came from an authorized vendor. The compromise happened in the logistics chain between manufacturer and customer.</div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Pattern</div><div class="takeaway-text">Physical delivery attacks sound exotic until you remember <strong>USB drops in parking lots</strong> still work. The supply chain includes the physical path to production.</div></div></div></div></div>
   <div class="sf"><span class="shint">22 / 28</span><div class="snav"><button class="btn" onclick="go(20)">← Back</button><button class="btn pri" onclick="go(22)">Next →</button></div></div>
 </div>
 

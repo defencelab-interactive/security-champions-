@@ -358,7 +358,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="reveal-step locked" data-step="3"><div class="reveal-num">4</div><div class="reveal-body"><div class="reveal-title">Missing protective flags</div><div class="reveal-text">Cookie flags like <code>HttpOnly</code> and <code>Secure</code> are not set by default. Missing them means JavaScript can read your cookies and cookies travel over unencrypted connections. The absence of a flag is itself a misconfiguration.</div></div></div>
     </div>
     <button class="reveal-btn" onclick="advanceStep('rv1')">Reveal next category →</button>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Champion's takeaway</div><div class="takeaway-text">Configuration drift is the silent killer. <strong>Schedule quarterly config audits</strong> — not because something broke, but because defaults change with every update.</div></div></div></div></div>
   <div class="sf"><span class="shint">07 / 16</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
 </div>
 
@@ -416,7 +416,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="scenario"><div class="scenario-tag">Key principle</div><div class="scenario-text">"Being under pressure, we didn't gather the requirements and environmental conditions properly. We didn't consider them in the design phase."</div></div>
     <div class="prose">Insecure design isn't about missing a single check. It's about the <strong>design phase</strong> — when teams under delivery pressure skip gathering security requirements, environmental conditions, and boundary analysis altogether. The rank dropped from #4 to #6, but the number of CVEs hasn't decreased. The risk is as real as ever.</div>
     <div class="co">Compare with decisions where teams <em>do</em> internalize risk: adding elasticity for load, using a VM scale set instead of a single VM. When the team is aware of consequences, they do preliminary checks. <strong>Insecure design is what happens when those checks aren't done.</strong></div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Pattern</div><div class="takeaway-text">Insecure design isn't a code bug — it's a <strong>requirements gap</strong>. The fix happens in sprint planning, not in code review.</div></div></div></div></div>
   <div class="sf"><span class="shint">11 / 16</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
 </div>
 

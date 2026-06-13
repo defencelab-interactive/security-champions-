@@ -720,7 +720,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">When K8s secrets are enough</div></div><div class="sp-r">
     <div class="prose"><strong>Use Kubernetes native secrets</strong> when your secrets don't change often, are used exclusively within the cluster, and your team has implemented RBAC and etcd encryption.</div>
     <div class="prose"><strong>Move to an external store</strong> (Vault with K8s auth method, or External Secrets Operator with cloud secret managers) when secrets need to be shared across clusters, across cloud providers, or when you need rotation, fine-grained audit trails, or compliance-grade access controls.</div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Practical rule</div><div class="takeaway-text">K8s native secrets are <strong>base64-encoded, not encrypted</strong>. They're fine for non-sensitive config. For real secrets, use an external vault with CSI driver injection.</div></div></div></div></div>
   <div class="sf"><span class="shint">17 / 28 · K8s recommendation</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
 </div>
 

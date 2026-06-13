@@ -271,7 +271,7 @@ params = [userId]
     <div class="prose">Not necessarily. The password could already be on a <strong>leaked list</strong>. It could be vulnerable to daisy-chaining attacks. Meeting every rule says nothing definitive about strength.</div>
     <div class="co">Two practical defenses: <strong>password dictionary check</strong> — compare against a database of known-compromised passwords (some libraries ship this directly). And <strong>encourage password managers</strong> — the only realistic way to get unique, high-entropy passwords for every service.</div>
     <div class="idot-wrap" id="id-auth"><button class="idot-trigger" onclick="tgd('id-auth')"><span class="idot">?</span><span class="idot-label">What else falls under A07?</span></button><div class="idot-pop">Brute-forcing without rate limiting, transmitting passwords without proper protection (HTTPS alone isn't enough — hash on the front end), exposing session identifiers in URLs. The compensating controls available are limited, and that's why this category persists.</div></div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Champion's takeaway</div><div class="takeaway-text">Password complexity rules create a <strong>false sense of security</strong>. Credential stuffing doesn't care about your special characters — it uses real passwords from other breaches.</div></div></div></div></div>
   <div class="sf"><span class="shint">07 / 14</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
 </div>
 

@@ -253,7 +253,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="co"><strong>Trusted repository</strong> — maintain a curated list of approved dependencies. <strong>SBOM</strong> — know what's in your build. <strong>Integrity checks</strong> — verify at install, verify at runtime.</div>
     <div class="idot-wrap" id="id-sbom"><button class="idot-trigger" onclick="tgd('id-sbom')"><span class="idot">?</span><span class="idot-label">What is an SBOM?</span></button><div class="idot-pop"><strong>Software Bill of Materials</strong> — a complete inventory of all components, libraries, and dependencies in your software. Think of it as a nutrition label for code. It lists what's inside, what version, and where it came from. Required by some regulations and increasingly expected by enterprise customers.</div></div>
     <div class="scenario"><div class="scenario-tag">Key principle</div><div class="scenario-text">"The core reason is that we use third-party code, and we don't always know <em>who</em> developed those dependencies and <em>how</em>. And that's a risk."</div></div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Champion's takeaway</div><div class="takeaway-text">Your supply chain risk grows with every <strong>transitive dependency</strong> you didn't choose. Run <code>npm ls --all</code> and count what you've never heard of.</div></div></div></div></div>
   <div class="sf"><span class="shint">03 / 12</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
 </div>
 
@@ -280,7 +280,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="prose">Cryptographic failures dropped from #2 to #4 — not because crypto matters less, but because tooling has matured. The core reason this category exists: developers implement protocols themselves instead of using existing, vetted libraries.</div>
     <div class="prose">Even using existing protocols correctly is hard:</div>
     <div class="scenario"><div class="scenario-tag">Worth remembering</div><div class="scenario-text">"You can pass a year and a half of university cryptography and <em>still</em> not fully understand what each KMS configuration option means. That's not a personal failure — that's the nature of the field. And that's exactly why we should be very careful and <em>pay attention to each configuration</em>."</div></div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Practical rule</div><div class="takeaway-text">Boring crypto = <strong>correct crypto</strong>. If you're implementing something clever, you're implementing something wrong.</div></div></div></div></div>
   <div class="sf"><span class="shint">05 / 12</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
 </div>
 
@@ -325,7 +325,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="compare-panel">What about after deployment? If a component is compromised in production — modified binary, injected code, tampered config — <strong>do you detect it?</strong> Runtime integrity checking is harder, more expensive, and most teams skip it. That gap is exactly what A08 measures.</div>
     </div>
     <div class="scenario"><div class="scenario-tag">Key principle</div><div class="scenario-text">"Are we able to maintain the integrity of components? Do we check it just during installation? But what about during <em>runtime</em> — if they've been compromised?"</div></div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Remember</div><div class="takeaway-text">Data has three states: <strong>at rest, in transit, in use</strong>. Each needs different integrity controls. Most teams only protect transit.</div></div></div></div></div>
   <div class="sf"><span class="shint">08 / 12</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
 </div>
 

@@ -448,7 +448,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     </div>
     <div class="cl-counter" id="cicd-counter"><b>0</b> / 10 checked</div>
     <div class="xp" id="xgha"><button class="xh" onclick="tg('xgha')"><span>If you use GitHub Actions (not just Jenkins)</span><span class="xa">›</span></button><div class="xb" id="xgha-p">The same principles apply, different controls. <strong>Workflow permissions:</strong> set <code>permissions:</code> to least privilege per job — don't leave the default read-write. <strong>GITHUB_TOKEN scope:</strong> restrict to the minimum needed; <code>contents: read</code> is enough for most build jobs. <strong>Third-party actions:</strong> pin by commit SHA, not by tag — tags can be rewritten. <strong>Fork PRs:</strong> never auto-run workflows on PRs from forks without explicit approval; they can inject code that runs with your secrets.</div></div>
-  </div></div></div>
+  <div class="takeaway"><div class="takeaway-label">Practical rule</div><div class="takeaway-text">CI/CD hardening starts with one question: <strong>who can push to main and trigger a deploy?</strong> If the answer is "anyone on the team," your pipeline is your weakest link.</div></div></div></div></div>
   <div class="sf"><span class="shint">10 / 22</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
 </div>
 
@@ -507,7 +507,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="slsa-marker"><span>← lower maturity</span><span class="slsa-most">Most teams are here (L1–L2)</span><span>higher maturity →</span></div>
     </div></div><div class="scene-loop"></div></div></div>
     <div class="breather-caption"><p>Four ascending steps — each one taller than the last. <strong>Most teams sit between Level 1 and 2.</strong> Getting to Level 3 is the meaningful jump.</p>
-    <div class="breather-notice">Did you notice — <b>each level builds on the previous one</b>? You can't skip levels. The height difference represents the effort gap.</div></div>
+    <div class="breather-notice">Did you notice — <b>each level builds on the previous one</b>? You can't skip levels. The height difference represents the effort gap.</div><div class="takeaway"><div class="takeaway-label">Champion's takeaway</div><div class="takeaway-text">SLSA self-assessment isn't pass/fail — it's a <strong>maturity ladder</strong>. Start at Level 1 (provenance exists) and work up. Most teams are at Level 0 without realizing it.</div></div></div>
   </div></div>
   <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn reflect-btn" onclick="openReflect('slsa')">⏸ Reflect</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
 </div>
