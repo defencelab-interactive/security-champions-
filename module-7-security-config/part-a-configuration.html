@@ -480,30 +480,59 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
   <div class="sf"><span class="shint">Context</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
 </div>
 
+
 <!-- ═══ CONTEXT: What you already have ═══ -->
 <div class="slide" id="s2">
   <div class="sh"><span class="stag"><span class="hl">Your toolkit</span> · So far</span><div class="pips" id="pp2"></div></div>
-  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What you already have</div></div><div class="sp-r" style="gap:14px;justify-content:center">
-    <div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;gap:10px;align-items:baseline;font-size:14px;color:var(--tm);line-height:1.65"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--or);white-space:nowrap;min-width:40px">M1–2</span><span>Champion role, sprint workflow, business language</span></div>
-<div style="display:flex;gap:10px;align-items:baseline;font-size:14px;color:var(--tm);line-height:1.65"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--or);white-space:nowrap;min-width:40px">M3</span><span>Risk vocabulary: OWASP Top 10 through five lenses</span></div>
-<div style="display:flex;gap:10px;align-items:baseline;font-size:14px;color:var(--tm);line-height:1.65"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--or);white-space:nowrap;min-width:40px">M4</span><span>Threat finding: STRIDE → DREAD → backlog tickets</span></div>
-<div style="display:flex;gap:10px;align-items:baseline;font-size:14px;color:var(--tm);line-height:1.65"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--or);white-space:nowrap;min-width:40px">M5</span><span>Supply chain security: three surfaces, SBOM, SLSA</span></div>
-<div style="display:flex;gap:10px;align-items:baseline;font-size:14px;color:var(--tm);line-height:1.65"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--or);white-space:nowrap;min-width:40px">M6</span><span>Secret management: lifecycle, sprawl, rotation, health check</span></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What you already have</div><div class="sp-s">Modules 1–6</div></div><div class="sp-r" style="gap:12px;justify-content:flex-start">
+    <div style="border-left:3px solid var(--or);padding:10px 0 10px 18px;background:rgba(232,129,58,.04);border-radius:0 8px 8px 0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><span style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--or);text-transform:uppercase;background:rgba(232,129,58,.1);padding:2px 8px;border-radius:4px">M1–2</span></div>
+      <div style="font-size:20px;font-weight:600;color:var(--td);line-height:1.4">Champion role, sprint workflow, business language</div>
+      <div style="font-size:14px;color:var(--mu);line-height:1.55;margin-top:3px">The foundation for all Champion work</div>
+    </div>
+    <div style="border-left:3px solid var(--or);padding:10px 0 10px 18px;background:rgba(232,129,58,.04);border-radius:0 8px 8px 0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><span style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--or);text-transform:uppercase;background:rgba(232,129,58,.1);padding:2px 8px;border-radius:4px">M3</span></div>
+      <div style="font-size:20px;font-weight:600;color:var(--td);line-height:1.4">Risk vocabulary: OWASP Top 10 through five lenses</div>
+      <div style="font-size:14px;color:var(--mu);line-height:1.55;margin-top:3px">Pattern recognition across architecture layers</div>
+    </div>
+    <div style="border-left:3px solid var(--or);padding:10px 0 10px 18px;background:rgba(232,129,58,.04);border-radius:0 8px 8px 0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><span style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--or);text-transform:uppercase;background:rgba(232,129,58,.1);padding:2px 8px;border-radius:4px">M4</span></div>
+      <div style="font-size:20px;font-weight:600;color:var(--td);line-height:1.4">Threat finding: STRIDE → DREAD → backlog tickets</div>
+      <div style="font-size:14px;color:var(--mu);line-height:1.55;margin-top:3px">Systematic discovery and prioritization</div>
+    </div>
+    <div style="border-left:3px solid var(--or);padding:10px 0 10px 18px;background:rgba(232,129,58,.04);border-radius:0 8px 8px 0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><span style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--or);text-transform:uppercase;background:rgba(232,129,58,.1);padding:2px 8px;border-radius:4px">M5</span></div>
+      <div style="font-size:20px;font-weight:600;color:var(--td);line-height:1.4">Supply chain security: three surfaces, SBOM, SLSA</div>
+      <div style="font-size:14px;color:var(--mu);line-height:1.55;margin-top:3px">Verified code, verified dependencies, verified pipeline</div>
+    </div>
+    <div style="border-left:3px solid var(--or);padding:10px 0 10px 18px;background:rgba(232,129,58,.04);border-radius:0 8px 8px 0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><span style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--or);text-transform:uppercase;background:rgba(232,129,58,.1);padding:2px 8px;border-radius:4px">M6</span></div>
+      <div style="font-size:20px;font-weight:600;color:var(--td);line-height:1.4">Secret management: lifecycle, sprawl, rotation</div>
+      <div style="font-size:14px;color:var(--mu);line-height:1.55;margin-top:3px">Secrets tracked, rotated, and health-checked quarterly</div>
+    </div>
+  </div></div></div>
+  <div class="sf"><span class="shint">Context</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
 </div>
   </div></div></div>
   <div class="sf"><span class="shint">Context</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
 </div>
 
+
 <!-- ═══ CONTEXT: What this module adds ═══ -->
 <div class="slide" id="s3">
   <div class="sh"><span class="stag"><span class="hl">Module 7</span> · Where it all runs</span><div class="pips" id="pp3"></div></div>
-  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Where it all runs</div></div><div class="sp-r" style="justify-content:center">
-    <div class="co" style="font-size:15px;line-height:1.7;font-weight:500">Your supply chain delivers code (M5). That code contains secrets (M6). Now: where does it all run?</div>
-    <div class="prose">Configuration is where the most common security failures happen. Misconfiguration rose to #2 on the OWASP Top 10. This module covers secure baselines (Part A) and access control (Part B).</div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Where it all runs</div></div><div class="sp-r" style="justify-content:flex-start;gap:14px">
+    <div style="display:flex;gap:20px;align-items:flex-start">
+      <div style="flex-shrink:0;opacity:.85"><svg viewBox="0 0 120 120" width="140" height="140"><g transform="translate(60,58)"><path d="M0,-30 L5,-28 L7,-22 L11,-20 L14,-26 L19,-23 L17,-17 L22,-13 L26,-17 L28,-12 L23,-9 L23,-4 L30,0 L28,5 L23,6 L22,11 L26,14 L23,19 L19,17 L14,22 L17,26 L12,28 L9,23 L5,23 L0,30 L-5,28 L-7,22 L-11,20 L-14,26 L-19,23 L-17,17 L-22,13 L-26,17 L-28,12 L-23,9 L-23,4 L-30,0 L-28,-5 L-23,-6 L-22,-11 L-26,-14 L-23,-19 L-19,-17 L-14,-22 L-17,-26 L-12,-28 L-9,-23 L-5,-23 Z" fill="none" stroke="rgba(232,129,58,.2)" stroke-width="1"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite"/></path></g><circle cx="60" cy="58" r="12" fill="none" stroke="rgba(232,129,58,.3)" stroke-width="1.5"/><path d="M55,58 L58,61 L65,54" fill="none" stroke="var(--or)" stroke-width="2" stroke-linecap="round"/></svg></div>
+      <div style="flex:1">
+        <div class="co" style="font-size:16px;line-height:1.65;font-weight:500;margin-bottom:12px">Your supply chain delivers code (M5). That code contains secrets (M6). Now: where does it all run?</div>
+        <div class="prose">The answer is "in a configured environment" — and configuration is where the most common security failures happen. Misconfiguration rose to #2 on the OWASP Top 10 because modern systems have so many configurable layers that forgetting to lock one down IS a vulnerability.</div>
+      </div>
+    </div>
+    <div class="prose">This module covers two things: how to establish and maintain a <strong>secure configuration baseline</strong> (Part A), and how to <strong>control who has access to what</strong> (Part B). The single most important habit: treat every configuration drift from your baseline as a defect — not a note in a wiki, but a <strong>bug in Jira</strong>.</div>
   </div></div></div>
   <div class="sf"><span class="shint">Context</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
 </div>
-
 <!-- ═══ S1 · The uncomfortable question ═══ -->
 <div class="slide" id="s4">
   <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Why it happens</span><div class="sh-right"><div class="pips" id="pp4"></div></div></div>
