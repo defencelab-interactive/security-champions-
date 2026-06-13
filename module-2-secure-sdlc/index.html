@@ -603,9 +603,43 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
   <div class="sf"><span class="shint">Cover</span><div class="snav"><button class="btn pri" onclick="go(1)">Begin →</button></div></div>
 </div>
 
-<!-- ═══ S1 · What "Secure SDLC" actually changes ═══ -->
+<!-- ═══ CONTEXT: Journey Map ═══ -->
 <div class="slide" id="s1">
-  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Foundations</span><div class="pips" id="pp1"></div></div>
+  <div class="sh"><span class="stag"><span class="hl">Your journey</span> · Program map</span><div class="pips" id="pp1"></div></div>
+  <div class="sb"><div class="fbody" style="flex-direction:column;justify-content:center;align-items:center;gap:28px;text-align:center">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:4px;color:var(--or)">Your journey so far</div>
+    <div style="width:100%;max-width:720px;padding:0 16px"><svg viewBox="0 0 720 80" width="100%" style="max-width:720px" xmlns="http://www.w3.org/2000/svg"><circle cx="44" cy="36" r="14" fill="rgba(232,129,58,.15)" stroke="rgba(232,129,58,.3)" stroke-width="1.5"/><path d="M39,36 L43,40 L49,32" fill="none" stroke="rgba(232,129,58,.5)" stroke-width="2" stroke-linecap="round"/><text x="44" y="64" fill="rgba(255,255,255,.35)" font-size="9" text-anchor="middle" font-weight="600">Role</text><line x1="60" y1="36" x2="104" y2="36" stroke="rgba(255,255,255,.08)" stroke-width="1"/><circle cx="120" cy="36" r="16" fill="rgba(232,129,58,.12)" stroke="var(--or)" stroke-width="2.5"><animate attributeName="r" values="16;18;16" dur="2.5s" repeatCount="indefinite"/></circle><text x="120" y="41" fill="var(--or)" font-size="13" text-anchor="middle" font-weight="800">M2</text><text x="120" y="64" fill="var(--or)" font-size="10" text-anchor="middle" font-weight="700">Process</text><line x1="136" y1="36" x2="180" y2="36" stroke="rgba(255,255,255,.08)" stroke-width="1"/><circle cx="196" cy="36" r="12" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/><text x="196" y="64" fill="rgba(255,255,255,.2)" font-size="9" text-anchor="middle" font-weight="500">Risks</text><line x1="212" y1="36" x2="256" y2="36" stroke="rgba(255,255,255,.08)" stroke-width="1"/><circle cx="272" cy="36" r="12" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/><text x="272" y="64" fill="rgba(255,255,255,.2)" font-size="9" text-anchor="middle" font-weight="500">Find</text><line x1="288" y1="36" x2="332" y2="36" stroke="rgba(255,255,255,.08)" stroke-width="1"/><circle cx="348" cy="36" r="12" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/><text x="348" y="64" fill="rgba(255,255,255,.2)" font-size="9" text-anchor="middle" font-weight="500">Supply</text><line x1="364" y1="36" x2="408" y2="36" stroke="rgba(255,255,255,.08)" stroke-width="1"/><circle cx="424" cy="36" r="12" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/><text x="424" y="64" fill="rgba(255,255,255,.2)" font-size="9" text-anchor="middle" font-weight="500">Secrets</text><line x1="440" y1="36" x2="484" y2="36" stroke="rgba(255,255,255,.08)" stroke-width="1"/><circle cx="500" cy="36" r="12" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/><text x="500" y="64" fill="rgba(255,255,255,.2)" font-size="9" text-anchor="middle" font-weight="500">Config</text><line x1="516" y1="36" x2="560" y2="36" stroke="rgba(255,255,255,.08)" stroke-width="1"/><circle cx="576" cy="36" r="12" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/><text x="576" y="64" fill="rgba(255,255,255,.2)" font-size="9" text-anchor="middle" font-weight="500">Respond</text><line x1="592" y1="36" x2="636" y2="36" stroke="rgba(255,255,255,.08)" stroke-width="1"/><circle cx="652" cy="36" r="12" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/><text x="652" y="64" fill="rgba(255,255,255,.2)" font-size="9" text-anchor="middle" font-weight="500">Mobile</text></svg></div>
+    <div style="font-size:15px;color:rgba(255,255,255,.5);max-width:520px;line-height:1.7">9 modules. One toolkit. You are at <strong style="color:var(--or)">Module 2</strong> — process.</div>
+  </div></div>
+  <div class="sf"><span class="shint">Context</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+</div>
+
+<!-- ═══ CONTEXT: What you already have ═══ -->
+<div class="slide" id="s2">
+  <div class="sh"><span class="stag"><span class="hl">Your toolkit</span> · So far</span><div class="pips" id="pp2"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What you already have</div></div><div class="sp-r" style="gap:14px;justify-content:center">
+    <div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;gap:10px;align-items:baseline;font-size:14px;color:var(--tm);line-height:1.65"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--or);white-space:nowrap;min-width:40px">M1</span><span>You understand WHY the Champion role exists — broken perimeter model, onboarding economics, people-process-technology gap</span></div>
+<div style="display:flex;gap:10px;align-items:baseline;font-size:14px;color:var(--tm);line-height:1.65"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--or);white-space:nowrap;min-width:40px">M1</span><span>The role is a bridge, not a replacement for the security team</span></div>
+<div style="display:flex;gap:10px;align-items:baseline;font-size:14px;color:var(--tm);line-height:1.65"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--or);white-space:nowrap;min-width:40px">M1</span><span>Golden rule: don't disrupt the dev process</span></div>
+<div style="display:flex;gap:10px;align-items:baseline;font-size:14px;color:var(--tm);line-height:1.65"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--or);white-space:nowrap;min-width:40px">M1</span><span>You've committed to specific first-week actions</span></div>
+</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">Context</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+</div>
+
+<!-- ═══ CONTEXT: What this module adds ═══ -->
+<div class="slide" id="s3">
+  <div class="sh"><span class="stag"><span class="hl">Module 2</span> · From WHY to HOW</span><div class="pips" id="pp3"></div></div>
+  <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">From WHY to HOW</div></div><div class="sp-r" style="justify-content:center">
+    <div class="co" style="font-size:15px;line-height:1.7;font-weight:500">How do you fit security work into a sprint that's already full?</div>
+    <div class="prose">This module answers that. You'll get three daily tools: a taxonomy for requirements, a method for making security visible in your tracker, and the ability to translate a CVE into a dollar figure.</div>
+  </div></div></div>
+  <div class="sf"><span class="shint">Context</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+</div>
+
+<!-- ═══ S1 · What "Secure SDLC" actually changes ═══ -->
+<div class="slide" id="s4">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Foundations</span><div class="pips" id="pp4"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What "Secure SDLC" actually changes</div></div><div class="sp-r">
     <div class="prose">A team running an <span class="gloss" data-def="Software Development Lifecycle — the standard phases a team uses to build software: idea, design, build, test, release, operate.">SDLC</span> already has the structure: idea, design, build, test, release, operate. A <strong>Secure SDLC</strong> keeps that same structure and adds a thin layer of security practice inside each phase — security reviews during design, automated scanning during build, configuration checks at deployment.</div>
     <div class="phase-strip">
@@ -622,12 +656,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     </div>
     <div class="prose">The change is mostly in <strong>timing</strong>. Without these practices, problems show up after release, when fixing them is expensive. With them, problems are caught earlier in the lifecycle, when a fix is still a small change to the design or the code.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">02 / 35 · Foundations</span><div class="snav"><button class="btn" onclick="go(0)">← Back</button><button class="btn pri" onclick="go(2)">Next →</button></div></div>
+  <div class="sf"><span class="shint">05 / 38 · Foundations</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S2 · Microsoft SDL ═══ -->
-<div class="slide" id="s2">
-  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Foundations</span><div class="pips" id="pp2"></div></div>
+<div class="slide" id="s5">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Foundations</span><div class="pips" id="pp5"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Pick a framework that gets out of your way</div></div><div class="sp-r">
     <div class="prose">Several mature standards exist. <span class="gloss" data-def="NIST Secure Software Development Framework — a deeper, people-and-supply-chain-focused standard. Worth reading if you face regulated-industry audits.">NIST SSDF</span> is excellent — focused on people, supply chain, proactive controls, and reactive response. Worth a deep read if you face regulated-industry audits.</div>
     <div class="prose">For starting out, <strong>Microsoft SDL</strong> is the lightest option that still covers the ground. Ten practices grouped into three categories.</div>
@@ -657,24 +691,24 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 
     <div class="prose">The first one — <strong>define security requirements</strong> — is where this module spends most of its time.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">03 / 35 · Foundations</span><div class="snav"><button class="btn" onclick="go(1)">← Back</button><button class="btn pri" onclick="go(3)">Next →</button></div></div>
+  <div class="sf"><span class="shint">06 / 38 · Foundations</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S3 · Define security requirements ═══ -->
-<div class="slide" id="s3">
-  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Foundations</span><div class="pips" id="pp3"></div></div>
+<div class="slide" id="s6">
+  <div class="sh"><span class="stag"><span class="hl">Act 1</span> · Foundations</span><div class="pips" id="pp6"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The first practice: define security requirements</div></div><div class="sp-r">
     <div class="prose">"Establish and define security requirements" sounds like work for analysts and product owners. In practice, it's the most leveraged work a Champion does in any sprint.</div>
     <div class="co" style="font-weight:600">Everything downstream — what you test, what you review, where you spend your security budget — depends on getting the requirements right.</div>
     <div class="prose">A vague requirement produces vague work and zero accountability. A precise one produces a backlog item, a test, and a measurable outcome.</div>
     <div class="xp" id="x3a"><button class="xh" onclick="tg('x3a')"><span>Vague vs precise — a comparison</span><span class="xa">›</span></button><div class="xb" id="x3a-p"><strong>Vague:</strong> "The application must be secure."<br><br><strong>Precise:</strong> "Transactions must be encrypted in transit using TLS 1.3 or higher, with key rotation every 90 days, validated by an automated check in CI."<br><br>The hour you spend making a requirement precise saves a week of arguing in code review.</div></div>
   </div></div></div>
-  <div class="sf"><span class="shint">04 / 35 · Foundations</span><div class="snav"><button class="btn" onclick="go(2)">← Back</button><button class="btn pri" onclick="go(4)">Next →</button></div></div>
+  <div class="sf"><span class="shint">07 / 38 · Foundations</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S4 · 🅑 PUNCH LINE ═══ -->
-<div class="slide" id="s4">
-  <div class="sh"><span class="stag"><span class="hl">Pause</span> · The principle</span><div class="pips" id="pp4"></div></div>
+<div class="slide" id="s7">
+  <div class="sh"><span class="stag"><span class="hl">Pause</span> · The principle</span><div class="pips" id="pp7"></div></div>
   <div class="sb"><div class="punch">
     <div class="punch-mark tl">&ldquo;</div>
     <div class="punch-mark br">&ldquo;</div>
@@ -683,12 +717,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="punch-source">Security work belongs inside ordinary work, woven into how the team builds — <b>not in a separate process running alongside</b> it.</div>
     <div class="co" style="margin-top:14px;font-size:13.5px"><strong>Your role as a Champion:</strong> ensure security requirements are at the right layer, visible in the tracker, and framed in language product can act on. You don't own all the security work — you own making it <em>plannable</em>.</div>
   </div></div>
-  <div class="sf"><span class="shint">05 / 35 · Punch line</span><div class="snav"><button class="btn" onclick="go(3)">← Back</button><button class="btn pri" onclick="go(5)">Next →</button></div></div>
+  <div class="sf"><span class="shint">08 / 38 · Punch line</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S5 · QUIZ — classify a requirement ═══ -->
-<div class="slide" id="s5">
-  <div class="sh"><span class="stag">Knowledge check · classifying a requirement</span><div class="pips" id="pp5"></div></div>
+<div class="slide" id="s8">
+  <div class="sh"><span class="stag">Knowledge check · classifying a requirement</span><div class="pips" id="pp8"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div><div class="sp-s">Test your instinct</div></div><div class="sp-r">
     <div class="qw" id="q1"><div class="qq">A team writes "all dependencies must be up to date and have no known vulnerabilities." What kind of security requirement is this?</div>
       <button class="qo" onclick="pk('q1',0)">A) Functional security — it requires a security feature</button>
@@ -698,12 +732,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="qe" id="q1-e"><strong>D.</strong> This is a <em>secure development</em> requirement. It doesn't add a security feature to the product (functional security), and it doesn't define the secure behavior of a business function (secure functional). It defines how the team must build — what hygiene the development process itself maintains.</div>
     </div>
   </div></div></div>
-  <div class="sf"><span class="shint">06 / 35 · Quiz</span><div class="snav"><button class="btn" onclick="go(4)">← Back</button><button class="btn pri" onclick="go(6)">Next →</button></div></div>
+  <div class="sf"><span class="shint">09 / 38 · Quiz</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S6 · Tool divider ═══ -->
-<div class="slide" id="s6">
-  <div class="sh"><span class="stag"><span class="hl">Tool</span> · Taxonomy of requirements</span><div class="pips" id="pp6"></div></div>
+<div class="slide" id="s9">
+  <div class="sh"><span class="stag"><span class="hl">Tool</span> · Taxonomy of requirements</span><div class="pips" id="pp9"></div></div>
   <div class="sb"><div class="fbody">
     <div class="fb-content">
       <div class="fb-tg">Tool</div>
@@ -722,47 +756,47 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       </div>
     </div>
   </div></div>
-  <div class="sf"><span class="shint">07 / 35 · Tool</span><div class="snav"><button class="btn" onclick="go(5)">← Back</button><button class="btn pri" onclick="go(7)">Next →</button></div></div>
+  <div class="sf"><span class="shint">10 / 38 · Tool</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S7 · Layers 1 & 2 ═══ -->
-<div class="slide" id="s7">
-  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · The Taxonomy · 1 of 3</span><div class="pips" id="pp7"></div></div>
+<div class="slide" id="s10">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · The Taxonomy · 1 of 3</span><div class="pips" id="pp10"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What the product does, and how it does it securely</div></div><div class="sp-r">
     <div class="prose">The taxonomy has four layers. We'll walk through them in pairs.</div>
     <div class="prose"><strong>Layer 1 — Business / functional.</strong> What does the product do? Process payments. Match riders to drivers. Run a multiplayer game. Nobody starts a project with authentication; they start with a business goal.</div>
     <div class="prose"><strong>Layer 2 — Secure functional.</strong> How does the product do that thing securely? "Transactions must be encrypted." "A player profile is only accessible to its owner." Security stops being a separate concern and starts being part of the product's behavior.</div>
     <div class="prose" style="font-size:13px;color:var(--mu);font-style:italic">These first two layers are the product itself. The next two are the support structure that makes them possible.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">08 / 35 · Taxonomy</span><div class="snav"><button class="btn" onclick="go(6)">← Back</button><button class="btn pri" onclick="go(8)">Next →</button></div></div>
+  <div class="sf"><span class="shint">11 / 38 · Taxonomy</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S8 · Layers 3 & 4 ═══ -->
-<div class="slide" id="s8">
-  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · The Taxonomy · 2 of 3</span><div class="pips" id="pp8"></div></div>
+<div class="slide" id="s11">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · The Taxonomy · 2 of 3</span><div class="pips" id="pp11"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The supporting features, and the way you build</div></div><div class="sp-r">
     <div class="prose"><strong>Layer 3 — Functional security.</strong> What security features must exist to make Layer 2 possible? You can't encrypt transactions without keys. Keys need derivation, rotation, escrow, secure storage. Authentication, authorization, audit logging — all live at this layer.</div>
     <div class="prose"><strong>Layer 4 — Secure development &amp; operations.</strong> How do we build, ship, and run all of the above without breaking it? Trusted supply chain. Configuration management. Separation of duties for DevOps access. Disaster recovery procedures.</div>
     <div class="prose">Layer 3 is "what security features the product contains." Layer 4 is "what hygiene the team and the pipeline maintain." Both are easy to confuse, and both matter.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">09 / 35 · Taxonomy</span><div class="snav"><button class="btn" onclick="go(7)">← Back</button><button class="btn pri" onclick="go(9)">Next →</button></div></div>
+  <div class="sf"><span class="shint">12 / 38 · Taxonomy</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S9 · Why order matters ═══ -->
-<div class="slide" id="s9">
-  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · The Taxonomy · 3 of 3</span><div class="pips" id="pp9"></div></div>
+<div class="slide" id="s12">
+  <div class="sh"><span class="stag"><span class="hl">Act 2</span> · The Taxonomy · 3 of 3</span><div class="pips" id="pp12"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Why the order is not optional</div></div><div class="sp-r">
     <div class="prose">Each layer depends on the one above it. Skip a layer and the layers below have nothing to attach to.</div>
     <div class="co" style="font-weight:600">Always start at the top. Work top-down to design. Reason bottom-up to verify.</div>
     <div class="prose">If you start at Layer 3 — building authentication, key management, an audit log — before the business has decided what "secured account access" actually means, you'll deliver perfectly correct security infrastructure for a product nobody asked for.</div>
     <div class="xp" id="x9a"><button class="xh" onclick="tg('x9a')"><span>A worked example of getting this wrong</span><span class="xa">›</span></button><div class="xb" id="x9a-p">A team builds a polished <span class="gloss" data-def="OAuth — an authorization protocol that lets users grant limited access without sharing passwords. Common in API integrations and 'login with Google/Facebook' flows.">OAuth</span> flow with refresh tokens, scopes, and audit logging — beautiful work at Layer 3. Then the business says "actually we needed <span class="gloss" data-def="Single Sign-On — one login that grants access to multiple related applications. Common inside enterprises so users don't manage many passwords.">SSO</span> with the parent company, not standalone OAuth." Or: "we needed magic-link login because half our users can't remember passwords." The security work was real. The product was wrong. This is the most common failure mode in security-heavy teams, and it's avoided entirely by writing Layer 1 and Layer 2 down first, with the business in the room.</div></div>
   </div></div></div>
-  <div class="sf"><span class="shint">10 / 35 · Taxonomy</span><div class="snav"><button class="btn" onclick="go(8)">← Back</button><button class="btn pri" onclick="go(10)">Next →</button></div></div>
+  <div class="sf"><span class="shint">13 / 38 · Taxonomy</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S10 · BREATHER · Cascade tower ═══ -->
-<div class="slide" id="s10">
-  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Cascade</span><div class="pips" id="pp10"></div></div>
+<div class="slide" id="s13">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Cascade</span><div class="pips" id="pp13"></div></div>
   <div class="sb"><div class="breather bg-warm">
     <div class="breather-visual"><div class="tower-box">
       <div class="tw-architect">
@@ -784,12 +818,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="breather-caption"><p>Design decisions <strong>cascade down.</strong> Each layer constrains the one below it.</p>
     <div class="breather-notice">Notice — <b>the architect stays outside</b>. They don't live on any floor. They reason about all four together.</div></div>
   </div></div>
-  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(9)">← Back</button><button class="btn reflect-btn" onclick="openReflect('layers')">⏸ Reflect</button><button class="btn pri" onclick="go(11)">Next →</button></div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn reflect-btn" onclick="openReflect('layers')">⏸ Reflect</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S11 · QUIZ — pick the right layer ═══ -->
-<div class="slide" id="s11">
-  <div class="sh"><span class="stag">Knowledge check · pick the layer</span><div class="pips" id="pp11"></div></div>
+<div class="slide" id="s14">
+  <div class="sh"><span class="stag">Knowledge check · pick the layer</span><div class="pips" id="pp14"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
     <div class="qw" id="q2"><div class="qq">A team needs to add audit logging for every payment transaction. Which layer does this requirement belong to?</div>
       <button class="qo" onclick="pk('q2',0)">A) Layer 1 — Business / functional</button>
@@ -799,12 +833,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="qe" id="q2-e"><strong>C — Functional security.</strong> Audit logging is a security <em>feature</em> the product must contain. It's not the business goal (Layer 1), nor the secure behavior of payments (Layer 2 — "transactions must be tamper-evident"), nor a build-time hygiene practice (Layer 4). It's a feature you build into the product, alongside authentication and authorization.</div>
     </div>
   </div></div></div>
-  <div class="sf"><span class="shint">12 / 35 · Quiz</span><div class="snav"><button class="btn" onclick="go(10)">← Back</button><button class="btn pri" onclick="go(12)">Next →</button></div></div>
+  <div class="sf"><span class="shint">15 / 38 · Quiz</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S12 · Two ways to integrate ═══ -->
-<div class="slide" id="s12">
-  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration</span><div class="pips" id="pp12"></div></div>
+<div class="slide" id="s15">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration</span><div class="pips" id="pp15"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Two ways to fit security into your sprints</div></div><div class="sp-r">
     <div class="prose">There are two common ways teams fit security work into <span class="gloss" data-def="Agile — a family of iterative software development methods (Scrum, Kanban, etc.) that organize work in short cycles called sprints.">Agile</span>. Both work; they trade off against each other on metrics and on how product owners react to them.</div>
     <div class="approach">
@@ -824,12 +858,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="approach-con">Hard sell to product — sprints that ship no visible features.</div>
     </div>
   </div></div></div>
-  <div class="sf"><span class="shint">13 / 35 · Sprint</span><div class="snav"><button class="btn" onclick="go(11)">← Back</button><button class="btn pri" onclick="go(13)">Next →</button></div></div>
+  <div class="sf"><span class="shint">16 / 38 · Sprint</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn pri" onclick="go(16)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S13 · 🅐 FIELD NOTE — Security labels ═══ -->
-<div class="slide" id="s13">
-  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration</span><div class="pips" id="pp13"></div></div>
+<div class="slide" id="s16">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration</span><div class="pips" id="pp16"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Make security work visible in the tools you already use</div></div><div class="sp-r">
     <div class="prose">When security work happens in side-channels — a Slack thread that says "approved", a quick word in standup — it disappears the moment the conversation scrolls. The next person who touches the ticket has no idea security ever weighed in.</div>
     <div class="prose">The fix is mechanical. <strong>Use labels in your issue tracker.</strong> Most teams already have Jira, GitHub, GitLab, or Linear, and all of them support tags. Add a small fixed vocabulary: <code>requires-security-review</code>, <code>security-tested</code>, <code>retest</code>. Apply consistently.</div>
@@ -840,12 +874,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="fnote-attrib">A security review that happened in a DM didn't happen for anyone except the two people in that DM. Labels put the signal where <b>everyone who later touches the work</b> can see it.</div>
     </div>
   </div></div></div>
-  <div class="sf"><span class="shint">14 / 35 · Sprint</span><div class="snav"><button class="btn" onclick="go(12)">← Back</button><button class="btn pri" onclick="go(14)">Next →</button></div></div>
+  <div class="sf"><span class="shint">17 / 38 · Sprint</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S14 · 🅒 WAR STORY — Funny labels ═══ -->
-<div class="slide" id="s14">
-  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration</span><div class="pips" id="pp14"></div></div>
+<div class="slide" id="s17">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration</span><div class="pips" id="pp17"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Which labels actually stick</div></div><div class="sp-r">
     <div class="prose">Most label systems die because they're built by committee. A document defines twenty perfect tags. Three months later, two are in use and eighteen sit ignored.</div>
     <div class="prose">Labels that survive share three traits — <strong>short</strong>, <strong>visually distinct</strong>, and (counter-intuitively) <strong>slightly playful</strong>. Teams reach for tags that feel human; they avoid tags that feel like compliance.</div>
@@ -866,12 +900,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       </span>
     </button>
   </div></div></div>
-  <div class="sf"><span class="shint">15 / 35 · Sprint</span><div class="snav"><button class="btn" onclick="go(13)">← Back</button><button class="btn pri" onclick="go(15)">Next →</button></div></div>
+  <div class="sf"><span class="shint">18 / 38 · Sprint</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S15 · QUIZ — visibility ═══ -->
-<div class="slide" id="s16">
-  <div class="sh"><span class="stag">Knowledge check · visibility</span><div class="pips" id="pp16"></div></div>
+<div class="slide" id="s19">
+  <div class="sh"><span class="stag">Knowledge check · visibility</span><div class="pips" id="pp19"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
     <div class="qw" id="q3"><div class="qq">A team's security reviewer messages "approved" on every ticket they review, in a private DM. What's the underlying problem?</div>
       <button class="qo" onclick="pk('q3',0)">A) DMs are insecure — security comments leak metadata</button>
@@ -881,12 +915,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="qe" id="q3-e"><strong>B.</strong> The fix isn't more detail or more secrecy — it's putting the signal where the team will see it. A label and a one-line comment on the ticket itself give every future reader the same context the original team had. DM-based reviews are invisible to anyone who joins the project after the conversation.</div>
     </div>
   </div></div></div>
-  <div class="sf"><span class="shint">17 / 35 · Quiz</span><div class="snav"><button class="btn" onclick="go(15)">← Back</button><button class="btn pri" onclick="go(17)">Next →</button></div></div>
+  <div class="sf"><span class="shint">20 / 38 · Quiz</span><div class="snav"><button class="btn" onclick="go(18)">← Back</button><button class="btn pri" onclick="go(20)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S15 · Labels comparison ═══ -->
-<div class="slide" id="s15">
-  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration · examples</span><div class="pips" id="pp15"></div></div>
+<div class="slide" id="s18">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration · examples</span><div class="pips" id="pp18"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Examples — same purpose, different feel</div></div><div class="sp-r">
     <div class="prose">Each row pairs a <strong>formal label</strong> a security policy might prescribe with a <strong>playful alternative</strong> teams have actually adopted. Hover any tag for what it's used for.</div>
 
@@ -914,35 +948,35 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div><b>Before introducing playful labels, agree on them with the team.</b> Tags only work if everyone applies them the same way — pick three to five together, write a one-line definition for each, and pin it where new joiners can find it.</div>
     </div>
   </div></div></div>
-  <div class="sf"><span class="shint">16 / 35 · Examples</span><div class="snav"><button class="btn" onclick="go(14)">← Back</button><button class="btn pri" onclick="go(16)">Next →</button></div></div>
+  <div class="sf"><span class="shint">19 / 38 · Examples</span><div class="snav"><button class="btn" onclick="go(17)">← Back</button><button class="btn pri" onclick="go(19)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S17 · Multi-sprint security stories (was s16) ═══ -->
-<div class="slide" id="s17">
-  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration</span><div class="pips" id="pp17"></div></div>
+<div class="slide" id="s20">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration</span><div class="pips" id="pp20"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">When one sprint isn't enough</div></div><div class="sp-r">
     <div class="prose">Adding a security label is a five-minute change. Replacing your authentication system with SSO is a multi-month engineering project. They can't be planned the same way.</div>
     <div class="prose">For larger work, treat it as a <strong>multi-sprint security story</strong> with the same structure as any feature epic. Break it into phases. Define what "done" looks like at each phase. Ask product to allocate capacity rather than promise it.</div>
     <div class="prose">The big trap is writing a giant security epic and then leaving it on the <span class="gloss" data-def="The list of work items a team plans to do, ordered by priority. Items that sit at the bottom of the backlog rarely get picked up.">backlog</span> forever, because it never beats a feature on priority.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">18 / 35 · Sprint</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="go(18)">Next →</button></div></div>
+  <div class="sf"><span class="shint">21 / 38 · Sprint</span><div class="snav"><button class="btn" onclick="go(19)">← Back</button><button class="btn pri" onclick="go(21)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S17 · How to deliver multi-sprint security ═══ -->
-<div class="slide" id="s18">
-  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration</span><div class="pips" id="pp18"></div></div>
+<div class="slide" id="s21">
+  <div class="sh"><span class="stag"><span class="hl">Act 3</span> · Sprint integration</span><div class="pips" id="pp21"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Two ways out of the backlog graveyard</div></div><div class="sp-r">
     <div class="prose">The trick to keeping a multi-sprint security story alive is to make it look more like product work and less like an indefinite cleanup task.</div>
     <div class="prose"><strong>1 · Slice for value.</strong> The first slice should deliver something the business can show — a single high-risk service migrated to SSO, not "the whole system, eventually." Visible progress beats theoretical completeness.</div>
     <div class="prose"><strong>2 · Tie it to a deadline.</strong> A regulatory milestone, an audit window, a vendor cutoff. Nothing moves a security epic faster than a date the company can't move.</div>
     <div class="xp" id="x17a"><button class="xh" onclick="tg('x17a')"><span>The trap to avoid</span><span class="xa">›</span></button><div class="xb" id="x17a-p">A common failure: the team writes the epic, lists every sub-task, estimates 8–10 sprints, and then never picks it up because every individual sprint always has something more urgent. Three months later, leadership asks why nothing has shipped, and the team can point at every sprint's commitment and say "we kept the product moving." Both things are true. The security work just never landed in a sprint.</div></div>
   </div></div></div>
-  <div class="sf"><span class="shint">19 / 35 · Sprint</span><div class="snav"><button class="btn" onclick="go(17)">← Back</button><button class="btn pri" onclick="go(19)">Next →</button></div></div>
+  <div class="sf"><span class="shint">22 / 38 · Sprint</span><div class="snav"><button class="btn" onclick="go(20)">← Back</button><button class="btn pri" onclick="go(22)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S18 · BREATHER · Sprint flow ═══ -->
-<div class="slide" id="s19">
-  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Security inside the rhythm</span><div class="pips" id="pp19"></div></div>
+<div class="slide" id="s22">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Security inside the rhythm</span><div class="pips" id="pp22"></div></div>
   <div class="sb"><div class="breather bg-warm">
     <div class="breather-visual"><div class="sprint-flow">
       <div class="sprint-stage">
@@ -957,36 +991,36 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="breather-caption"><p>Five phases. <strong>Five places</strong> security can live without a separate ceremony.</p>
     <div class="breather-notice">Notice — <b>the shield appears at every stage</b>, not before, not after. Inside.</div></div>
   </div></div>
-  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(18)">← Back</button><button class="btn reflect-btn" onclick="openReflect('sprint')">⏸ Reflect</button><button class="btn pri" onclick="go(20)">Next →</button></div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(21)">← Back</button><button class="btn reflect-btn" onclick="openReflect('sprint')">⏸ Reflect</button><button class="btn pri" onclick="go(23)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S19 · Talk to business in money ═══ -->
-<div class="slide" id="s20">
-  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · Talking to the business</span><div class="pips" id="pp20"></div></div>
+<div class="slide" id="s23">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · Talking to the business</span><div class="pips" id="pp23"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Talk to business in money, not in CVEs</div></div><div class="sp-r">
     <div class="prose">You'll never have unlimited budget. So security work becomes <em>prioritization</em>, and prioritization is a conversation with the business rather than a unilateral decision by security.</div>
     <div class="prose">The reason most security pitches fail with executives isn't that the executives don't care. It's that security people show up speaking the wrong language. <span class="gloss" data-def="Common Vulnerabilities and Exposures — the public ID system for known software flaws (e.g. CVE-2024-12345). CVSS is the related severity score from 0–10.">CVE</span> counts and risk scores don't move budget. Two things do.</div>
     <div class="co" style="font-weight:600">Risk = Probability × Impact — expressed in dollars.</div>
     <div class="prose">Threat modeling tells you the probability side. Knowing the threat landscape — what actually gets attacked, what your peers got breached for last quarter — tells you the impact side. Multiply them. Now you have a number an executive can act on.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">21 / 35 · Business</span><div class="snav"><button class="btn" onclick="go(19)">← Back</button><button class="btn pri" onclick="go(21)">Next →</button></div></div>
+  <div class="sf"><span class="shint">24 / 38 · Business</span><div class="snav"><button class="btn" onclick="go(22)">← Back</button><button class="btn pri" onclick="go(24)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S20 · The translation skill ═══ -->
-<div class="slide" id="s21">
-  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · Talking to the business</span><div class="pips" id="pp21"></div></div>
+<div class="slide" id="s24">
+  <div class="sh"><span class="stag"><span class="hl">Act 4</span> · Talking to the business</span><div class="pips" id="pp24"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The Champion's most underrated skill</div></div><div class="sp-r">
     <div class="prose">Translating a technical concern into a sentence that ends in a dollar figure isn't a presentation skill. It's a habit you build by doing it weekly. The framing changes the conversation completely.</div>
     <div class="xp" id="x20a"><button class="xh" onclick="tg('x20a')"><span>A worked example — same vulnerability, two framings</span><span class="xa">›</span></button><div class="xb" id="x20a-p"><div class="xb-q">"This dependency is unpatched, CVE-2024-XXXX, CVSS 9.8."</div><div style="margin:8px 0;font-size:12px;color:var(--mu);font-style:italic">Meaningless to a CFO.</div><div class="xb-q">"This dependency handles our payment routing. If exploited, attackers can redirect transactions. Probability: medium — there's a public exploit and our service is internet-facing. Impact: a single day of redirected payments at our volume is roughly $400K, plus regulatory penalties. Recommended action: upgrade this sprint, $0 marginal cost."</div><div class="xb-n">The vulnerability is identical. The framing is everything.</div></div></div>
     <div class="xp" id="x20b"><button class="xh" onclick="tg('x20b')"><span>Another example — session tokens in localStorage</span><span class="xa">›</span></button><div class="xb" id="x20b-p"><div class="xb-q">"We're storing session tokens in localStorage. That's an XSS risk, severity high."</div><div style="margin:8px 0;font-size:12px;color:var(--mu);font-style:italic">Technically correct. Practically useless in a planning meeting.</div><div class="xb-q">"Our session tokens are in localStorage — any XSS vulnerability gives an attacker full account access. We have 45K active users; a single reflected XSS in our search page (found in last quarter's pentest) would expose all active sessions. Estimated incident cost: $150K in response, notification, and credential reset — plus reputational damage we can't price. Fix: move to httpOnly cookies, 2-day migration, no user-facing changes."</div><div class="xb-n">Same pattern: name the asset, quantify the exposure, price the impact, propose the fix with cost. Works for any domain.</div></div></div>
     <div class="prose">When security stops being a cost center and starts being a line item that competes — and wins — on its own merits, that's the shift. You make it by doing this translation, every time, until the team picks it up too.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">22 / 35 · Business</span><div class="snav"><button class="btn" onclick="go(20)">← Back</button><button class="btn pri" onclick="go(22)">Next →</button></div></div>
+  <div class="sf"><span class="shint">25 / 38 · Business</span><div class="snav"><button class="btn" onclick="go(23)">← Back</button><button class="btn pri" onclick="go(25)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S21 · QUIZ — framing risk ═══ -->
-<div class="slide" id="s22">
-  <div class="sh"><span class="stag">Knowledge check · framing risk</span><div class="pips" id="pp22"></div></div>
+<div class="slide" id="s25">
+  <div class="sh"><span class="stag">Knowledge check · framing risk</span><div class="pips" id="pp25"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
     <div class="qw" id="q4"><div class="qq">Why does framing security risk in dollar terms matter more than framing it in CVE severity?</div>
       <button class="qo" onclick="pk('q4',0)">A) Executives don't trust CVSS scores</button>
@@ -996,12 +1030,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="qe" id="q4-e"><strong>B.</strong> Executives aren't dismissing CVSS scores; they don't have a way to <em>act</em> on them. A budget allocation request is a decision they make every week. Dollar framing puts your security work into the same conversation as headcount, infrastructure, and feature investment.</div>
     </div>
   </div></div></div>
-  <div class="sf"><span class="shint">23 / 35 · Quiz</span><div class="snav"><button class="btn" onclick="go(21)">← Back</button><button class="btn pri" onclick="go(23)">Next →</button></div></div>
+  <div class="sf"><span class="shint">26 / 38 · Quiz</span><div class="snav"><button class="btn" onclick="go(24)">← Back</button><button class="btn pri" onclick="go(26)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S22 · Threat modeling divider ═══ -->
-<div class="slide" id="s23">
-  <div class="sh"><span class="stag"><span class="hl">Tool</span> · Threat modeling</span><div class="pips" id="pp23"></div></div>
+<div class="slide" id="s26">
+  <div class="sh"><span class="stag"><span class="hl">Tool</span> · Threat modeling</span><div class="pips" id="pp26"></div></div>
   <div class="sb"><div class="fbody">
     <div class="fb-content">
       <div class="fb-tg">Tool</div>
@@ -1023,12 +1057,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       </svg>
     </div>
   </div></div>
-  <div class="sf"><span class="shint">24 / 35 · Tool</span><div class="snav"><button class="btn" onclick="go(22)">← Back</button><button class="btn pri" onclick="go(24)">Next →</button></div></div>
+  <div class="sf"><span class="shint">27 / 38 · Tool</span><div class="snav"><button class="btn" onclick="go(25)">← Back</button><button class="btn pri" onclick="go(27)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S23 · What threat modeling is ═══ -->
-<div class="slide" id="s24">
-  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Threat modeling</span><div class="pips" id="pp24"></div></div>
+<div class="slide" id="s27">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Threat modeling</span><div class="pips" id="pp27"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What threat modeling actually is</div></div><div class="sp-r">
     <div class="prose"><span class="gloss" data-def="A structured way of asking 'what could go wrong with this system?' before it goes wrong in production. The output is a list of risks the team agrees to address.">Threat modeling</span> has a reputation for being a heavy practice — whiteboards, formal frameworks, multi-day workshops. Those exist, and at large scale they're useful, but the practice itself is much smaller.</div>
     <div class="prose">At its core, threat modeling is a habit of asking <strong>three questions</strong> during design:</div>
@@ -1039,12 +1073,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     </div>
     <div class="prose">Done this way, threat modeling fits inside a normal design conversation. The next slides cover the trickiest part — recognizing where to look — and a checklist for the second question.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">25 / 35 · Threat modeling</span><div class="snav"><button class="btn" onclick="go(23)">← Back</button><button class="btn pri" onclick="go(25)">Next →</button></div></div>
+  <div class="sf"><span class="shint">28 / 38 · Threat modeling</span><div class="snav"><button class="btn" onclick="go(26)">← Back</button><button class="btn pri" onclick="go(28)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S24 · Trust boundary — concept ═══ -->
-<div class="slide" id="s25">
-  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Threat modeling · trust boundary</span><div class="pips" id="pp25"></div></div>
+<div class="slide" id="s28">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Threat modeling · trust boundary</span><div class="pips" id="pp28"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Where data changes hands — that's where to look</div></div><div class="sp-r">
     <div class="prose">A <strong>trust boundary</strong> is any place where data moves from one level of trust to another. A form submission from a user crosses one. An <span class="gloss" data-def="Application Programming Interface — a defined way for one piece of software to call another, often across a network.">API</span> call to a third-party service crosses one. A queue passing messages between services with different roles crosses one.</div>
     <div class="prose">When you walk a system looking for places to add security checks, the boundaries are where you spend most of the attention. Code inside a single trust zone usually trusts itself by convention — the work happens at the edges.</div>
@@ -1066,12 +1100,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="tb-foot">At <b>boundary 1</b>: validate &amp; authenticate the user's input.<br>At <b>boundary 2</b>: authorize the action, check ownership, and <b>sanitize input before the DB query</b> — the database doesn't blindly trust the app either.</div>
     </div>
   </div></div></div>
-  <div class="sf"><span class="shint">26 / 35 · Threat modeling</span><div class="snav"><button class="btn" onclick="go(24)">← Back</button><button class="btn pri" onclick="go(26)">Next →</button></div></div>
+  <div class="sf"><span class="shint">29 / 38 · Threat modeling</span><div class="snav"><button class="btn" onclick="go(27)">← Back</button><button class="btn pri" onclick="go(29)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S25 · Trust boundary — what happens when missing ═══ -->
-<div class="slide" id="s26">
-  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Threat modeling · trust boundary</span><div class="pips" id="pp26"></div></div>
+<div class="slide" id="s29">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Threat modeling · trust boundary</span><div class="pips" id="pp29"></div></div>
   <div class="sb"><div class="tb-scene">
     <div class="tb-scene-head">
       <div class="tb-scene-tag">When a check is missing at a boundary</div>
@@ -1113,12 +1147,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       </div>
     </div>
   </div></div>
-  <div class="sf"><span class="shint">27 / 35 · Threat modeling</span><div class="snav"><button class="btn" onclick="go(25)">← Back</button><button class="btn pri" onclick="go(27)">Next →</button></div></div>
+  <div class="sf"><span class="shint">30 / 38 · Threat modeling</span><div class="snav"><button class="btn" onclick="go(28)">← Back</button><button class="btn pri" onclick="go(30)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S26 · STRIDE OVERVIEW (new) ═══ -->
-<div class="slide" id="s27">
-  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · STRIDE · overview</span><div class="pips" id="pp27"></div></div>
+<div class="slide" id="s30">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · STRIDE · overview</span><div class="pips" id="pp30"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Six categories that catch most software security risks</div></div><div class="sp-r">
     <div class="prose"><span class="gloss" data-def="A threat-modeling mnemonic developed at Microsoft. Six categories that catch most software security risks.">STRIDE</span> is the standard checklist for the "what can go wrong" question in threat modeling. Each letter is a category of threat to look for at every component of your system.</div>
 
@@ -1157,12 +1191,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 
     <div class="stride-hint">Hover any <b>ⓘ</b> for the definition. The next two slides walk through them in detail.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">28 / 35 · STRIDE overview</span><div class="snav"><button class="btn" onclick="go(26)">← Back</button><button class="btn pri" onclick="go(28)">Next →</button></div></div>
+  <div class="sf"><span class="shint">31 / 38 · STRIDE overview</span><div class="snav"><button class="btn" onclick="go(29)">← Back</button><button class="btn pri" onclick="go(31)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S27 · STRIDE part 1 (was S26) ═══ -->
-<div class="slide" id="s28">
-  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · STRIDE · 1 of 2</span><div class="pips" id="pp28"></div></div>
+<div class="slide" id="s31">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · STRIDE · 1 of 2</span><div class="pips" id="pp31"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The first three: spoofing, tampering, repudiation</div></div><div class="sp-r">
     <div class="prose">The first three categories cover <strong>identity and integrity</strong> — who's acting, whether the data they touch is honest, and whether their actions can be traced.</div>
     <div class="stride-row">
@@ -1184,12 +1218,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     </div>
     <div class="prose" style="font-size:13px;color:var(--mu);font-style:italic">The remaining three — Information disclosure, Denial of service, Elevation of privilege — are on the next slide.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">29 / 35 · STRIDE</span><div class="snav"><button class="btn" onclick="go(27)">← Back</button><button class="btn pri" onclick="go(29)">Next →</button></div></div>
+  <div class="sf"><span class="shint">32 / 38 · STRIDE</span><div class="snav"><button class="btn" onclick="go(30)">← Back</button><button class="btn pri" onclick="go(32)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S28 · STRIDE part 2 ═══ -->
-<div class="slide" id="s29">
-  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · STRIDE · 2 of 2</span><div class="pips" id="pp29"></div></div>
+<div class="slide" id="s32">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · STRIDE · 2 of 2</span><div class="pips" id="pp32"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">The remaining three: leak, downtime, escalation</div></div><div class="sp-r">
     <div class="prose">The last three categories cover <strong>access and availability</strong> — what data leaks out, whether the system stays up, and whether anyone can climb where they shouldn't.</div>
     <div class="stride-row">
@@ -1212,12 +1246,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="co" style="font-size:13.5px">Run STRIDE on each component in your diagram. You won't catch every threat, but you'll catch the obvious ones — and that's most of them.</div>
     <div class="xp" id="x29a"><button class="xh" onclick="tg('x29a')"><span>What STRIDE doesn't cover</span><span class="xa">›</span></button><div class="xb" id="x29a-p">STRIDE catches most software threats, but it wasn't designed for everything. Supply chain attacks (a compromised dependency), business logic flaws (a valid user abusing a legitimate feature), and privacy-specific threats (data minimization, consent) need complementary approaches. You'll cover supply chain in Module 5 and privacy considerations alongside access control in Module 7.</div></div>
   </div></div></div>
-  <div class="sf"><span class="shint">30 / 35 · STRIDE</span><div class="snav"><button class="btn" onclick="go(28)">← Back</button><button class="btn pri" onclick="go(30)">Next →</button></div></div>
+  <div class="sf"><span class="shint">33 / 38 · STRIDE</span><div class="snav"><button class="btn" onclick="go(31)">← Back</button><button class="btn pri" onclick="go(33)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S28 · When to threat-model ═══ -->
-<div class="slide" id="s30">
-  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Threat modeling · timing</span><div class="pips" id="pp30"></div></div>
+<div class="slide" id="s33">
+  <div class="sh"><span class="stag"><span class="hl">Act 5</span> · Threat modeling · timing</span><div class="pips" id="pp33"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">When to threat-model in agile</div></div><div class="sp-r">
     <div class="prose">"Run a full threat model before each release" works in waterfall. It doesn't fit in two-week sprints.</div>
     <div class="prose">In agile, run threat modeling at <strong>three trigger points</strong>:</div>
@@ -1228,12 +1262,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     </div>
     <div class="prose">A Champion's job is to <em>flag the trigger</em> — to recognize when a design change deserves the time. The 20-minute version, done at the right moment, is worth more than a two-day workshop done at the wrong one.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">31 / 35 · Threat modeling</span><div class="snav"><button class="btn" onclick="go(29)">← Back</button><button class="btn pri" onclick="go(31)">Next →</button></div></div>
+  <div class="sf"><span class="shint">34 / 38 · Threat modeling</span><div class="snav"><button class="btn" onclick="go(32)">← Back</button><button class="btn pri" onclick="go(34)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S29 · QUIZ — STRIDE category ═══ -->
-<div class="slide" id="s31">
-  <div class="sh"><span class="stag">Knowledge check · pick a STRIDE category</span><div class="pips" id="pp31"></div></div>
+<div class="slide" id="s34">
+  <div class="sh"><span class="stag">Knowledge check · pick a STRIDE category</span><div class="pips" id="pp34"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">Knowledge check</div></div><div class="sp-r">
     <div class="qw" id="q5"><div class="qq">A user clicks "delete account" but the system can't prove later <em>which</em> account button was clicked or by whom. Which STRIDE category does this represent?</div>
       <button class="qo" onclick="pk('q5',0)">A) Spoofing</button>
@@ -1250,12 +1284,12 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       <div class="qe" id="q6-e"><strong>C — Information disclosure.</strong> The different error messages leak whether an account exists. An attacker can enumerate valid usernames before even attempting to break in. The fix: return the same generic error regardless — "Invalid credentials." This is one of the most common real-world information disclosure patterns.</div>
     </div>
   </div></div></div>
-  <div class="sf"><span class="shint">32 / 35 · Quiz</span><div class="snav"><button class="btn" onclick="go(30)">← Back</button><button class="btn pri" onclick="go(32)">Next →</button></div></div>
+  <div class="sf"><span class="shint">35 / 38 · Quiz</span><div class="snav"><button class="btn" onclick="go(33)">← Back</button><button class="btn pri" onclick="go(35)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S30 · BREATHER · Three habits recap ═══ -->
-<div class="slide" id="s32">
-  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Recap</span><div class="pips" id="pp32"></div></div>
+<div class="slide" id="s35">
+  <div class="sh"><span class="stag"><span class="hl">Time to think</span> · Recap</span><div class="pips" id="pp35"></div></div>
   <div class="sb"><div class="breather bg-warm" style="padding:30px 24px 14px">
     <div class="breather-visual">
       <div class="habits-grid">
@@ -1267,24 +1301,24 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
     <div class="breather-caption"><p>Three habits that make you a Champion <strong>operating in the sprint</strong> rather than a security person <strong>shouting at it</strong>.</p>
     <div class="breather-notice">All three are small enough to start <b>this week</b>. None of them require a budget approval.</div></div>
   </div></div>
-  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(31)">← Back</button><button class="btn reflect-btn" onclick="openReflect('habits')">⏸ Reflect</button><button class="btn pri" onclick="go(33)">Next →</button></div></div>
+  <div class="sf"><span class="shint">Time to think and reflect</span><div class="snav"><button class="btn" onclick="go(34)">← Back</button><button class="btn reflect-btn" onclick="openReflect('habits')">⏸ Reflect</button><button class="btn pri" onclick="go(36)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S31 · Bridge to Module 3 ═══ -->
-<div class="slide" id="s33">
-  <div class="sh"><span class="stag"><span class="hl">Bridge</span> · Into Module 3</span><div class="pips" id="pp33"></div></div>
+<div class="slide" id="s36">
+  <div class="sh"><span class="stag"><span class="hl">Bridge</span> · Into Module 3</span><div class="pips" id="pp36"></div></div>
   <div class="sb"><div class="split"><div class="sp-l"><div class="sp-t">What you carry into Module 3</div></div><div class="sp-r">
     <div class="prose">You now have a way to <em>organize</em> security work. The next module is about <em>what to look for.</em></div>
     <div class="prose">Module 3 walks the OWASP Top 10 — the ten most common application security risks, ranked by industry data. For each one, you'll see the underlying pattern, why it persists, and what a Champion checks for during code review and design.</div>
     <div class="prose">The structure you learned here — <strong>requirements at the right layer, visibility through labels, dollar framing for risk</strong> — is what makes the OWASP list actionable instead of just educational. Without that structure, the Top 10 is a checklist. With it, it's a backlog.</div>
     <div class="prose">Before you continue, take one slide to commit to what you'll actually do.</div>
   </div></div></div>
-  <div class="sf"><span class="shint">34 / 35 · Bridge</span><div class="snav"><button class="btn" onclick="go(32)">← Back</button><button class="btn pri" onclick="go(34)">Next →</button></div></div>
+  <div class="sf"><span class="shint">37 / 38 · Bridge</span><div class="snav"><button class="btn" onclick="go(35)">← Back</button><button class="btn pri" onclick="go(37)">Next →</button></div></div>
 </div>
 
 <!-- ═══ S32 · ACTION PACT (closing) ═══ -->
-<div class="slide" id="s34">
-  <div class="sh"><span class="stag"><span class="hl">Module 2</span> · Your action pact</span><div class="pips" id="pp34"></div></div>
+<div class="slide" id="s37">
+  <div class="sh"><span class="stag"><span class="hl">Module 2</span> · Your action pact</span><div class="pips" id="pp37"></div></div>
   <div class="sb"><div class="actpact">
     <div class="actpact-head">
       <div class="actpact-tag">⏵ Your next sprint</div>
@@ -1329,7 +1363,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
       </div>
     </div>
   </div></div>
-  <div class="sf"><span class="shint">35 / 35 · Action pact</span><div class="snav"><button class="btn" onclick="go(33)">← Back</button><button class="btn" onclick="openRetake()" style="border-color:rgba(217,69,69,.4);color:#ff8888;">↻ Reset</button><button class="btn pri" onclick="alert('You\'ve completed Module 2. Module 3 — OWASP Top 10 — coming next.')">Finish module ✓</button></div></div>
+  <div class="sf"><span class="shint">38 / 38 · Action pact</span><div class="snav"><button class="btn" onclick="go(36)">← Back</button><button class="btn" onclick="openRetake()" style="border-color:rgba(217,69,69,.4);color:#ff8888;">↻ Reset</button><button class="btn pri" onclick="alert('You\'ve completed Module 2. Module 3 — OWASP Top 10 — coming next.')">Finish module ✓</button></div></div>
 </div>
 
 </div><!-- end .deck -->
@@ -1362,7 +1396,7 @@ body{background:var(--bk);font-family:'DM Sans',system-ui,sans-serif;color:var(-
 </div>
 
 <script>
-const T=35;let c=0;
+const T=38;let c=0;
 
 const STORAGE_KEY='sc_m2_full_v4';
 const RANKS=[
