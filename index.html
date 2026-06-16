@@ -46,10 +46,40 @@
   }
 
   .bg-fingerprint {
-    position: fixed; inset:0; z-index:0; pointer-events:none;
-    opacity: .025;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 100 100'%3E%3Cpath d='M50 15c-19.3 0-35 15.7-35 35s15.7 35 35 35 35-15.7 35-35-15.7-35-35-35zm0 6c16 0 29 13 29 29s-13 29-29 29-29-13-29-29 13-29 29-29zm0 6c-12.7 0-23 10.3-23 23s10.3 23 23 23 23-10.3 23-23-10.3-23-23-23zm0 6c-9.4 0-17 7.6-17 17s7.6 17 17 17 17-7.6 17-17-7.6-17-17-17zm0 6c-6 0-11 5-11 11s5 11 11 11 11-5 11-11-5-11-11-11zm0 6c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5z' fill='%2322d3ee' fill-opacity='1' stroke='none'/%3E%3C/svg%3E");
-    background-size: 200px 200px;
+    position: fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  }
+
+  /* floating hexagon badges */
+  .hex-badge {
+    position: absolute;
+    display: flex; align-items:center; justify-content:center;
+    background: rgba(255,255,255,.06);
+    backdrop-filter: blur(6px);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    animation: hexDrift 20s ease-in-out infinite;
+  }
+  .hex-badge svg { opacity:.5; }
+
+  .hex-badge.sm {
+    width:48px; height:42px;
+    background: rgba(34,211,238,.08);
+  }
+  .hex-badge.sm svg { display:none; }
+
+  .hb1 { width:120px; height:104px; top:8%; left:3%; animation-delay:0s; }
+  .hb2 { width:90px; height:78px; top:25%; right:4%; animation-delay:-5s; }
+  .hb3 { width:100px; height:87px; bottom:20%; left:2%; animation-delay:-10s; }
+  .hb4 { width:80px; height:69px; bottom:8%; right:6%; animation-delay:-3s; }
+  .hb5 { width:110px; height:95px; top:55%; right:1%; animation-delay:-8s; }
+  .hs1 { top:18%; left:12%; animation-delay:-2s; }
+  .hs2 { top:45%; left:1%; animation-delay:-7s; }
+  .hs3 { top:70%; right:10%; animation-delay:-12s; }
+  .hs4 { bottom:30%; right:2%; animation-delay:-4s; }
+  .hs5 { top:5%; right:14%; animation-delay:-9s; }
+
+  @keyframes hexDrift {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-14px) rotate(4deg); }
   }
 
   .container {
@@ -195,7 +225,40 @@
 <body>
 <div class="bg-grid"></div>
 <div class="bg-glow"></div>
-<div class="bg-fingerprint"></div>
+<div class="bg-fingerprint">
+  <!-- large hexes with icons -->
+  <div class="hex-badge hb1">
+    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.2" stroke-linecap="round">
+      <path d="M12 2C8.5 2 5.5 4.5 4.2 8c-1 2.8-.8 5.8.5 8.2"/><path d="M7.5 5.5C6 7.2 5 9.5 5 12c0 2 .5 3.8 1.4 5.3"/><path d="M10 4.5c-1.7 1-3 3.5-3 6.5 0 2.5 1 4.7 2.5 6"/><path d="M12 6c-1.2.8-2 2.8-2 5s.8 4.2 2 5"/><path d="M14 4.5c1.7 1 3 3.5 3 6.5 0 2.5-1 4.7-2.5 6"/><path d="M16.5 5.5C18 7.2 19 9.5 19 12c0 2-.5 3.8-1.4 5.3"/><path d="M19.8 8c1 2.8.8 5.8-.5 8.2"/>
+    </svg>
+  </div>
+  <div class="hex-badge hb2">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2l8 4v6c0 5.5-3.8 10.7-8 12-4.2-1.3-8-6.5-8-12V6l8-4z"/><path d="M9 12l2 2 4-4"/>
+    </svg>
+  </div>
+  <div class="hex-badge hb3">
+    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </svg>
+  </div>
+  <div class="hex-badge hb4">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="1.3" stroke-linecap="round">
+      <circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4m-9-9h4m14 0h4"/><path d="M4.2 4.2l2.8 2.8m10 10l2.8 2.8m0-15.6l-2.8 2.8m-10 10l-2.8 2.8"/>
+    </svg>
+  </div>
+  <div class="hex-badge hb5">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>
+    </svg>
+  </div>
+  <!-- small accent hexes -->
+  <div class="hex-badge sm hs1"></div>
+  <div class="hex-badge sm hs2"></div>
+  <div class="hex-badge sm hs3"></div>
+  <div class="hex-badge sm hs4"></div>
+  <div class="hex-badge sm hs5"></div>
+</div>
 
 <div class="container">
   <header>
