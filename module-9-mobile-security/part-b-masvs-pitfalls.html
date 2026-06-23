@@ -474,6 +474,12 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
 .is-fs .rm-sub{font-size:17px!important}
 .is-fs .rm-tag{font-size:12px!important}
 .is-fs .gloss{border-bottom-width:2px!important}
+
+.manifesto-echo{text-align:left;margin:12px 0}
+.me-item{padding:8px 14px;margin-bottom:6px;border-left:3px solid var(--or);background:rgba(232,129,58,.04);border-radius:0 6px 6px 0;font-size:13.5px;line-height:1.5;color:var(--td)}
+.me-item b{color:var(--or);font-weight:700}
+.me-closer{text-align:center;margin-top:20px;font-size:15px;line-height:1.5;color:var(--tx)}
+.me-closer b{color:var(--or)}
 </style>
 </head>
 <body>
@@ -756,23 +762,26 @@ html,body{height:100%!important;overflow:hidden!important;margin:0!important}bod
 
 <!-- ═══ S17 · Bridge to Part 3 ═══ -->
 <div class="slide" id="s17">
-  <div class="sh"><span class="stag"><span class="hl">Next</span> · Part 3</span><div class="pips" id="pp17"></div></div>
-  <div class="sb"><div class="fbody">
-    <div class="fb-content" style="animation:fi .8s ease .2s both">
-      <div class="fb-tg">Next</div>
-      <div class="fb-tt" style="animation:fi .8s ease .35s both">Action Plan &amp; Course Finale</div>
-      <div class="fb-sb" style="animation:fi .8s ease .5s both">Part 3: building your five-step mobile security action plan, the security kernel concept, and completing the Security Champions journey.</div>
+  <div class="sh"><span class="stag"><span class="hl">Complete</span> · Course Finale</span><div class="pips" id="pp17"></div></div>
+  <div class="sb"><div class="fbody" style="max-width:680px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:16px">
+      <div class="fb-tg">The Security Champions Program</div>
+      <div class="fb-tt" style="font-size:22px;line-height:1.3;margin-top:8px">9 modules ago, you signed a manifesto.<br>Here\'s what those words mean now.</div>
     </div>
-    <div class="fb-visual" style="animation:fi 1s ease .4s both">
-      <svg viewBox="0 0 200 200" width="220" height="220">
-        <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(232,129,58,.15)" stroke-width="1.5" stroke-dasharray="6 4"><animateTransform attributeName="transform" type="rotate" values="0 100 100;360 100 100" dur="30s" repeatCount="indefinite"/></circle>
-        <circle cx="100" cy="100" r="40" fill="none" stroke="rgba(46,173,107,.2)" stroke-width="1.5"><animate attributeName="r" values="38;42;38" dur="4s" repeatCount="indefinite"/></circle>
-        <path d="M100 75 L112 81 L112 95 C112 103 106 109 100 115 C94 109 88 103 88 95 L88 81 Z" fill="rgba(232,129,58,.15)" stroke="var(--or)" stroke-width="1.5"><animate attributeName="opacity" values=".7;1;.7" dur="3s" repeatCount="indefinite"/></path>
-        <text x="100" y="100" fill="var(--or)" font-size="16" text-anchor="middle" font-weight="800">✓</text>
-      </svg>
+    <div class="manifesto-echo">
+      <div class="me-item"><b>Speak up.</b> You know the champion role — you\'re the bridge between security and your team. Not the gatekeeper. The translator.</div>
+      <div class="me-item"><b>Build it in.</b> You\'ve seen how security requirements layer into the SDLC — business, functional, dev &amp; ops. You know where they go in a ticket.</div>
+      <div class="me-item"><b>See what\'s really at risk.</b> You\'ve walked the OWASP Top 10 through five lenses. You don\'t count bugs — you read patterns. Impact × likelihood.</div>
+      <div class="me-item"><b>Ask "what can go wrong" early.</b> You can run STRIDE on a whiteboard, score with DREAD, and turn threats into backlog tickets before a single line ships.</div>
+      <div class="me-item"><b>Question what I depend on.</b> You know your code is the small circle. You can read an SBOM, flag an unpinned image, question a transitive dependency four levels deep.</div>
+      <div class="me-item"><b>Spot every secret.</b> You know the lifecycle — create, store, distribute, use, rotate, destruct. You\'ll catch the hardcoded key in a PR that everyone else missed.</div>
+      <div class="me-item"><b>Challenge the defaults.</b> You can recognize drift from baseline, question an over-permissioned role, and ask why a default config made it to production.</div>
+      <div class="me-item"><b>Know the plan before things break.</b> You know PICERL. You know contain comes before investigate. You know who to escalate to and when.</div>
+      <div class="me-item"><b>Think full stack.</b> You know MASVS levels, you know client trust is a trap, you know mobile security doesn\'t stop at the UI.</div>
     </div>
+    <div class="me-closer">Every line meant something different when you first read it.<br><b>That\'s the transformation.</b></div>
   </div></div>
-  <div class="sf"><span class="shint">18 / 18 · Bridge</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="alert('Part 3 — Action Plan & Course Finale — coming next.')">Finish Part 2 ✓</button></div></div>
+  <div class="sf"><span class="shint">18 / 18 · Finale</span><div class="snav"><button class="btn" onclick="go(16)">← Back</button><button class="btn pri" onclick="alert('Congratulations — you are a Security Champion.')">Finish ✓</button></div></div>
 </div>
 
 </div>
